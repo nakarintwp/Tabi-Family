@@ -1,5 +1,5 @@
 -- Tabi Family / Japan Family Trip Planner
--- Run in Supabase SQL Editor once per project.
+-- Safe to run in Supabase SQL Editor. Tables are created only if missing.
 
 create extension if not exists pgcrypto;
 
@@ -78,6 +78,18 @@ create table if not exists public.expenses (
   created_at timestamptz not null default now()
 );
 
+create or replace function public.set_updated_at()
+returns trigger language plpgsql as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$;
+
+drop trigger if exists set_trips_updated_at on public.trips;
+create trigger set_trips_updated_at before update on public.trips
+for each row execute function public.set_updated_at();
+
 alter table public.trips enable row level security;
 alter table public.trip_members enable row level security;
 alter table public.trip_days enable row level security;
@@ -85,17 +97,21 @@ alter table public.activities enable row level security;
 alter table public.bookings enable row level security;
 alter table public.expenses enable row level security;
 
+drop policy if exists "owners manage trips" on public.trips;
 create policy "owners manage trips" on public.trips
 for all using (auth.uid() = owner_id) with check (auth.uid() = owner_id);
 
+drop policy if exists "owners manage trip members" on public.trip_members;
 create policy "owners manage trip members" on public.trip_members
 for all using (exists(select 1 from public.trips t where t.id = trip_id and t.owner_id = auth.uid()))
 with check (exists(select 1 from public.trips t where t.id = trip_id and t.owner_id = auth.uid()));
 
+drop policy if exists "owners manage trip days" on public.trip_days;
 create policy "owners manage trip days" on public.trip_days
 for all using (exists(select 1 from public.trips t where t.id = trip_id and t.owner_id = auth.uid()))
 with check (exists(select 1 from public.trips t where t.id = trip_id and t.owner_id = auth.uid()));
 
+drop policy if exists "owners manage activities" on public.activities;
 create policy "owners manage activities" on public.activities
 for all using (exists(
   select 1 from public.trip_days d join public.trips t on t.id = d.trip_id
@@ -105,16 +121,19 @@ for all using (exists(
   where d.id = day_id and t.owner_id = auth.uid()
 ));
 
+drop policy if exists "owners manage bookings" on public.bookings;
 create policy "owners manage bookings" on public.bookings
 for all using (exists(select 1 from public.trips t where t.id = trip_id and t.owner_id = auth.uid()))
 with check (exists(select 1 from public.trips t where t.id = trip_id and t.owner_id = auth.uid()));
 
+drop policy if exists "owners manage expenses" on public.expenses;
 create policy "owners manage expenses" on public.expenses
 for all using (exists(select 1 from public.trips t where t.id = trip_id and t.owner_id = auth.uid()))
 with check (exists(select 1 from public.trips t where t.id = trip_id and t.owner_id = auth.uid()));
 
 create index if not exists idx_trips_owner on public.trips(owner_id);
-create index if not exists idx_trip_days_trip on public.trip_days(trip_id);
+create index if not exists idx_trip_days_trip on public.trip_days(trip_id, trip_date);
+create index if not exists idx_trip_members_trip on public.trip_members(trip_id);
 create index if not exists idx_activities_day on public.activities(day_id, sort_order);
 create index if not exists idx_bookings_trip on public.bookings(trip_id);
 create index if not exists idx_expenses_trip on public.expenses(trip_id, paid_at desc);

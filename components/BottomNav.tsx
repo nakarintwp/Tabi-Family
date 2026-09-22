@@ -2,8 +2,8 @@ import Link from "next/link";
 
 const items = [
   ["/", "⌂", "Home"],
+  ["/trips", "🗾", "Trips"],
   ["/plan", "☷", "Plan"],
-  ["/map", "⌖", "Map"],
   ["/wallet", "▣", "Wallet"],
   ["/trips/new", "+", "New"],
 ] as const;

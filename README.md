@@ -1,95 +1,101 @@
 # Tabi Family — Japan Family Trip Planner
 
-Mobile-first starter for a Japan family trip planner using **Next.js 16 + Supabase + GitHub + Vercel**.
+Mobile-first family trip planner for Japan built with **Next.js + Supabase + Vercel**.
 
-## What is included
+## V1 features
 
-- Mobile-first Home / Today dashboard
-- Day timeline / Plan
-- Map concept screen (ready for a real map provider)
-- Booking Wallet + Budget
-- Create Trip form
-- Supabase Magic Link Auth (SSR-compatible)
-- Supabase PostgreSQL schema + Row Level Security policies
-- Next.js 16 `proxy.ts` session refresh
-- GitHub Actions build/typecheck CI
-- Vercel-ready project structure
-- Demo mode: UI works even before Supabase environment variables are added
+- Supabase Magic Link authentication
+- Row Level Security (RLS): each account sees only its own trip data
+- Create a real trip in Supabase
+- Auto-create trip days from start/end dates
+- Family profiles: adult / child / senior + walking level + needs
+- Add itinerary activities per day
+- Expense tracking in JPY and THB
+- Live Home, Trips, Plan and Wallet screens
+- Responsive mobile-first UI
 
-## 1. Run locally
+## 1. Supabase
 
-Requirements: Node.js 22+
+Create a Supabase project, then open **SQL Editor → New query** and run:
 
-```bash
-npm install
-cp .env.example .env.local
-npm run dev
+```text
+supabase/schema.sql
 ```
 
-Open http://localhost:3000
+The SQL is safe to run again: tables use `if not exists` and policies are recreated cleanly.
 
-If you do not configure Supabase yet, the UI still works in demo mode.
+## 2. Environment variables
 
-## 2. Create Supabase project
-
-1. Create a project at Supabase.
-2. Open **SQL Editor** and run `supabase/schema.sql`.
-3. In **Connect / API**, copy:
-   - Project URL
-   - Publishable key
-4. Put them in `.env.local`:
+Supabase → **Project Settings / Connect / API Keys**. Copy:
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_YOUR_KEY
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_xxx
 ```
 
-5. In Supabase Auth URL configuration, add local callback / site URLs as needed, including `http://localhost:3000/auth/callback` for local development.
+For local development create `.env.local` using `.env.example`.
 
-## 3. Push to GitHub
+For Vercel go to:
+
+**Project → Settings → Environment Variables**
+
+Add both variables to Production, Preview and Development, then redeploy.
+
+## 3. Supabase Auth URLs
+
+Supabase → **Authentication → URL Configuration**
+
+Site URL:
+
+```text
+https://tabi-family.vercel.app
+```
+
+Redirect URLs:
+
+```text
+https://tabi-family.vercel.app/**
+http://localhost:3000/**
+```
+
+## 4. Local run
 
 ```bash
-git init
-git add .
-git commit -m "Initial Tabi Family web app"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/japan-family-trip-planner.git
-git push -u origin main
+npm install
+npm run dev
 ```
 
-The included `.github/workflows/ci.yml` runs typecheck and build on pushes/PRs.
+Open `http://localhost:3000`.
 
-## 4. Deploy on Vercel
+## 5. Deploy with GitHub + Vercel
 
-1. Import the GitHub repository into Vercel.
-2. Add environment variables:
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
-   - `NEXT_PUBLIC_SITE_URL` = your production Vercel URL or custom domain
-3. Deploy.
-4. Add the production callback URL to Supabase Auth redirect URLs:
-   `https://YOUR_DOMAIN/auth/callback`
+After changing files:
 
-Vercel detects Next.js automatically; no custom build adapter is required.
+```bash
+git add .
+git commit -m "Add live Supabase trip planning"
+git push
+```
 
-## 5. Recommended next development phase
+Vercel will deploy automatically from `main`.
 
-1. Load the signed-in user's actual trips on Home.
-2. CRUD for family members, trip days, activities, bookings, expenses.
-3. Google Maps Platform / Mapbox map and route calculations.
-4. Weather integration and Rain Plan.
-5. AI itinerary API with constraint validation (child/senior/walking limits).
-6. Shared-trip membership/roles for family collaboration.
-7. PWA offline cache for Today, bookings, addresses and emergency data.
+## Main routes
 
-## Database ownership model
+- `/` — live dashboard
+- `/auth/login` — Magic Link login
+- `/account` — current account / logout
+- `/trips` — all trips
+- `/trips/new` — create trip
+- `/trips/[id]` — family + itinerary + expenses
+- `/plan` — itinerary from the current trip
+- `/wallet` — expenses / booking wallet
+- `/map` — map concept (Google Maps integration is a later phase)
 
-The MVP uses `trips.owner_id` and RLS. Only the authenticated owner can access related members/days/activities/bookings/expenses. For family collaboration, add `trip_collaborators` in the next phase and expand RLS policies.
+## Recommended next phase
 
-## Security notes
-
-- Never expose a Supabase service-role key in `NEXT_PUBLIC_*` variables.
-- Use the **publishable key** in the browser.
-- Authorization is enforced by PostgreSQL RLS, not only by UI checks.
-- Server-side identity checks should use verified Supabase claims.
+1. Google Maps / Places search and route time
+2. Booking CRUD and QR/document upload
+3. Weather + rain-plan re-optimization
+4. Family Pace score
+5. AI itinerary generation constrained by family profile and real map/opening-hours data
+6. Shared trips / invitations for family members
