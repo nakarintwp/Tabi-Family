@@ -6,6 +6,9 @@ import { SubmitButton } from "@/components/SubmitButton";
 import { DEFAULT_TRIP_INTERESTS, DISCOVERY_DESTINATIONS, TRIP_INTERESTS, getTemplate } from "@/lib/discovery";
 import { createTrip } from "./actions";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function NewTripPage({ searchParams }: { searchParams: Promise<{ error?: string; template?: string }> }) {
   const { error, template: templateId } = await searchParams;
   const template = templateId ? getTemplate(templateId) : undefined;
@@ -23,7 +26,7 @@ export default async function NewTripPage({ searchParams }: { searchParams: Prom
             <h1 className="page-title">สร้างทริปใหม่</h1>
             <p className="page-subtitle">{template ? `ใช้ ${template.title} เป็นจุดเริ่มต้น แล้วแก้ต่อได้ทุกจุด` : "สร้าง Trip, สมาชิก และวันเดินทางในครั้งเดียว"}</p>
           </div>
-          <div className="speed-chip">⚡ Fast create</div>
+          <div className="create-version-stack"><div className="speed-chip">⚡ Fast create</div><div className="build-chip">V7.3.1</div></div>
         </div>
 
         {template && <div className={`template-selected trip-cover cover-${template.coverStyle}`}><span>{template.coverEmoji}</span><div><strong>{template.title}</strong><small>{template.days} วัน · {template.cities.join(" • ")}</small></div><Link className="link" href="/templates">เปลี่ยน</Link></div>}
@@ -44,7 +47,7 @@ export default async function NewTripPage({ searchParams }: { searchParams: Prom
           {template && <p className="small muted form-hint">Template นี้ออกแบบไว้ประมาณ {template.days} วัน — หากเลือกวันน้อยกว่า ระบบจะใส่เฉพาะ Day ที่มีอยู่</p>}
 
           <div className="field">
-            <div className="field-label-row"><label>เมือง / พื้นที่ที่จะไป</label><span className="small muted">Explore จะใช้รายการนี้กรองสถานที่ให้อัตโนมัติ</span></div>
+            <div className="selection-section-title"><div><span className="selection-step">1</span><strong>เมือง / พื้นที่ที่จะไป</strong></div><span>ติ๊กเลือกได้หลายเมือง</span></div><p className="selection-note">เลือกพื้นที่ของทริปก่อน เพื่อให้ Explore แสดงเฉพาะสถานที่ที่เกี่ยวข้องกับเส้นทางนี้</p>
             <div className="destination-picker">
               {DISCOVERY_DESTINATIONS.map((destination) => (
                 <label className="destination-option" key={destination.id}>
@@ -58,7 +61,7 @@ export default async function NewTripPage({ searchParams }: { searchParams: Prom
           </div>
 
           <div className="field">
-            <div className="field-label-row"><label>กิจกรรมที่สนใจ</label><span className="small muted">Explore จะเรียงสถานที่ที่ตรงใจขึ้นก่อน</span></div>
+            <div className="selection-section-title"><div><span className="selection-step">2</span><strong>กิจกรรมที่สนใจ</strong></div><span>เลือกได้หลายแบบ</span></div><p className="selection-note">ระบบจะใช้ความสนใจเหล่านี้จัดลำดับคำแนะนำใน Explore ให้ตรงกับทริปมากขึ้น</p>
             <div className="interest-picker">
               {TRIP_INTERESTS.map((interest) => (
                 <label className="interest-option" key={interest.id}>

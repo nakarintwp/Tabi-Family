@@ -1656,3 +1656,17 @@ body::before {
 .interest-filter-row { padding-top: 4px; }
 .interest-match-badge { position: absolute; left: 10px; bottom: 9px; border-radius: 999px; background: rgba(255,255,255,.94); border: 1px solid #d8ecf6; color: #2275a6; padding: 5px 8px; font-size: 10px; font-weight: 900; box-shadow: 0 4px 14px rgba(33,112,161,.08); }
 @media (min-width: 700px) { .interest-picker { grid-template-columns: 1fr 1fr; } }
+
+
+/* V7.3.1 Create Trip visibility hardening */
+.create-version-stack { display:flex; align-items:flex-end; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+.build-chip { display:inline-flex; align-items:center; justify-content:center; min-height:28px; padding:5px 10px; border-radius:999px; border:1px solid #b9dff2; background:#f3fbff; color:#36708f; font-size:11px; font-weight:900; letter-spacing:.04em; }
+.selection-section-title { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:4px 0 6px; }
+.selection-section-title > div { display:flex; align-items:center; gap:9px; }
+.selection-section-title strong { color:#173f59; font-size:16px; }
+.selection-section-title > span { color:#6f8998; font-size:11px; font-weight:800; }
+.selection-step { display:grid; place-items:center; width:27px; height:27px; border-radius:50%; background:#178dd1; color:#fff; font-size:12px; font-weight:900; box-shadow:0 5px 14px rgba(23,141,209,.22); }
+.selection-note { margin:0 0 10px; color:#708795; font-size:12px; line-height:1.5; }
+.destination-picker, .interest-picker { position:relative; z-index:1; visibility:visible !important; opacity:1 !important; }
+.destination-option, .interest-option { visibility:visible !important; opacity:1 !important; }
+@media (max-width:560px) { .selection-section-title { align-items:flex-start; flex-direction:column; gap:5px; } .create-version-stack { align-items:flex-start; justify-content:flex-start; } }

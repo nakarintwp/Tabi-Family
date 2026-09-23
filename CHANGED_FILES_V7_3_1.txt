@@ -1,0 +1,7 @@
+V7.3.1 changed files
+- app/trips/new/page.tsx
+- app/globals.css
+- public/sw.js
+- package.json
+- README.md
+- V7_3_1_CREATE_TRIP_PICKER_FIX.md

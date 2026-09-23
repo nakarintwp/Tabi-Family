@@ -1,3 +1,7 @@
+# Tabi Family — V7.3.1
+
+Create Trip destination/interest picker visibility fix.
+
 # Tabi Family
 
 **Current version: V7.3 — Trip Interests**
