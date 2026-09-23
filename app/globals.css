@@ -1670,4 +1670,71 @@ body::before {
 .destination-picker, .interest-picker { position:relative; z-index:1; visibility:visible !important; opacity:1 !important; }
 .destination-option, .interest-option { visibility:visible !important; opacity:1 !important; }
 @media (max-width:560px) { .selection-section-title { align-items:flex-start; flex-direction:column; gap:5px; } .create-version-stack { align-items:flex-start; justify-content:flex-start; } }
-\n\n/* =========================================================\n   V7.3.2 — deploy visibility + snow reliability\n   ========================================================= */\n.header-actions { display:flex; align-items:center; gap:8px; }\n.global-build-chip {\n  display:inline-flex; align-items:center; justify-content:center; min-height:24px;\n  padding:4px 8px; border-radius:999px; border:1px solid rgba(42,148,209,.22);\n  background:rgba(247,253,255,.92); color:#357493; font-size:9px; font-weight:900;\n  letter-spacing:.04em; box-shadow:0 4px 12px rgba(29,116,169,.06);\n}\n\n/* Put snowfall above page surfaces while remaining fully non-interactive. */\n.snow-only-atmosphere { z-index: 12 !important; background: transparent !important; }\n.snow-only-atmosphere .weather-sky-glow { opacity:.24; }\n.snow-only-atmosphere .weather-snowfall { z-index:2; }\n.snow-only-atmosphere .weather-snowfall i {\n  color:rgba(255,255,255,.96);\n  text-shadow:0 1px 4px rgba(42,120,166,.38), 0 0 9px rgba(64,156,207,.22);\n}\n.snow-only-atmosphere .snow-depth-front i {\n  font-size:calc(12px + (var(--i) % 5) * 3px);\n}\n\n/* Users with Reduce Motion still see snow; it becomes static instead of vanishing above the viewport. */\n@media (prefers-reduced-motion: reduce) {\n  .snow-only-atmosphere .weather-snowfall i {\n    animation:none !important;\n    top:var(--static-top, 20%) !important;\n    transform:none !important;\n    opacity:.55 !important;\n  }\n}\n\n/* Make the create-trip selectors impossible to visually merge into the form. */\n.selection-panel {\n  padding:14px; border:1px solid #cfe9f6; border-radius:22px;\n  background:linear-gradient(145deg,rgba(250,254,255,.98),rgba(234,248,255,.86));\n  box-shadow:0 7px 20px rgba(33,112,161,.06);\n}\n
+
+/* =========================================================
+   V7.3.3 — deploy + snow CSS build fix
+   ========================================================= */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.global-build-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(42, 148, 209, .22);
+  background: rgba(247, 253, 255, .92);
+  color: #357493;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .04em;
+  box-shadow: 0 4px 12px rgba(29, 116, 169, .06);
+}
+
+/* Keep snowfall visible above cards without intercepting taps. */
+.snow-only-atmosphere {
+  z-index: 12 !important;
+  background: transparent !important;
+  pointer-events: none !important;
+}
+
+.snow-only-atmosphere .weather-sky-glow {
+  opacity: .24;
+}
+
+.snow-only-atmosphere .weather-snowfall {
+  z-index: 2;
+}
+
+.snow-only-atmosphere .weather-snowfall i {
+  color: rgba(255, 255, 255, .96);
+  text-shadow: 0 1px 4px rgba(42, 120, 166, .38), 0 0 9px rgba(64, 156, 207, .22);
+}
+
+/* CSS has no modulo operator; front flakes use a stable valid size. */
+.snow-only-atmosphere .snow-depth-front i {
+  font-size: 18px;
+}
+
+/* Reduce Motion keeps snow visible as a static decoration. */
+@media (prefers-reduced-motion: reduce) {
+  .snow-only-atmosphere .weather-snowfall i {
+    animation: none !important;
+    top: var(--static-top, 20%) !important;
+    transform: none !important;
+    opacity: .55 !important;
+  }
+}
+
+.selection-panel {
+  padding: 14px;
+  border: 1px solid #cfe9f6;
+  border-radius: 22px;
+  background: linear-gradient(145deg, rgba(250, 254, 255, .98), rgba(234, 248, 255, .86));
+  box-shadow: 0 7px 20px rgba(33, 112, 161, .06);
+}
