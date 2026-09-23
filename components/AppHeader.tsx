@@ -4,10 +4,10 @@ export function AppHeader() {
   return (
     <header className="topbar winter-topbar">
       <Link href="/" className="brand winter-brand">
-        <span className="brand-mark">旅</span>
+        <span className="brand-mark">TF</span>
         <span className="brand-copy">
           <strong>Tabi Family</strong>
-          <small>冬の家族旅 · Winter Japan</small>
+          <small>Family Trip Planner · Winter Mode</small>
         </span>
       </Link>
       <Link className="avatar winter-avatar" href="/account" aria-label="Account">

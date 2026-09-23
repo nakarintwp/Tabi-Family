@@ -3,14 +3,14 @@ import "./globals.css";
 import { WinterAtmosphere } from "@/components/WinterAtmosphere";
 
 export const metadata: Metadata = {
-  title: "Tabi Family — Japan Winter Trip Planner",
-  description: "Mobile-first Japan family trip planner with a Japanese winter experience, built with Next.js, Supabase and Vercel.",
+  title: "Tabi Family — Family Trip Planner",
+  description: "Mobile-first family trip planner with a clean modern winter experience, built with Next.js, Supabase and Vercel.",
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#17324d",
+  themeColor: "#244b68",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

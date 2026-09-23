@@ -122,7 +122,7 @@ export function LoginForm({ next, initialError, staleSession = false }: { next: 
   return (
     <div className="auth-card password-auth-card">
       <Link href="/" className="brand">
-        <span className="brand-mark">旅</span>
+        <span className="brand-mark">TF</span>
         <span>Tabi Family</span>
       </Link>
 
