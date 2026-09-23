@@ -1,0 +1,15 @@
+V2 key changes
+==============
+components/SubmitButton.tsx
+app/trips/new/actions.ts
+app/trips/new/page.tsx
+app/trips/[id]/page.tsx
+app/trips/[id]/loading.tsx
+app/trips/[id]/days/[dayId]/page.tsx
+app/trips/[id]/days/[dayId]/actions.ts
+app/trips/[id]/days/[dayId]/loading.tsx
+app/globals.css
+supabase/schema.sql
+supabase/migrations/20260923_performance_day_planner.sql
+V2_UPGRADE.md
+README.md

@@ -99,3 +99,13 @@ Vercel will deploy automatically from `main`.
 4. Family Pace score
 5. AI itinerary generation constrained by family profile and real map/opening-hours data
 6. Shared trips / invitations for family members
+
+## V2: Performance + Dashboard + Day Planner
+
+See `V2_UPGRADE.md`.
+
+For an existing V1 Supabase project, run this once in SQL Editor:
+
+`supabase/migrations/20260923_performance_day_planner.sql`
+
+This enables the one-request transactional Create Trip flow. Without the migration, the app keeps a backward-compatible fallback, but creation will be slower.

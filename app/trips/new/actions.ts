@@ -19,7 +19,7 @@ function enumerateDates(startDate: string, endDate: string) {
 
   const dates: string[] = [];
   const cursor = new Date(start);
-  while (cursor <= end && dates.length < 31) {
+  while (cursor <= end && dates.length <= 30) {
     dates.push(cursor.toISOString().slice(0, 10));
     cursor.setUTCDate(cursor.getUTCDate() + 1);
   }
@@ -56,10 +56,29 @@ export async function createTrip(formData: FormData) {
 
   const tripDates = enumerateDates(startDate, endDate);
   if (!tripDates.length) fail("วันกลับต้องไม่น้อยกว่าวันเริ่ม");
-  if (tripDates.length >= 31) fail("MVP รองรับทริปไม่เกิน 30 วันต่อครั้ง");
+  if (tripDates.length > 30) fail("MVP รองรับทริปไม่เกิน 30 วันต่อครั้ง");
   if (!cities.length) fail("กรุณาระบุอย่างน้อย 1 เมือง");
   if (!["relaxed", "balanced", "packed"].includes(pace)) fail("รูปแบบทริปไม่ถูกต้อง");
 
+  // Fast path: one RPC = one database round-trip and one transaction.
+  // Run supabase/migrations/20260923_performance_day_planner.sql once to enable it.
+  const { data: rpcTripId, error: rpcError } = await supabase.rpc("create_trip_bundle", {
+    p_title: title,
+    p_start_date: startDate,
+    p_end_date: endDate,
+    p_cities: cities,
+    p_pace: pace,
+    p_budget: budget,
+    p_adults: adults,
+    p_children: children,
+    p_seniors: seniors,
+  });
+
+  if (!rpcError && rpcTripId) {
+    redirect(`/trips/${rpcTripId}`);
+  }
+
+  // Backward-compatible fallback for databases that have not run the new migration yet.
   const { data: trip, error: tripError } = await supabase
     .from("trips")
     .insert({
@@ -75,37 +94,26 @@ export async function createTrip(formData: FormData) {
     .select("id")
     .single();
 
-  if (tripError || !trip) fail(tripError?.message || "สร้างทริปไม่สำเร็จ");
-
-  const cleanupAndFail = async (message: string): Promise<never> => {
-    await supabase.from("trips").delete().eq("id", trip.id);
-    fail(message);
-  };
+  if (tripError || !trip) {
+    fail(rpcError?.message || tripError?.message || "สร้างทริปไม่สำเร็จ");
+  }
 
   const memberRows: Array<{ trip_id: string; name: string; member_type: string; walking_level: number; needs: string[] }> = [];
-  for (let i = 0; i < adults; i++) {
-    memberRows.push({ trip_id: trip.id, name: `Adult ${i + 1}`, member_type: "adult", walking_level: 3, needs: [] });
-  }
-  for (let i = 0; i < children; i++) {
-    memberRows.push({ trip_id: trip.id, name: `Child ${i + 1}`, member_type: "child", walking_level: 2, needs: ["พักเป็นระยะ"] });
-  }
-  for (let i = 0; i < seniors; i++) {
-    memberRows.push({ trip_id: trip.id, name: `Senior ${i + 1}`, member_type: "senior", walking_level: 2, needs: ["หลีกเลี่ยงบันได", "พักเป็นระยะ"] });
-  }
+  for (let i = 0; i < adults; i++) memberRows.push({ trip_id: trip.id, name: `Adult ${i + 1}`, member_type: "adult", walking_level: 3, needs: [] });
+  for (let i = 0; i < children; i++) memberRows.push({ trip_id: trip.id, name: `Child ${i + 1}`, member_type: "child", walking_level: 2, needs: ["พักเป็นระยะ"] });
+  for (let i = 0; i < seniors; i++) memberRows.push({ trip_id: trip.id, name: `Senior ${i + 1}`, member_type: "senior", walking_level: 2, needs: ["หลีกเลี่ยงบันได", "พักเป็นระยะ"] });
 
-  if (memberRows.length) {
-    const { error } = await supabase.from("trip_members").insert(memberRows);
-    if (error) await cleanupAndFail(`สร้างสมาชิกไม่สำเร็จ: ${error.message}`);
-  }
+  const [memberResult, dayResult] = await Promise.all([
+    memberRows.length ? supabase.from("trip_members").insert(memberRows) : Promise.resolve({ error: null }),
+    supabase.from("trip_days").insert(
+      tripDates.map((tripDate, index) => ({ trip_id: trip.id, trip_date: tripDate, title: `Day ${index + 1}` })),
+    ),
+  ]);
 
-  const { error: dayError } = await supabase.from("trip_days").insert(
-    tripDates.map((tripDate, index) => ({
-      trip_id: trip.id,
-      trip_date: tripDate,
-      title: `Day ${index + 1}`,
-    })),
-  );
-  if (dayError) await cleanupAndFail(`สร้างวันเดินทางไม่สำเร็จ: ${dayError.message}`);
+  if (memberResult.error || dayResult.error) {
+    await supabase.from("trips").delete().eq("id", trip.id);
+    fail(memberResult.error?.message || dayResult.error?.message || "สร้างข้อมูลทริปไม่สำเร็จ");
+  }
 
   redirect(`/trips/${trip.id}`);
 }
