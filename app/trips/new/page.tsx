@@ -3,13 +3,14 @@ import { randomUUID } from "node:crypto";
 import { AppHeader } from "@/components/AppHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { SubmitButton } from "@/components/SubmitButton";
-import { getTemplate } from "@/lib/discovery";
+import { DISCOVERY_DESTINATIONS, getTemplate } from "@/lib/discovery";
 import { createTrip } from "./actions";
 
 export default async function NewTripPage({ searchParams }: { searchParams: Promise<{ error?: string; template?: string }> }) {
   const { error, template: templateId } = await searchParams;
   const template = templateId ? getTemplate(templateId) : undefined;
   const createRequestId = randomUUID();
+  const selectedCities = new Set(template?.cities || ["Nagoya", "Takayama", "Shirakawa-go"]);
 
   return (
     <main className="shell">
@@ -42,8 +43,17 @@ export default async function NewTripPage({ searchParams }: { searchParams: Prom
           {template && <p className="small muted form-hint">Template นี้ออกแบบไว้ประมาณ {template.days} วัน — หากเลือกวันน้อยกว่า ระบบจะใส่เฉพาะ Day ที่มีอยู่</p>}
 
           <div className="field">
-            <label htmlFor="cities">เมือง (คั่นด้วย comma)</label>
-            <input className="input" id="cities" name="cities" defaultValue={(template?.cities || ["Tokyo", "Fuji", "Kyoto", "Osaka"]).join(", ")} required />
+            <div className="field-label-row"><label>เมือง / พื้นที่ที่จะไป</label><span className="small muted">Explore จะใช้รายการนี้กรองสถานที่ให้อัตโนมัติ</span></div>
+            <div className="destination-picker">
+              {DISCOVERY_DESTINATIONS.map((destination) => (
+                <label className="destination-option" key={destination.id}>
+                  <input type="checkbox" name="cities" value={destination.id} defaultChecked={selectedCities.has(destination.id)} />
+                  <span className="destination-option-emoji">{destination.emoji}</span>
+                  <span><strong>{destination.label}</strong><small>{destination.subtitle}</small></span>
+                </label>
+              ))}
+            </div>
+            <p className="small muted form-hint">ตัวอย่างทริป Chubu: Nagoya → Takayama → Shirakawa-go เมื่อเข้า Explore จะเห็นเฉพาะพื้นที่ของทริปนี้</p>
           </div>
 
           <div className="grid2">

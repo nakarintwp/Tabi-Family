@@ -24,11 +24,11 @@ export default async function WishlistPage({ params }: { params: Promise<{ id: s
 
   return <main className="shell"><div className="container"><AppHeader />
     <div className="planner-topbar"><Link href={`/trips/${id}`} className="back-link">‹ Dashboard</Link><span className="planner-counter">Wishlist</span></div>
-    <section className="planner-hero wishlist-hero"><div><span className="eyebrow">DISCOVER → SAVE → PLAN</span><h1>♡ Wishlist</h1><p>{trip.title}</p></div><Link className="btn btn-secondary" href="/explore">Explore Japan</Link></section>
+    <section className="planner-hero wishlist-hero"><div><span className="eyebrow">DISCOVER → SAVE → PLAN</span><h1>♡ Wishlist</h1><p>{trip.title}</p></div><Link className="btn btn-secondary" href={`/explore?trip=${id}`}>Explore Trip</Link></section>
 
     <section className="section">
       <div className="section-head"><h2>สถานที่ที่อยากไป</h2><span className="small muted">{items?.length || 0} จุด</span></div>
-      {!items?.length ? <div className="empty-state"><div className="empty-icon">♡</div><h2>Wishlist ยังว่าง</h2><p>ไปหน้า Explore แล้วเก็บสถานที่ไว้ก่อน ไม่ต้องรีบกำหนดวัน</p><Link className="btn btn-primary" href="/explore">เปิด Explore Japan</Link></div> : <div className="wishlist-grid">
+      {!items?.length ? <div className="empty-state"><div className="empty-icon">♡</div><h2>Wishlist ยังว่าง</h2><p>ไปหน้า Explore แล้วเก็บสถานที่ไว้ก่อน ไม่ต้องรีบกำหนดวัน</p><Link className="btn btn-primary" href={`/explore?trip=${id}`}>เปิด Explore ของทริป</Link></div> : <div className="wishlist-grid">
         {items.map((item) => <article className="wishlist-card" key={item.id}>
           <div className="wishlist-icon">{item.emoji || "📍"}</div>
           <div className="wishlist-copy"><span className="activity-label">{item.city || "Japan"} · {item.category}</span><h3>{item.title}</h3><p>{item.summary}</p><div className="place-facts"><span>{item.child_friendly ? "👧 Kids" : ""}</span><span>{item.senior_friendly ? "👵 Senior" : "⚠️"}</span><span>{item.is_outdoor ? "🌤 Outdoor" : "🏠 Indoor"}</span></div></div>

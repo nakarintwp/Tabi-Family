@@ -37,6 +37,18 @@ export type TripTemplate = {
   activities: TripTemplateActivity[];
 };
 
+export const DISCOVERY_DESTINATIONS = [
+  { id: "Nagoya", label: "Nagoya", subtitle: "Aichi · เมืองหลัก", emoji: "🏙️" },
+  { id: "Takayama", label: "Takayama", subtitle: "Hida · เมืองเก่า", emoji: "🏘️" },
+  { id: "Shirakawa-go", label: "Shirakawa-go", subtitle: "Gifu · หมู่บ้านหิมะ", emoji: "❄️" },
+  { id: "Tokyo", label: "Tokyo", subtitle: "Kanto", emoji: "🗼" },
+  { id: "Kyoto", label: "Kyoto", subtitle: "Kansai", emoji: "⛩️" },
+  { id: "Osaka", label: "Osaka", subtitle: "Kansai", emoji: "🐙" },
+  { id: "Fuji", label: "Fuji / Kawaguchiko", subtitle: "Yamanashi", emoji: "🗻" },
+] as const;
+
+export const CHUBU_ROUTE_CITIES = ["Nagoya", "Takayama", "Shirakawa-go"] as const;
+
 export const DISCOVERY_PLACES: DiscoveryPlace[] = [
   {
     slug: "sensoji",
@@ -262,6 +274,171 @@ export const DISCOVERY_PLACES: DiscoveryPlace[] = [
     latitude: 35.51703,
     longitude: 138.75175,
   },
+  {
+    slug: "nagoya-city-science-museum",
+    title: "Nagoya City Science Museum",
+    city: "Nagoya", area: "Fushimi", category: "museum", emoji: "🔭",
+    summary: "พิพิธภัณฑ์วิทยาศาสตร์ขนาดใหญ่ เหมาะกับเด็กและเป็นตัวเลือกในร่มสำหรับวันอากาศไม่ดี",
+    tags: ["kids", "indoor", "science"], durationMinutes: 180, childFriendly: true, seniorFriendly: true, isOutdoor: false,
+    latitude: 35.1651, longitude: 136.8997,
+  },
+  {
+    slug: "atsuta-jingu", title: "Atsuta Jingu", city: "Nagoya", area: "Atsuta", category: "attraction", emoji: "⛩️",
+    summary: "ศาลเจ้าสำคัญของ Nagoya บรรยากาศสงบ มีพื้นที่ร่มไม้ เหมาะวางครึ่งวันแบบไม่เร่ง",
+    tags: ["culture", "quiet", "family"], durationMinutes: 90, childFriendly: true, seniorFriendly: true, isOutdoor: true,
+    latitude: 35.1274, longitude: 136.9084,
+  },
+  {
+    slug: "osu-shopping-street", title: "Osu Shopping Street", city: "Nagoya", area: "Osu", category: "shopping", emoji: "🛍️",
+    summary: "ย่านช้อปปิ้งและของกินที่เดินสนุก ร้านหลากหลาย เหมาะกับช่วงบ่ายถึงเย็น",
+    tags: ["shopping", "food", "arcade"], durationMinutes: 150, childFriendly: true, seniorFriendly: true, isOutdoor: false,
+    latitude: 35.1594, longitude: 136.9055,
+  },
+  {
+    slug: "osu-kannon", title: "Osu Kannon", city: "Nagoya", area: "Osu", category: "attraction", emoji: "🏮",
+    summary: "วัดใจกลางย่าน Osu จัดคู่กับถนนช้อปปิ้งได้ง่ายโดยไม่ต้องย้ายพื้นที่หลายครั้ง",
+    tags: ["culture", "shopping", "easy"], durationMinutes: 60, childFriendly: true, seniorFriendly: true, isOutdoor: true,
+    latitude: 35.1599, longitude: 136.9009,
+  },
+  {
+    slug: "port-of-nagoya-aquarium", title: "Port of Nagoya Public Aquarium", city: "Nagoya", area: "Nagoya Port", category: "family", emoji: "🐬",
+    summary: "Aquarium ขนาดใหญ่ เหมาะกับครอบครัวและวันที่ต้องการกิจกรรมในร่มหลายชั่วโมง",
+    tags: ["kids", "indoor", "aquarium"], durationMinutes: 240, childFriendly: true, seniorFriendly: true, isOutdoor: false,
+    latitude: 35.0906, longitude: 136.8783,
+  },
+  {
+    slug: "scmaglev-railway-park", title: "SCMAGLEV and Railway Park", city: "Nagoya", area: "Kinjo-futo", category: "family", emoji: "🚄",
+    summary: "พิพิธภัณฑ์รถไฟและชินคันเซ็น เหมาะมากกับเด็กหรือคนชอบระบบขนส่ง",
+    tags: ["kids", "train", "indoor"], durationMinutes: 180, childFriendly: true, seniorFriendly: true, isOutdoor: false,
+    latitude: 35.0487, longitude: 136.8504,
+  },
+  {
+    slug: "toyota-industry-museum", title: "Toyota Commemorative Museum of Industry and Technology", city: "Nagoya", area: "Noritake", category: "museum", emoji: "⚙️",
+    summary: "เรียนรู้ประวัติ Toyota ตั้งแต่สิ่งทอถึงรถยนต์ อยู่ไม่ไกลจาก Nagoya Station และใช้เวลาครึ่งวันได้",
+    tags: ["indoor", "technology", "family"], durationMinutes: 180, childFriendly: true, seniorFriendly: true, isOutdoor: false,
+    latitude: 35.1839, longitude: 136.8769,
+  },
+  {
+    slug: "tokugawa-art-museum", title: "Tokugawa Art Museum", city: "Nagoya", area: "Higashi", category: "museum", emoji: "🖼️",
+    summary: "พิพิธภัณฑ์ศิลปะและสมบัติของตระกูล Tokugawa เหมาะกับวันที่ต้องการจังหวะเที่ยวสบาย",
+    tags: ["culture", "indoor", "senior"], durationMinutes: 120, childFriendly: true, seniorFriendly: true, isOutdoor: false,
+    latitude: 35.1831, longitude: 136.9322,
+  },
+  {
+    slug: "oasis-21", title: "Oasis 21", city: "Nagoya", area: "Sakae", category: "attraction", emoji: "💧",
+    summary: "แลนด์มาร์กสมัยใหม่ใน Sakae เชื่อมกับแหล่งช้อปปิ้งและจุดชมวิว เหมาะช่วงเย็น",
+    tags: ["sakae", "photo", "shopping"], durationMinutes: 75, childFriendly: true, seniorFriendly: true, isOutdoor: true,
+    latitude: 35.1707, longitude: 136.9090,
+  },
+  {
+    slug: "mirai-tower", title: "Chubu Electric Power MIRAI TOWER", city: "Nagoya", area: "Sakae", category: "attraction", emoji: "🗼",
+    summary: "จุดชมวิวใจกลาง Sakae สามารถจัดต่อกับ Oasis 21 และ Hisaya-odori Park ได้",
+    tags: ["view", "sakae", "night"], durationMinutes: 75, childFriendly: true, seniorFriendly: true, isOutdoor: false,
+    latitude: 35.1722, longitude: 136.9080,
+  },
+  {
+    slug: "noritake-garden", title: "Noritake Garden", city: "Nagoya", area: "Noritake", category: "shopping", emoji: "☕",
+    summary: "พื้นที่สวน พิพิธภัณฑ์ และร้านเครื่องเซรามิก ใกล้ Nagoya Station เหมาะกับวันเดินทางเบา ๆ",
+    tags: ["shopping", "craft", "easy"], durationMinutes: 120, childFriendly: true, seniorFriendly: true, isOutdoor: true,
+    latitude: 35.1818, longitude: 136.8792,
+  },
+  {
+    slug: "legoland-japan", title: "LEGOLAND Japan", city: "Nagoya", area: "Kinjo-futo", category: "family", emoji: "🧱",
+    summary: "ธีมพาร์กสำหรับครอบครัว โดยเฉพาะเด็กเล็กถึงประถม ควรเผื่อเกือบเต็มวัน",
+    tags: ["kids", "theme-park", "full-day"], durationMinutes: 360, childFriendly: true, seniorFriendly: true, isOutdoor: true,
+    latitude: 35.0504, longitude: 136.8455,
+  },
+  {
+    slug: "sakae-shopping", title: "Sakae Shopping District", city: "Nagoya", area: "Sakae", category: "shopping", emoji: "✨",
+    summary: "ย่านใจกลางเมืองสำหรับห้าง ร้านอาหาร และช้อปปิ้ง เหมาะใส่ท้ายวันหลังเที่ยวจุดหลัก",
+    tags: ["shopping", "food", "night"], durationMinutes: 180, childFriendly: true, seniorFriendly: true, isOutdoor: false,
+    latitude: 35.1682, longitude: 136.9066,
+  },
+  {
+    slug: "inuyama-castle-day-trip", title: "Inuyama Castle", city: "Nagoya", area: "Inuyama · Day trip", category: "attraction", emoji: "🏯",
+    summary: "Day trip จาก Nagoya ไปเมืองปราสาทเก่า เหมาะกับคนที่อยากได้บรรยากาศเมืองเล็กเพิ่มจากตัวเมือง",
+    tags: ["day-trip", "castle", "culture"], durationMinutes: 300, childFriendly: true, seniorFriendly: false, isOutdoor: true,
+    latitude: 35.3885, longitude: 136.9396,
+  },
+  {
+    slug: "miyagawa-morning-market", title: "Miyagawa Morning Market", city: "Takayama", area: "Miyagawa River", category: "food", emoji: "🍎",
+    summary: "ตลาดเช้าริมแม่น้ำ เหมาะเริ่มวันก่อนเดินเข้าย่านเมืองเก่า มีของกินและผลิตผลท้องถิ่น",
+    tags: ["morning", "food", "local"], durationMinutes: 75, childFriendly: true, seniorFriendly: true, isOutdoor: true,
+    latitude: 36.1430, longitude: 137.2590,
+  },
+  {
+    slug: "takayama-jinya", title: "Takayama Jinya", city: "Takayama", area: "Hachiken-machi", category: "attraction", emoji: "🏛️",
+    summary: "อาคารราชการประวัติศาสตร์ใกล้เมืองเก่า เหมาะจัดต่อกับ Morning Market และ Sanmachi",
+    tags: ["history", "culture", "central"], durationMinutes: 90, childFriendly: true, seniorFriendly: true, isOutdoor: false,
+    latitude: 36.1391, longitude: 137.2585,
+  },
+  {
+    slug: "hida-folk-village", title: "Hida Folk Village", city: "Takayama", area: "Hida-no-Sato", category: "nature", emoji: "🏡",
+    summary: "หมู่บ้านกลางแจ้งรวมบ้านโบราณของ Hida ให้บรรยากาศชนบทโดยไม่ต้องเดินทางไกลจาก Takayama",
+    tags: ["culture", "winter", "open-air"], durationMinutes: 150, childFriendly: true, seniorFriendly: true, isOutdoor: true,
+    latitude: 36.1351, longitude: 137.2366,
+  },
+  {
+    slug: "takayama-festival-floats", title: "Takayama Festival Floats Exhibition Hall", city: "Takayama", area: "Sakuramachi", category: "museum", emoji: "🎎",
+    summary: "ชมรถแห่เทศกาล Takayama ในอาคาร เหมาะเป็นกิจกรรมในร่มช่วงหนาวหรือฝน",
+    tags: ["indoor", "culture", "festival"], durationMinutes: 90, childFriendly: true, seniorFriendly: true, isOutdoor: false,
+    latitude: 36.1450, longitude: 137.2607,
+  },
+  {
+    slug: "hida-kokubunji", title: "Hida Kokubunji", city: "Takayama", area: "Sowa-machi", category: "attraction", emoji: "🛕",
+    summary: "วัดเก่าใกล้สถานี Takayama แวะง่าย ใช้เวลาไม่นานและเหมาะกับวัน arrival/departure",
+    tags: ["temple", "easy", "central"], durationMinutes: 45, childFriendly: true, seniorFriendly: true, isOutdoor: true,
+    latitude: 36.1420, longitude: 137.2547,
+  },
+  {
+    slug: "hida-furukawa-day-trip", title: "Hida Furukawa", city: "Takayama", area: "Hida · Day trip", category: "attraction", emoji: "🐟",
+    summary: "เมืองเล็กสงบใกล้ Takayama มีคลอง บ้านไม้ และบรรยากาศเดินเล่น เหมาะกับคนที่ไม่ชอบความเร่งรีบ",
+    tags: ["day-trip", "quiet", "old-town"], durationMinutes: 240, childFriendly: true, seniorFriendly: true, isOutdoor: true,
+    latitude: 36.2376, longitude: 137.1899,
+  },
+  {
+    slug: "shinhotaka-ropeway", title: "Shinhotaka Ropeway", city: "Takayama", area: "Okuhida · Day trip", category: "nature", emoji: "🚡",
+    summary: "กระเช้าชมเทือกเขาแอลป์ญี่ปุ่น เหมาะกับวันอากาศเปิดและควรเผื่อเวลาเดินทางจาก Takayama",
+    tags: ["mountain", "snow", "day-trip"], durationMinutes: 360, childFriendly: true, seniorFriendly: true, isOutdoor: true,
+    latitude: 36.2854, longitude: 137.5755,
+  },
+  {
+    slug: "shirakawago-shiroyama-viewpoint", title: "Shiroyama Viewpoint", city: "Shirakawa-go", area: "Ogimachi", category: "nature", emoji: "📸",
+    summary: "จุดชมวิวหมู่บ้านจากมุมสูง เหมาะกับช่วงหิมะ แต่ควรเช็กสภาพทางและเผื่อการเดินขึ้น",
+    tags: ["view", "snow", "photo"], durationMinutes: 75, childFriendly: true, seniorFriendly: false, isOutdoor: true,
+    latitude: 36.2615, longitude: 136.9045,
+  },
+  {
+    slug: "wada-house", title: "Wada House", city: "Shirakawa-go", area: "Ogimachi", category: "museum", emoji: "🏠",
+    summary: "บ้านกัสโชสึคุริสำคัญที่เข้าชมภายในได้ เหมาะกับการทำความเข้าใจชีวิตในหมู่บ้าน",
+    tags: ["heritage", "indoor", "culture"], durationMinutes: 60, childFriendly: true, seniorFriendly: true, isOutdoor: false,
+    latitude: 36.2607, longitude: 136.9063,
+  },
+  {
+    slug: "gassho-zukuri-minkaen", title: "Gassho-zukuri Minkaen", city: "Shirakawa-go", area: "Ogimachi", category: "museum", emoji: "🏘️",
+    summary: "พิพิธภัณฑ์กลางแจ้งรวมบ้านกัสโชหลายหลัง เหมาะกับคนที่อยากชมรายละเอียดสถาปัตยกรรมมากขึ้น",
+    tags: ["heritage", "open-air", "family"], durationMinutes: 120, childFriendly: true, seniorFriendly: true, isOutdoor: true,
+    latitude: 36.2579, longitude: 136.9078,
+  },
+  {
+    slug: "kanda-house", title: "Kanda House", city: "Shirakawa-go", area: "Ogimachi", category: "museum", emoji: "🪵",
+    summary: "บ้านกัสโชเก่าแก่ที่เปิดให้เข้าชม เหมาะจัดต่อกับ Wada House ระหว่างเดินในหมู่บ้าน",
+    tags: ["heritage", "indoor", "history"], durationMinutes: 45, childFriendly: true, seniorFriendly: true, isOutdoor: false,
+    latitude: 36.2588, longitude: 136.9076,
+  },
+  {
+    slug: "myozenji", title: "Myozenji Temple Museum", city: "Shirakawa-go", area: "Ogimachi", category: "museum", emoji: "🛕",
+    summary: "วัดและอาคารแบบกัสโชที่มีเอกลักษณ์ เป็นจุดพักชมวัฒนธรรมระหว่างเดินหมู่บ้าน",
+    tags: ["culture", "heritage", "quiet"], durationMinutes: 60, childFriendly: true, seniorFriendly: true, isOutdoor: false,
+    latitude: 36.2583, longitude: 136.9073,
+  },
+  {
+    slug: "deai-bridge", title: "Deai Bridge", city: "Shirakawa-go", area: "Ogimachi", category: "attraction", emoji: "🌉",
+    summary: "สะพานทางเข้าหมู่บ้านและจุดถ่ายภาพริมแม่น้ำ เหมาะแวะระหว่างเข้าออกพื้นที่หลัก",
+    tags: ["photo", "river", "walk"], durationMinutes: 30, childFriendly: true, seniorFriendly: true, isOutdoor: true,
+    latitude: 36.2565, longitude: 136.9049,
+  },
+
 ];
 
 export const TRIP_TEMPLATES: TripTemplate[] = [

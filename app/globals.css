@@ -1605,3 +1605,32 @@ body::before {
 .snow-only-atmosphere .snow-depth-front i {
   text-shadow: 0 2px 8px rgba(67,146,191,.22);
 }
+
+/* V7.2 — Trip-scoped destinations & Explore */
+.field-label-row { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; flex-wrap: wrap; }
+.destination-picker { display: grid; grid-template-columns: 1fr; gap: 9px; margin-top: 8px; }
+.destination-option { position: relative; display: grid; grid-template-columns: auto auto 1fr; align-items: center; gap: 10px; min-height: 64px; padding: 11px 13px; border: 1px solid #d8eaf3; border-radius: 20px; background: rgba(255,255,255,.92); cursor: pointer; box-shadow: 0 6px 18px rgba(47,118,153,.05); }
+.destination-option:hover { border-color: #9fd5ee; transform: translateY(-1px); }
+.destination-option input { width: 18px; height: 18px; accent-color: #178dd1; }
+.destination-option-emoji { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 14px; background: #e8f7ff; font-size: 21px; }
+.destination-option strong, .destination-option small { display: block; }
+.destination-option strong { color: #183d56; font-size: 14px; }
+.destination-option small { margin-top: 2px; color: #79909f; font-size: 11px; }
+.destination-option:has(input:checked) { border-color: #52afe0; background: linear-gradient(135deg,#f8fdff,#e8f7ff); box-shadow: 0 8px 22px rgba(23,141,209,.10); }
+.destination-option.disabled { cursor: default; opacity: .72; }
+.trip-scope-section { padding-top: 6px; }
+.trip-scope-row { display: flex; gap: 9px; overflow-x: auto; padding: 2px 0 8px; scrollbar-width: none; }
+.trip-scope-chip { flex: 0 0 min(78vw, 300px); display: grid; grid-template-columns: 38px 1fr; align-items: center; gap: 10px; padding: 11px 13px; border-radius: 20px; border: 1px solid #dceaf2; background: rgba(255,255,255,.92); color: #183d56; box-shadow: 0 7px 20px rgba(33,112,161,.06); }
+.trip-scope-chip > span { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 14px; background: #eaf8ff; font-size: 20px; }
+.trip-scope-chip strong, .trip-scope-chip small { display: block; }
+.trip-scope-chip strong { font-size: 13px; }
+.trip-scope-chip small { color: #7c929f; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.trip-scope-chip.active { border-color: #58b4e2; background: linear-gradient(135deg,#f9fdff,#e9f8ff); box-shadow: 0 9px 24px rgba(23,141,209,.11); }
+.trip-destination-summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 10px; padding: 13px 15px; border-radius: 20px; background: #eef9ff; border: 1px solid #d6edf8; }
+.trip-destination-summary strong { color: #1a4f6e; }
+.trip-destination-summary p { margin: 4px 0 0; color: #668496; font-size: 12px; line-height: 1.5; }
+.destination-form { margin-top: 0; }
+@media (min-width: 700px) {
+  .destination-picker { grid-template-columns: 1fr 1fr; }
+  .trip-scope-chip { flex-basis: 310px; }
+}

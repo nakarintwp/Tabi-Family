@@ -33,7 +33,9 @@ export async function createTrip(formData: FormData) {
   const title = String(formData.get("title") || "Japan Family Trip").trim();
   const startDate = toIsoDate(formData.get("start_date"));
   const endDate = toIsoDate(formData.get("end_date"));
-  const cities = String(formData.get("cities") || "Tokyo").split(",").map((value) => value.trim()).filter(Boolean).slice(0, 12);
+  const cityValues = formData.getAll("cities").map((value) => String(value).trim()).filter(Boolean);
+  const legacyCities = String(formData.get("cities_text") || "").split(",").map((value) => value.trim()).filter(Boolean);
+  const cities = Array.from(new Set(cityValues.length ? cityValues : legacyCities)).slice(0, 12);
   const pace = String(formData.get("pace") || "balanced");
   const budgetRaw = Number(formData.get("budget") || 0);
   const budget = Number.isFinite(budgetRaw) && budgetRaw > 0 ? budgetRaw : null;

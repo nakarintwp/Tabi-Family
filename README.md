@@ -1,9 +1,11 @@
-# Tabi Family — V7 Discovery & Planning Experience
+# Tabi Family — V7.2 Trip-Scoped Explore
 
 Mobile-first Japan family trip planner built with **Next.js + Supabase + Vercel**.
 
 ## V7 highlights
 
+- Trip-scoped Explore: เมืองที่เลือกตอนสร้าง Trip เป็นตัวกรอง Explore อัตโนมัติ
+- Chubu-focused curated data: Nagoya / Takayama / Shirakawa-go
 - Explore Japan with curated family-friendly places
 - Wishlist → save now, schedule later
 - Ready-made Trip Templates
@@ -59,7 +61,9 @@ Run `supabase/schema.sql`. For an existing project, apply migrations in sequence
 ## Key routes
 
 ```text
-/explore                       Explore Japan
+/explore                       Explore ของทริปที่กำลังจะไป
+/explore?city=Nagoya           เปิดดูเมืองเดี่ยว
+/trips/[id]/destinations       แก้เมือง/พื้นที่ของ Trip
 /templates                     Trip Templates
 /trips/[id]/wishlist           Wishlist
 /trips/[id]/calendar           Calendar Overview
@@ -72,3 +76,7 @@ Run `supabase/schema.sql`. For an existing project, apply migrations in sequence
 ## V7.1 — Snow Only Theme
 
 พื้นหลังของแอปเปลี่ยนเป็นหิมะตกตลอดเวลา โดยไม่เปลี่ยนตามสภาพอากาศจริง ส่วนหน้า Weather / Rain Plan ยังทำงานตามเดิม ดูรายละเอียดใน `V7_1_SNOW_ONLY_THEME.md`.
+
+## V7.2 — Trip-Scoped Explore
+
+ตอนสร้าง Trip ผู้ใช้เลือกเมือง/พื้นที่ด้วย checkbox แล้ว `trips.cities` เดิมจะเป็น source of truth ให้ Explore. จาก Trip Dashboard จะเปิด `/explore?trip=<trip-id>` และแสดงเฉพาะเมืองของทริปนั้น เช่น Nagoya → Takayama → Shirakawa-go. ไม่มี SQL migration ใหม่สำหรับ V7.2.

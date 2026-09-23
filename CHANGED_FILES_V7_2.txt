@@ -1,0 +1,14 @@
+V7.2 changed/added files
+
+app/explore/page.tsx
+app/trips/new/page.tsx
+app/trips/new/actions.ts
+app/trips/[id]/page.tsx
+app/trips/[id]/wishlist/page.tsx
+app/trips/[id]/destinations/page.tsx (new)
+app/trips/[id]/destinations/actions.ts (new)
+app/globals.css
+lib/discovery.ts
+package.json
+README.md
+V7_2_TRIP_SCOPED_EXPLORE.md (new)

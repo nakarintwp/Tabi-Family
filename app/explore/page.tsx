@@ -15,10 +15,16 @@ const categoryLabels: Record<string, string> = {
   shopping: "ช้อปปิ้ง",
 };
 
-export default async function ExplorePage({ searchParams }: { searchParams: Promise<{ city?: string; category?: string; saved?: string; error?: string }> }) {
+type ExploreQuery = { city?: string; category?: string; trip?: string; saved?: string; error?: string };
+
+export default async function ExplorePage({ searchParams }: { searchParams: Promise<ExploreQuery> }) {
   const query = await searchParams;
   const { supabase, userId } = await requireVerifiedUser("/explore");
-  const { data: trips } = await supabase.from("trips").select("id,title,owner_id").order("start_date", { ascending: true, nullsFirst: false });
+  const { data: trips } = await supabase
+    .from("trips")
+    .select("id,title,owner_id,cities,start_date")
+    .order("start_date", { ascending: true, nullsFirst: false });
+
   const rows = trips || [];
   const sharedIds = rows.filter((t) => t.owner_id !== userId).map((t) => t.id);
   const roleMap = new Map<string, string>();
@@ -27,17 +33,24 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
     for (const item of roles || []) roleMap.set(item.trip_id, item.role);
   }
   const editableTrips = rows.filter((t) => t.owner_id === userId || roleMap.get(t.id) === "editor");
+  const selectedTrip = query.trip ? rows.find((trip) => trip.id === query.trip) : (query.city ? undefined : rows[0]);
+  const selectedTripEditable = selectedTrip ? editableTrips.some((trip) => trip.id === selectedTrip.id) : false;
 
-  const cities = Array.from(new Set(DISCOVERY_PLACES.map((p) => p.city)));
-  const activeCity = query.city || "all";
+  const allCities = Array.from(new Set(DISCOVERY_PLACES.map((p) => p.city)));
+  const tripCities = selectedTrip?.cities?.filter((city: string) => allCities.includes(city)) || [];
+  const availableCities = tripCities.length ? tripCities : allCities;
+  const activeCity = query.city && availableCities.includes(query.city) ? query.city : "all";
   const activeCategory = query.category || "all";
+
   const filtered = DISCOVERY_PLACES.filter((place) =>
+    (!tripCities.length || tripCities.includes(place.city)) &&
     (activeCity === "all" || place.city === activeCity) &&
     (activeCategory === "all" || place.category === activeCategory)
   );
 
-  const buildHref = (city: string, category: string) => {
+  const buildHref = (city: string, category: string, tripId = selectedTrip?.id) => {
     const params = new URLSearchParams();
+    if (tripId) params.set("trip", tripId);
     if (city !== "all") params.set("city", city);
     if (category !== "all") params.set("category", category);
     const qs = params.toString();
@@ -47,18 +60,35 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
 
   return <main className="shell"><div className="container"><AppHeader />
     <section className="discovery-hero">
-      <div><span className="eyebrow">V7 · DISCOVERY</span><h1>Explore Japan</h1><p>เก็บสถานที่ที่สนใจก่อน แล้วค่อยโยนลงวันเดินทางเมื่อพร้อม</p></div>
+      <div>
+        <span className="eyebrow">V7.2 · TRIP-SCOPED DISCOVERY</span>
+        <h1>{selectedTrip ? `Explore · ${selectedTrip.title}` : "Explore Japan"}</h1>
+        <p>{selectedTrip ? "แสดงเฉพาะเมืองและพื้นที่ที่ผูกกับทริปนี้" : "เลือกทริปก่อน แล้วระบบจะแสดงเฉพาะพื้นที่ที่คุณกำลังจะไป"}</p>
+      </div>
       <Link className="btn btn-secondary" href="/templates">Trip Templates</Link>
     </section>
 
     {query.saved === "1" && <div className="success-box">บันทึกลง Wishlist แล้ว ✓</div>}
     {query.error && <div className="error-box">{query.error}</div>}
 
+    {rows.length > 0 && <section className="section trip-scope-section">
+      <div className="section-head"><h2>Explore ตามทริป</h2><span className="small muted">เมืองถูกกำหนดตอนสร้าง Trip</span></div>
+      <div className="trip-scope-row">
+        {rows.map((trip) => <Link key={trip.id} href={buildHref("all", activeCategory, trip.id)} className={`trip-scope-chip ${selectedTrip?.id === trip.id ? "active" : ""}`}>
+          <span>🧳</span><div><strong>{trip.title}</strong><small>{(trip.cities || []).join(" • ") || "ยังไม่ได้เลือกเมือง"}</small></div>
+        </Link>)}
+      </div>
+      {selectedTrip && <div className="trip-destination-summary">
+        <div><strong>พื้นที่ของทริปนี้</strong><p>{tripCities.length ? tripCities.join(" → ") : "ยังไม่มีเมืองที่ตรงกับ Explore database"}</p></div>
+        {selectedTrip.owner_id === userId && <Link className="link" href={`/trips/${selectedTrip.id}/destinations`}>แก้เมือง ›</Link>}
+      </div>}
+    </section>}
+
     <section className="section">
-      <div className="section-head"><h2>เลือกเมือง</h2><span className="small muted">Curated · ไม่ใช้ Places API</span></div>
+      <div className="section-head"><h2>{selectedTrip ? "เมืองในทริป" : "เลือกเมือง"}</h2><span className="small muted">{filtered.length} สถานที่ · Curated · ไม่ใช้ Places API</span></div>
       <div className="filter-chip-row">
         <Link className={`filter-chip ${activeCity === "all" ? "active" : ""}`} href={buildHref("all", activeCategory)}>ทั้งหมด</Link>
-        {cities.map((city) => <Link key={city} className={`filter-chip ${activeCity === city ? "active" : ""}`} href={buildHref(city, activeCategory)}>{city}</Link>)}
+        {availableCities.map((city) => <Link key={city} className={`filter-chip ${activeCity === city ? "active" : ""}`} href={buildHref(city, activeCategory)}>{city}</Link>)}
       </div>
       <div className="filter-chip-row compact-filter-row">
         <Link className={`filter-chip ${activeCategory === "all" ? "active" : ""}`} href={buildHref(activeCity, "all")}>ทุกประเภท</Link>
@@ -66,7 +96,9 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
       </div>
     </section>
 
-    {!editableTrips.length && <div className="notice"><span>💡</span><div><strong>สร้างทริปก่อนเพื่อใช้ Wishlist</strong><br/><span className="muted">คุณยังดู Explore ได้ตามปกติ</span><br/><Link className="link" href="/trips/new">สร้างทริปใหม่ ›</Link></div></div>}
+    {!rows.length && <div className="notice"><span>💡</span><div><strong>สร้างทริปก่อนเพื่อให้ Explore รู้ว่าคุณจะไปไหน</strong><br/><span className="muted">เมืองที่เลือกตอนสร้าง Trip จะกลายเป็นตัวกรองอัตโนมัติ</span><br/><Link className="link" href="/trips/new">สร้างทริปใหม่ ›</Link></div></div>}
+
+    {!filtered.length && <div className="empty-state"><div className="empty-icon">🗺️</div><h2>ยังไม่มีสถานที่ในพื้นที่นี้</h2><p>ลองเปลี่ยนเมืองหรือกลับไปแก้ Destinations ของ Trip</p>{selectedTrip && selectedTrip.owner_id === userId && <Link className="btn btn-primary" href={`/trips/${selectedTrip.id}/destinations`}>แก้เมืองในทริป</Link>}</div>}
 
     <section className="explore-grid">
       {filtered.map((place) => <article className="place-card" key={place.slug}>
@@ -77,7 +109,14 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
           <p>{place.summary}</p>
           <div className="tag-row">{place.tags.slice(0,3).map((tag) => <span className="mini-tag" key={tag}>{tag}</span>)}</div>
           <div className="place-facts"><span>{place.childFriendly ? "👧 Kids" : "—"}</span><span>{place.seniorFriendly ? "👵 Senior" : "⚠️ เดินเยอะ"}</span><span>{place.isOutdoor ? "🌤 Outdoor" : "🏠 Indoor"}</span></div>
-          {editableTrips.length ? <form action={savePlaceToWishlist} className="wishlist-save-form">
+          {selectedTrip ? (
+            selectedTripEditable ? <form action={savePlaceToWishlist} className="wishlist-save-form">
+              <input type="hidden" name="place_slug" value={place.slug} />
+              <input type="hidden" name="return_to" value={returnTo} />
+              <input type="hidden" name="trip_id" value={selectedTrip.id} />
+              <SubmitButton className="btn btn-primary btn-full" pendingText="กำลังบันทึก...">♡ Wishlist · {selectedTrip.title}</SubmitButton>
+            </form> : <div className="small muted">Viewer สามารถดูสถานที่ได้ แต่แก้ Wishlist ไม่ได้</div>
+          ) : editableTrips.length ? <form action={savePlaceToWishlist} className="wishlist-save-form">
             <input type="hidden" name="place_slug" value={place.slug} />
             <input type="hidden" name="return_to" value={returnTo} />
             <select className="select" name="trip_id" defaultValue={editableTrips[0]?.id}>
