@@ -518,3 +518,392 @@ button { cursor: pointer; }
 /* V4.3 · Email/password + QR family sharing */
 .auth-mode-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:5px;background:#eef3f6;border-radius:14px;margin:20px 0 22px}.auth-mode-tab{border:0;background:transparent;padding:10px 12px;border-radius:10px;font-weight:800;color:#607080;cursor:pointer}.auth-mode-tab.active{background:#fff;color:#0d3157;box-shadow:0 2px 10px rgba(16,42,67,.08)}.password-auth-card{max-width:520px}.password-auth-note{font-size:13px}.role-badge{display:inline-flex;align-items:center;justify-content:center;padding:4px 9px;border-radius:999px;font-size:11px;font-weight:900;letter-spacing:.02em;text-transform:uppercase;background:#eef3f6;color:#526372;white-space:nowrap}.role-badge.owner{background:#fff0c2;color:#765600}.role-badge.editor{background:#dff5eb;color:#0b6b4c}.role-badge.viewer{background:#e8eef8;color:#35547a}.trip-badge-row,.trip-hero-role-row,.planner-role-row{display:flex;align-items:center;gap:7px}.trip-hero-role-row{justify-content:space-between}.planner-role-row{margin-left:auto}.share-quick-action{border-color:#bfead9!important;background:linear-gradient(145deg,#f8fffc,#eaf9f2)!important}.share-page-head{align-items:flex-start}.share-create-card h2{margin:0 0 6px}.share-invite-list{display:grid;gap:14px}.share-invite-card{padding:18px}.share-invite-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:14px}.share-invite-head>div{display:flex;gap:10px;align-items:center}.invite-qr-card{display:grid;gap:12px;justify-items:center}.invite-qr-frame{width:min(100%,280px);aspect-ratio:1;background:#fff;border:1px solid #e1e8ed;border-radius:18px;padding:12px;display:grid;place-items:center}.invite-qr-frame img{width:100%;height:auto;display:block;border-radius:8px}.qr-loading{color:#7b8794;font-size:13px}.invite-link-box{width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:10px 12px;border-radius:10px;background:#f3f6f8;color:#52606d;font-size:12px}.invite-qr-actions{display:flex;gap:8px;justify-content:center}.member-access-list{display:grid;gap:10px}.access-member-card{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:14px}.access-avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#eef3f6}.access-member-copy{min-width:0}.access-member-copy strong,.access-member-copy span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.access-member-copy span{font-size:12px;color:#7b8794;margin-top:2px}.access-role-form{grid-column:2 / -1;display:flex;gap:7px}.access-member-card>form:last-child{grid-column:2 / -1}.join-container{max-width:560px}.join-hero{text-align:center;padding:28px 22px;margin-top:18px}.join-icon{font-size:46px;margin-bottom:8px}.join-hero h1{font-size:28px;margin:8px 0 12px}.join-action-card{padding:20px;margin:14px 0}.join-action-card h2{margin:0 0 7px}.compact-empty{padding:30px 18px}.viewer-notice{margin:14px 0}.packing-check.readonly{cursor:default}.empty-mini{padding:18px;border:1px dashed #d6dfe5;border-radius:14px;color:#7b8794;text-align:center}.back-link{display:inline-flex;align-items:center;color:#35547a;font-weight:800;text-decoration:none;margin:6px 0 12px}
 @media (max-width:560px){.share-invite-head{display:grid}.access-member-card{grid-template-columns:auto minmax(0,1fr) auto}.access-role-form{grid-column:1 / -1}.access-member-card>form:last-child{grid-column:1 / -1}.invite-qr-actions{width:100%}.invite-qr-actions .btn{flex:1}.trip-hero-role-row{align-items:flex-start}.share-page-head{gap:10px}}
+
+/* =========================================================
+   V5 — Japanese Winter UI / 雪の旅
+   Zero-cost visual layer: CSS-only snow, no image/API calls.
+   ========================================================= */
+:root {
+  --bg: #edf4f8;
+  --surface: rgba(255, 255, 255, .91);
+  --surface-soft: #eaf2f7;
+  --ink: #14283a;
+  --muted: #6a7c8b;
+  --primary: #17324d;
+  --primary-2: #315f7e;
+  --accent: #d9574f;
+  --success: #3c765e;
+  --warning: #a87724;
+  --border: rgba(111, 143, 163, .22);
+  --shadow: 0 18px 44px rgba(22, 57, 82, .10);
+  --washi: #fbfaf6;
+  --ice: #dcecf5;
+  --vermillion: #d9574f;
+  --indigo: #17324d;
+  --snow: #ffffff;
+}
+
+html { background: #eaf2f7; }
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 15% 4%, rgba(255,255,255,.96) 0 7%, transparent 22%),
+    linear-gradient(180deg, rgba(226,239,247,.94), rgba(246,249,250,.92) 42%, #eef3f5 100%);
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .18;
+  background-image:
+    linear-gradient(30deg, rgba(49,95,126,.16) 12%, transparent 12.5%, transparent 87%, rgba(49,95,126,.16) 87.5%, rgba(49,95,126,.16)),
+    linear-gradient(150deg, rgba(49,95,126,.16) 12%, transparent 12.5%, transparent 87%, rgba(49,95,126,.16) 87.5%, rgba(49,95,126,.16)),
+    linear-gradient(30deg, rgba(49,95,126,.16) 12%, transparent 12.5%, transparent 87%, rgba(49,95,126,.16) 87.5%, rgba(49,95,126,.16)),
+    linear-gradient(150deg, rgba(49,95,126,.16) 12%, transparent 12.5%, transparent 87%, rgba(49,95,126,.16) 87.5%, rgba(49,95,126,.16));
+  background-size: 56px 98px;
+  background-position: 0 0, 0 0, 28px 49px, 28px 49px;
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,.58), transparent 70%);
+}
+
+main, .auth-wrap { position: relative; z-index: 2; }
+.shell { isolation: isolate; }
+.container { position: relative; }
+
+/* Ambient Japanese winter landscape */
+.japan-winter-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.winter-sun {
+  position: absolute;
+  top: 78px;
+  right: max(6vw, 24px);
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  background: rgba(215, 76, 68, .14);
+  box-shadow: 0 0 0 18px rgba(255,255,255,.12);
+}
+.winter-mountain {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(1050px, 160vw);
+  clip-path: polygon(0 100%, 12% 70%, 20% 76%, 34% 45%, 43% 63%, 53% 22%, 63% 55%, 72% 44%, 83% 72%, 90% 62%, 100% 100%);
+}
+.winter-mountain-far {
+  bottom: 2vh;
+  height: 34vh;
+  background: linear-gradient(180deg, rgba(109,145,166,.08), rgba(109,145,166,.16));
+}
+.winter-mountain-near {
+  bottom: -3vh;
+  height: 24vh;
+  background: linear-gradient(180deg, rgba(57,91,112,.04), rgba(57,91,112,.11));
+  filter: blur(.2px);
+}
+
+/* CSS snow. Three lightweight layers; no JavaScript and no network requests. */
+.snow-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.snow-layer {
+  position: absolute;
+  inset: -120px 0 0;
+  background-repeat: repeat;
+  will-change: background-position;
+}
+.snow-layer-a {
+  opacity: .78;
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,.96) 0 2px, transparent 2.5px),
+    radial-gradient(circle, rgba(255,255,255,.9) 0 1.4px, transparent 2px),
+    radial-gradient(circle, rgba(255,255,255,.72) 0 1px, transparent 1.7px);
+  background-size: 154px 154px, 213px 213px, 117px 117px;
+  background-position: 18px -20px, 92px -120px, 41px -70px;
+  animation: snow-a 16s linear infinite;
+}
+.snow-layer-b {
+  opacity: .5;
+  filter: blur(.25px);
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,.86) 0 2.8px, transparent 3.4px),
+    radial-gradient(circle, rgba(255,255,255,.72) 0 1.8px, transparent 2.5px);
+  background-size: 286px 286px, 192px 192px;
+  background-position: 0 -120px, 120px -40px;
+  animation: snow-b 24s linear infinite;
+}
+.snow-layer-c {
+  opacity: .28;
+  filter: blur(.8px);
+  background-image: radial-gradient(circle, #fff 0 4px, transparent 5px);
+  background-size: 360px 360px;
+  background-position: 70px -180px;
+  animation: snow-c 31s linear infinite;
+}
+@keyframes snow-a {
+  from { background-position: 18px -220px, 92px -340px, 41px -260px; }
+  to   { background-position: 68px 980px, 22px 860px, 91px 940px; }
+}
+@keyframes snow-b {
+  from { background-position: 0 -360px, 120px -260px; }
+  to   { background-position: -90px 980px, 190px 1080px; }
+}
+@keyframes snow-c {
+  from { background-position: 70px -420px; }
+  to   { background-position: 10px 1020px; }
+}
+
+/* Header becomes a compact Japanese travel seal */
+.winter-topbar { padding-top: 16px; padding-bottom: 10px; }
+.winter-brand { gap: 11px; }
+.brand-copy { display: grid; line-height: 1.05; }
+.brand-copy strong { font-size: 15px; letter-spacing: -.01em; }
+.brand-copy small { margin-top: 5px; color: #758999; font-size: 8px; font-weight: 700; letter-spacing: .05em; }
+.brand-mark {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  border-radius: 13px 13px 13px 5px;
+  background: linear-gradient(145deg, #d85a50, #b93e38);
+  border: 1px solid rgba(122,38,32,.14);
+  box-shadow: 0 8px 20px rgba(166, 62, 55, .18);
+  font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
+}
+.brand-mark::after {
+  content: "雪";
+  position: absolute;
+  right: -5px;
+  bottom: -5px;
+  width: 17px;
+  height: 17px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #fff;
+  color: #7b99ab;
+  border: 1px solid #dce8ee;
+  font-size: 8px;
+  box-shadow: 0 3px 10px rgba(24,53,74,.08);
+}
+.winter-avatar {
+  background: rgba(255,255,255,.78);
+  border-color: rgba(111,143,163,.23);
+  box-shadow: 0 8px 20px rgba(28,63,88,.06);
+  backdrop-filter: blur(14px);
+}
+
+/* Hero: indigo night, rising sun and snowy mountain silhouette */
+.hero, .v4-hero, .today-hero {
+  border: 1px solid rgba(255,255,255,.22);
+  background:
+    linear-gradient(145deg, rgba(21,49,73,.98), rgba(35,79,108,.97) 58%, rgba(75,117,139,.96));
+  box-shadow: 0 22px 48px rgba(21,49,73,.18);
+  backdrop-filter: blur(10px);
+}
+.hero { min-height: 170px; }
+.hero > *, .today-hero > * { position: relative; z-index: 3; }
+.hero::after {
+  content: "";
+  position: absolute;
+  width: 82px;
+  height: 82px;
+  right: 28px;
+  top: 22px;
+  border-radius: 50%;
+  background: rgba(223, 82, 72, .86);
+  box-shadow: 0 0 0 14px rgba(255,255,255,.06);
+  z-index: 1;
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  left: 25%;
+  right: -8%;
+  bottom: -2px;
+  height: 78px;
+  z-index: 2;
+  background: linear-gradient(180deg, rgba(244,250,253,.95), rgba(208,226,236,.88));
+  clip-path: polygon(0 100%, 16% 78%, 28% 81%, 45% 28%, 54% 58%, 64% 45%, 76% 72%, 88% 55%, 100% 100%);
+  opacity: .72;
+}
+.hero .eyebrow, .today-kicker {
+  color: #d5e9f4;
+  opacity: 1;
+}
+.pill, .today-day-pill {
+  border: 1px solid rgba(255,255,255,.22);
+  background: rgba(255,255,255,.14);
+  backdrop-filter: blur(10px);
+}
+.hero-btn { background: #fff; color: var(--primary); }
+.hero-btn.ghost { border: 1px solid rgba(255,255,255,.34); background: rgba(255,255,255,.08); color: #fff; }
+
+/* Frosted washi cards */
+.card, .form-card, .auth-card, .day-dashboard-card, .quick-action,
+.planner-activity-card, .add-activity-panel, .family-profile-card,
+.pace-card, .today-next-card, .today-activity-copy,
+.packing-row, .share-invite-card, .access-member-card {
+  background: rgba(255,255,255,.88);
+  border-color: rgba(112,145,165,.22);
+  box-shadow: 0 10px 30px rgba(29,66,91,.055);
+  backdrop-filter: blur(15px) saturate(1.05);
+}
+.card, .form-card, .auth-card { position: relative; }
+.card::before, .form-card::before, .auth-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(120deg, rgba(255,255,255,.48), transparent 35%);
+  opacity: .75;
+}
+.card > *, .form-card > *, .auth-card > * { position: relative; z-index: 1; }
+
+/* Japanese red accents */
+.btn-primary {
+  background: linear-gradient(145deg, #cf554d, #b9423c);
+  color: #fff;
+  box-shadow: 0 9px 22px rgba(191,65,58,.18);
+}
+.btn-secondary { background: rgba(229,239,245,.92); color: var(--primary); }
+.link, .back-link, .micro-link, .text-button { color: #315f7e; }
+.speed-chip, .badge.success {
+  background: #edf7f4;
+  color: #326a56;
+  border: 1px solid #d4e9df;
+}
+
+/* Inputs: clean Japanese stationery feel */
+.input, .select, .textarea {
+  border-color: rgba(98,133,155,.28);
+  background: rgba(255,255,255,.82);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.82);
+}
+.input:focus, .select:focus, .textarea:focus {
+  border-color: #5e89a3;
+  box-shadow: 0 0 0 3px rgba(79,126,154,.12);
+}
+.field label { color: #29465c; }
+
+/* Timeline resembles a winter rail line */
+.timeline:before, .timeline-line, .today-dot::after { background: #c9dbe5; }
+.dot { border-color: #d65a51; box-shadow: 0 0 0 4px rgba(214,90,81,.08); }
+.planner-time-col strong, .today-time { color: #315f7e; }
+.activity-type-icon, .wallet-icon, .family-avatar-large, .otp-icon {
+  background: linear-gradient(145deg, #edf5f8, #dfeef5);
+  border: 1px solid rgba(104,145,168,.17);
+}
+
+/* Winter navigation bar */
+.bottom-nav {
+  z-index: 50;
+  width: min(calc(100% - 16px), 520px);
+  bottom: 8px;
+  border: 1px solid rgba(100,133,153,.20);
+  border-radius: 24px;
+  background: rgba(250,253,254,.86);
+  box-shadow: 0 15px 40px rgba(23,50,77,.13);
+  backdrop-filter: blur(22px) saturate(1.18);
+}
+.nav-item { border-radius: 15px; }
+.nav-item.active {
+  color: #b6423c;
+  background: linear-gradient(180deg, rgba(222,239,247,.92), rgba(247,250,251,.72));
+}
+.nav-item.active b { filter: drop-shadow(0 3px 6px rgba(49,95,126,.16)); }
+
+/* Page headings with small winter underline */
+.page-title {
+  color: #17324d;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans Thai", sans-serif;
+}
+.page-title::after {
+  content: "";
+  display: block;
+  width: 34px;
+  height: 3px;
+  margin-top: 8px;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #d9574f 0 40%, #9ebfd0 40% 100%);
+}
+.otp-head .page-title::after, .join-hero .page-title::after { margin-left: auto; margin-right: auto; }
+
+/* Login becomes a winter ryokan-style card */
+.auth-wrap {
+  background:
+    radial-gradient(circle at 50% 14%, rgba(255,255,255,.72), transparent 30%),
+    linear-gradient(180deg, rgba(218,235,244,.38), rgba(244,248,249,.16));
+}
+.auth-card {
+  border: 1px solid rgba(101,139,161,.23);
+  box-shadow: 0 28px 70px rgba(20,50,73,.14);
+}
+.auth-card::after {
+  content: "冬 · JAPAN";
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  color: #9f4540;
+  background: rgba(255,241,239,.85);
+  border: 1px solid rgba(209,93,84,.18);
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: .11em;
+}
+.auth-mode-tabs { background: rgba(224,235,241,.72); }
+.auth-mode-tab.active { color: #9d423d; }
+
+/* Map / route / packing winter refinements */
+.map-fallback, .map-placeholder, .route-points {
+  background:
+    linear-gradient(135deg, rgba(230,240,245,.92), rgba(248,250,250,.96)),
+    repeating-linear-gradient(45deg, transparent 0 24px, rgba(66,108,132,.04) 25px 26px);
+}
+.current-location-route { box-shadow: 0 12px 30px rgba(23,50,77,.06); }
+.route-point-icon { background: #fff; }
+.packing-row.packed, .today-activity.active .today-activity-copy {
+  background: rgba(239,248,244,.92);
+}
+.zero-cost-banner {
+  background: rgba(239,249,244,.88);
+  border-color: rgba(79,139,105,.20);
+}
+
+/* Subtle vertical red "noren" accent on important panels */
+.trip-hero, .planner-hero, .family-hero, .map-hero {
+  position: relative;
+}
+.trip-hero::marker { content: ""; }
+
+/* Mobile tuning */
+@media (max-width: 560px) {
+  .container { padding-left: 14px; padding-right: 14px; }
+  .hero { border-radius: 25px; padding: 20px; }
+  .hero::after { width: 68px; height: 68px; right: 20px; top: 20px; }
+  .hero::before { left: 18%; height: 70px; }
+  .brand-copy small { max-width: 145px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bottom-nav { width: calc(100% - 14px); }
+  .snow-layer-a { opacity: .62; }
+  .snow-layer-b { opacity: .38; }
+  .snow-layer-c { opacity: .18; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .snow-layer { animation: none !important; }
+  .button-spinner, .skeleton:after { animation: none !important; }
+}
