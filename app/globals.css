@@ -1578,3 +1578,30 @@ body::before {
   .calendar-day { grid-template-columns: 62px 1fr; }
   .cover-preset-grid { grid-template-columns: 1fr 1fr; }
 }
+
+/* =========================================================
+   V7.1 — Snow Only Atmosphere
+   Decorative snowfall is intentionally always on.
+   Live weather remains available on the Weather/Rain Plan page.
+   ========================================================= */
+.snow-only-atmosphere .weather-sky-glow {
+  background:
+    radial-gradient(circle at 18% 12%, rgba(255,255,255,.72), transparent 23%),
+    radial-gradient(circle at 82% 22%, rgba(220,244,255,.46), transparent 25%),
+    linear-gradient(180deg, rgba(225,246,255,.40), rgba(248,252,255,.12) 58%, rgba(235,247,253,.20));
+  opacity: .88;
+}
+.snow-only-atmosphere .snow-depth-back {
+  filter: blur(.45px);
+  opacity: .46;
+}
+.snow-only-atmosphere .snow-depth-back i {
+  font-size: calc(7px + (var(--i) % 4) * 2px);
+  animation-duration: calc(13s + (var(--i) % 7) * 1.7s);
+}
+.snow-only-atmosphere .snow-depth-front {
+  opacity: .90;
+}
+.snow-only-atmosphere .snow-depth-front i {
+  text-shadow: 0 2px 8px rgba(67,146,191,.22);
+}

@@ -68,3 +68,7 @@ Run `supabase/schema.sql`. For an existing project, apply migrations in sequence
 /trips/[id]/readiness          Trip Readiness
 /today                         Today Mode Pro
 ```
+
+## V7.1 — Snow Only Theme
+
+พื้นหลังของแอปเปลี่ยนเป็นหิมะตกตลอดเวลา โดยไม่เปลี่ยนตามสภาพอากาศจริง ส่วนหน้า Weather / Rain Plan ยังทำงานตามเดิม ดูรายละเอียดใน `V7_1_SNOW_ONLY_THEME.md`.
