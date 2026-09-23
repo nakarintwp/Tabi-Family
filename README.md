@@ -1,3 +1,9 @@
+# Tabi Family — V6.1 Cartoon Blue Theme
+
+ธีมการ์ตูนฟ้า-ขาว-เหลืองแบบ playful โดยไม่ใช้ภาพ/โลโก้ตัวละครลิขสิทธิ์ และคงฟังก์ชัน V6 ทั้งหมด
+
+ดู `V6_1_CARTOON_BLUE_THEME.md` สำหรับรายละเอียดการอัปเกรด
+
 # Tabi Family — Japan Family Trip Planner
 
 Mobile-first family trip planner built with **Next.js + Supabase + Vercel**.

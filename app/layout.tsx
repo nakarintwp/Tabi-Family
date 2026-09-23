@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { WinterAtmosphere } from "@/components/WinterAtmosphere";
+import { CartoonAtmosphere } from "@/components/CartoonAtmosphere";
 import { PwaRegister } from "@/components/PwaRegister";
 
 export const metadata: Metadata = {
@@ -13,14 +13,14 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#244b68",
+  themeColor: "#1b8eea",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="th">
       <body>
-        <WinterAtmosphere />
+        <CartoonAtmosphere />
         <PwaRegister />
         {children}
       </body>

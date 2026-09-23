@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Family trip planner with offline Today mode, collaboration and weather planning.",
     start_url: "/",
     display: "standalone",
-    background_color: "#eef5f8",
-    theme_color: "#244b68",
+    background_color: "#f4fbff",
+    theme_color: "#1b8eea",
     orientation: "portrait",
     icons: [
       { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
