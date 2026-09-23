@@ -80,3 +80,8 @@ Run `supabase/schema.sql`. For an existing project, apply migrations in sequence
 ## V7.2 — Trip-Scoped Explore
 
 ตอนสร้าง Trip ผู้ใช้เลือกเมือง/พื้นที่ด้วย checkbox แล้ว `trips.cities` เดิมจะเป็น source of truth ให้ Explore. จาก Trip Dashboard จะเปิด `/explore?trip=<trip-id>` และแสดงเฉพาะเมืองของทริปนั้น เช่น Nagoya → Takayama → Shirakawa-go. ไม่มี SQL migration ใหม่สำหรับ V7.2.
+
+## V7.2.1 — Delete Trip Fix
+- Fixes trip deletion after the V6/V7 activity-feed triggers.
+- Run `supabase/migrations/20260923_v7_2_1_delete_trip_fix.sql` before testing delete.
+- Delete failures now show a readable database error instead of the generic server-error page.

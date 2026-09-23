@@ -71,7 +71,7 @@ export async function deleteTrip(formData: FormData) {
     .eq("owner_id", userId);
 
   if (error) {
-    throw new Error(`ลบทริปไม่สำเร็จ: ${error.message}`);
+    redirect(`/trips/${tripId}?delete_error=${encodeURIComponent(error.message)}`);
   }
 
   revalidatePath("/");

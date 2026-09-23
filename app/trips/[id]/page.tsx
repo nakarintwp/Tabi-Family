@@ -16,7 +16,7 @@ function activityIcon(type: string) {
   return type === "food" ? "🍜" : type === "transport" ? "🚆" : type === "shopping" ? "🛍️" : type === "hotel" ? "🏨" : "📍";
 }
 
-export default async function TripDetailPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ joined?: string }> }) {
+export default async function TripDetailPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ joined?: string; delete_error?: string }> }) {
   const { id } = await params;
   const query = await searchParams;
   const { supabase, userId } = await requireVerifiedUser(`/trips/${id}`);
@@ -76,6 +76,7 @@ export default async function TripDetailPage({ params, searchParams }: { params:
       <div className="container">
         <AppHeader />
         {query.joined === "1" && <div className="success-box">เข้าร่วมทริปเรียบร้อยแล้ว ✓</div>}
+        {query.delete_error && <div className="error-box"><strong>ลบทริปไม่สำเร็จ</strong><br/><span>{query.delete_error}</span></div>}
 
         <section className={`hero compact-hero trip-hero trip-cover cover-${coverStyle}`}>
           <div className="trip-hero-role-row"><div className="eyebrow">Trip dashboard · V7 Discovery</div><span className={`role-badge ${role}`}>{role === "owner" ? "Owner" : role === "editor" ? "Editor" : "Viewer"}</span></div>

@@ -1,0 +1,13 @@
+V7.2.1 Delete Trip Fix
+
+Modified:
+- app/trips/[id]/actions.ts
+- app/trips/[id]/page.tsx
+- supabase/schema.sql
+- package.json
+- README.md
+
+Added:
+- supabase/migrations/20260923_v7_2_1_delete_trip_fix.sql
+- V7_2_1_DELETE_TRIP_FIX.md
+- CHANGED_FILES_V7_2_1.txt
