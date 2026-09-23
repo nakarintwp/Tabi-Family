@@ -3,8 +3,9 @@ import { notFound, redirect } from "next/navigation";
 import { AppHeader } from "@/components/AppHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { PaceScore } from "@/components/PaceScore";
+import { CurrentLocationRoute } from "@/components/CurrentLocationRoute";
 import { SubmitButton } from "@/components/SubmitButton";
-import { calculatePaceScore, googleMapsDirectionsUrl, mapsSearchUrl } from "@/lib/trip-metrics";
+import { calculatePaceScore, mapsSearchUrl } from "@/lib/trip-metrics";
 import { createClient } from "@/lib/supabase/server";
 import {
   addActivity,
@@ -62,7 +63,9 @@ export default async function DayPlannerPage({ params }: { params: Promise<{ id:
   });
 
   const metrics = calculatePaceScore(activities, trip.trip_members || [], trip.pace);
-  const routeUrl = googleMapsDirectionsUrl(activities);
+  const routeDestinations = activities
+    .filter((activity) => Boolean(activity.location_name?.trim() || activity.title?.trim()) || (Number.isFinite(Number(activity.latitude)) && Number.isFinite(Number(activity.longitude))))
+    .map((activity) => ({ id: activity.id, title: activity.title, locationName: activity.location_name, latitude: activity.latitude, longitude: activity.longitude }));
 
   return (
     <main className="shell">
@@ -76,7 +79,7 @@ export default async function DayPlannerPage({ params }: { params: Promise<{ id:
 
         <section className="planner-hero v4-hero">
           <div>
-            <div className="eyebrow">Day Planner Pro · V4</div>
+            <div className="eyebrow">Day Planner Pro · V4.1</div>
             <h1>{day.title || `Day ${dayIndex + 1}`}</h1>
             <p>{longDate(day.trip_date)}</p>
           </div>
@@ -92,8 +95,11 @@ export default async function DayPlannerPage({ params }: { params: Promise<{ id:
 
         <section className="section zero-cost-banner">
           <div className="zero-cost-icon">¥0</div>
-          <div><strong>Zero-cost map mode</strong><p>ใช้ลิงก์ Google Maps โดยตรง ไม่ใช้ Maps API และไม่ต้องมี API key</p></div>
-          {routeUrl ? <a className="btn btn-secondary btn-small" href={routeUrl} target="_blank" rel="noreferrer">เปิดเส้นทาง ↗</a> : null}
+          <div><strong>Current Location Route</strong><p>ใช้ตำแหน่งจากมือถือเป็นต้นทางได้ ปลายทางเพียง 1 จุดก็เปิดเส้นทางได้ โดยไม่ใช้ Maps API</p></div>
+        </section>
+
+        <section className="section">
+          <CurrentLocationRoute destinations={routeDestinations} title="Route Map" />
         </section>
 
         <section className="section planner-section">

@@ -3,7 +3,8 @@ import { notFound, redirect } from "next/navigation";
 import { AppHeader } from "@/components/AppHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { PaceScore } from "@/components/PaceScore";
-import { calculatePaceScore, googleMapsDirectionsUrl, mapsSearchUrl } from "@/lib/trip-metrics";
+import { CurrentLocationRoute } from "@/components/CurrentLocationRoute";
+import { calculatePaceScore, mapsSearchUrl } from "@/lib/trip-metrics";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function TripMapPage({ params }: { params: Promise<{ id: string }> }) {
@@ -26,7 +27,7 @@ export default async function TripMapPage({ params }: { params: Promise<{ id: st
     <main className="shell">
       <div className="container day-planner-container">
         <AppHeader />
-        <div className="planner-topbar"><Link href={`/trips/${trip.id}`} className="back-link">‹ Dashboard</Link><span className="planner-counter">V4 Maps · ¥0 API</span></div>
+        <div className="planner-topbar"><Link href={`/trips/${trip.id}`} className="back-link">‹ Dashboard</Link><span className="planner-counter">V4.1 Route · ¥0 API</span></div>
         <section className="planner-hero map-hero"><div><div className="eyebrow">Zero-cost map links</div><h1>🗺️ แผนที่ทั้งทริป</h1><p>{trip.title} · {trip.cities?.join(" • ")}</p></div><span className="planner-count-badge">📍 {totalLocations} จุด</span></section>
 
         <section className="section zero-cost-banner"><div className="zero-cost-icon">¥0</div><div><strong>ไม่ใช้ Google Maps API</strong><p>Tabi Family สร้างลิงก์ค้นหาและเส้นทาง แล้วเปิดใน Google Maps โดยตรง จึงไม่ต้องตั้ง Billing/API key</p></div></section>
@@ -37,8 +38,8 @@ export default async function TripMapPage({ params }: { params: Promise<{ id: st
             {days.map((day, index) => {
               const activities = [...(day.activities || [])].sort((a,b) => (a.sort_order || 0) - (b.sort_order || 0));
               const metrics = calculatePaceScore(activities, trip.trip_members || [], trip.pace);
-              const routeUrl = googleMapsDirectionsUrl(activities);
-              const locations = activities.filter((a) => a.location_name);
+              const locations = activities.filter((a) => a.location_name || (Number.isFinite(Number(a.latitude)) && Number.isFinite(Number(a.longitude))));
+              const routeDestinations = locations.map((activity) => ({ id: activity.id, title: activity.title, locationName: activity.location_name, latitude: activity.latitude, longitude: activity.longitude }));
               return <article className="card map-day-card" key={day.id}>
                 <div className="map-day-head"><div><strong>Day {index + 1} · {day.title || ""}</strong><small>{day.trip_date}</small></div><span className={`pace-mini pace-${metrics.tone}`}>{metrics.score}</span></div>
                 <div className="map-day-stats"><span>📍 {locations.length} สถานที่</span><span>⏱ ~{Math.round(metrics.totalMinutes / 60)} ชม.</span><span>⚡ {metrics.label}</span></div>
@@ -49,7 +50,8 @@ export default async function TripMapPage({ params }: { params: Promise<{ id: st
                   })}
                   {locations.length > 6 && <small className="muted">+ อีก {locations.length - 6} จุด</small>}
                 </div>}
-                <div className="map-day-actions"><Link href={`/trips/${trip.id}/days/${day.id}`} className="link">เปิด Day Planner</Link>{routeUrl && <a href={routeUrl} target="_blank" rel="noreferrer" className="link">เปิดเส้นทาง Google Maps ↗</a>}</div>
+                <div className="map-day-actions"><Link href={`/trips/${trip.id}/days/${day.id}`} className="link">เปิด Day Planner</Link></div>
+                {routeDestinations.length > 0 && <CurrentLocationRoute destinations={routeDestinations} compact title={`Route Map · Day ${index + 1}`} />}
               </article>;
             })}
           </div>

@@ -60,10 +60,10 @@ export default async function HomePage() {
           </section>
 
           <section className="section">
-            <div className="section-head"><h2>สิ่งที่พร้อมใช้แล้ว</h2><span className="badge success">V3</span></div>
+            <div className="section-head"><h2>สิ่งที่พร้อมใช้แล้ว</h2><span className="badge success">V4.1</span></div>
             <div className="feature-grid">
               <div className="card feature-card"><span>👨‍👩‍👧‍👵</span><strong>Family Profile</strong><small>อายุ การเดิน อาหาร ความสนใจ และ mobility</small></div>
-              <div className="card feature-card"><span>📅</span><strong>Maps + Pace</strong><small>พิกัด Google Places และ Family Pace Score</small></div>
+              <div className="card feature-card"><span>☀️</span><strong>Today + Route</strong><small>ใช้ตำแหน่งมือถือเป็นต้นทาง โดยไม่ใช้ Maps API</small></div>
               <div className="card feature-card"><span>💴</span><strong>Budget</strong><small>บันทึกค่าใช้จ่าย JPY / THB</small></div>
               <div className="card feature-card"><span>🔐</span><strong>Secure</strong><small>Supabase Auth + RLS แยกข้อมูลแต่ละบัญชี</small></div>
             </div>
@@ -95,8 +95,8 @@ export default async function HomePage() {
         <section className="section">
           <div className="section-head"><h2>จัดการทริป</h2><Link className="link" href={`/trips/${trip.id}`}>เปิดทั้งหมด ›</Link></div>
           <div className="quick-grid">
+            <Link className="card quick-card" href="/today"><span>☀️</span><strong>Today</strong><small>แผนวันนี้ + GPS</small></Link>
             <Link className="card quick-card" href={`/trips/${trip.id}`}><span>📅</span><strong>Itinerary</strong><small>{dayCount} วัน</small></Link>
-            <Link className="card quick-card" href={`/trips/${trip.id}`}><span>👨‍👩‍👧‍👵</span><strong>Family</strong><small>{memberCount} คน</small></Link>
             <Link className="card quick-card" href="/wallet"><span>💴</span><strong>Budget</strong><small>฿{expenseTotalTHB.toLocaleString("th-TH")}</small></Link>
           </div>
         </section>

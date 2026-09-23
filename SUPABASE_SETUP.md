@@ -1,4 +1,4 @@
-# Supabase setup checklist — Tabi Family V3
+# Supabase setup checklist — Tabi Family V4.1
 
 1. Create a Supabase project.
 2. Fresh install: run `supabase/schema.sql` in SQL Editor.
@@ -10,10 +10,14 @@
 8. Login using `/auth/login`.
 9. Open a trip → Family and save a detailed member profile.
 10. Open Day Planner and verify activity writes.
-11. Optional: configure `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` for Places + Maps.
-12. Verify coordinates appear on activities and `/trips/[id]/map` shows markers.
+11. V4.1 ไม่ต้องใช้ `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`.
+12. เปิด `/today` หรือ Route Map บนมือถือและอนุญาต Location เพื่อใช้ตำแหน่งปัจจุบันเป็นต้นทาง.
 
 
 ## V4 Zero-cost
 
 Run `supabase/migrations/20260923_v4_zero_cost_planner.sql` after the V3.2 migration. V4 does not require a Google Maps API key; normal Google Maps links are used instead.
+
+## V4.1 Current Location
+
+ไม่ต้องรัน SQL เพิ่มจาก V4. Browser Geolocation ทำงานบน HTTPS ของ Vercel และตำแหน่งปัจจุบันไม่ได้ถูกบันทึกลง Supabase ในฟีเจอร์นี้.

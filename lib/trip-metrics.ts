@@ -86,11 +86,12 @@ export function googleMapsDirectionsUrl(activities: PaceActivity[]) {
     .map((a) => a.location_name?.trim())
     .filter((value): value is string => Boolean(value))
     .slice(0, 10);
-  if (labels.length < 2) return null;
-  const [origin, ...rest] = labels;
-  const destination = rest[rest.length - 1];
-  const waypoints = rest.slice(0, -1);
-  const params = new URLSearchParams({ api: "1", origin, destination, travelmode: "transit" });
+  if (!labels.length) return null;
+  const destination = labels[labels.length - 1];
+  const waypoints = labels.slice(0, -1);
+  // Omit origin intentionally: Google Maps can use the device/current location.
+  // V4.1 CurrentLocationRoute can also provide an explicit browser GPS origin.
+  const params = new URLSearchParams({ api: "1", destination, travelmode: "transit" });
   if (waypoints.length) params.set("waypoints", waypoints.join("|"));
   return `https://www.google.com/maps/dir/?${params.toString()}`;
 }

@@ -81,8 +81,9 @@ export default async function TripDetailPage({ params }: { params: Promise<{ id:
 
         <section className="quick-actions v4-quick-actions">
           {firstDay && <Link className="quick-action primary" href={`/trips/${trip.id}/days/${firstDay.id}`}><span>🗓️</span><strong>Day Planner Pro</strong><small>เรียง • ย้าย • คัดลอก</small></Link>}
+          <Link className="quick-action" href="/today"><span>☀️</span><strong>Today</strong><small>แผนวันนี้ + GPS</small></Link>
           <Link className="quick-action" href={`/trips/${trip.id}/family`}><span>👨‍👩‍👧‍👵</span><strong>Family</strong><small>โปรไฟล์ครอบครัว</small></Link>
-          <Link className="quick-action" href={`/trips/${trip.id}/map`}><span>🗺️</span><strong>Maps</strong><small>ลิงก์ Maps ฟรี</small></Link>
+          <Link className="quick-action" href={`/trips/${trip.id}/map`}><span>🧭</span><strong>Route</strong><small>Current location</small></Link>
           <Link className="quick-action" href={`/trips/${trip.id}/packing`}><span>🧳</span><strong>Packing</strong><small>{packingItems.length ? `${packedItems}/${packingItems.length} พร้อม` : "Checklist"}</small></Link>
           <Link className="quick-action" href={`/trips/${trip.id}/wallet`}><span>👛</span><strong>Wallet</strong><small>{bookings.length} booking</small></Link>
         </section>

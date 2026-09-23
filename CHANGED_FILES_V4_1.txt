@@ -1,0 +1,12 @@
+components/CurrentLocationRoute.tsx
+components/TodayMode.tsx
+app/today/page.tsx
+components/BottomNav.tsx
+app/trips/[id]/days/[dayId]/page.tsx
+app/trips/[id]/map/page.tsx
+app/trips/[id]/page.tsx
+app/page.tsx
+app/globals.css
+package.json
+README.md
+V4_1_UPGRADE.md
