@@ -1,0 +1,21 @@
+Tabi Family V4 changed/new files
+
+app/trips/[id]/page.tsx
+app/trips/[id]/days/[dayId]/actions.ts
+app/trips/[id]/days/[dayId]/page.tsx
+app/trips/[id]/map/page.tsx
+app/trips/[id]/packing/actions.ts
+app/trips/[id]/packing/page.tsx
+app/trips/[id]/wallet/actions.ts
+app/trips/[id]/wallet/page.tsx
+app/wallet/page.tsx
+components/PaceScore.tsx
+lib/trip-metrics.ts
+app/globals.css
+supabase/schema.sql
+supabase/migrations/20260923_v4_zero_cost_planner.sql
+.env.example
+README.md
+SUPABASE_SETUP.md
+V4_UPGRADE.md
+package.json

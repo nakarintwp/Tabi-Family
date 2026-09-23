@@ -12,3 +12,8 @@
 10. Open Day Planner and verify activity writes.
 11. Optional: configure `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` for Places + Maps.
 12. Verify coordinates appear on activities and `/trips/[id]/map` shows markers.
+
+
+## V4 Zero-cost
+
+Run `supabase/migrations/20260923_v4_zero_cost_planner.sql` after the V3.2 migration. V4 does not require a Google Maps API key; normal Google Maps links are used instead.

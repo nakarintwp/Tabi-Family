@@ -28,7 +28,9 @@ export default async function TripDetailPage({ params }: { params: Promise<{ id:
       id,title,start_date,end_date,cities,pace,budget,currency,
       trip_members(id,name,member_type,walking_level,needs,created_at),
       trip_days(id,trip_date,title,notes,activities(id,title,activity_type,start_time,location_name,sort_order,duration_minutes,notes,child_friendly,senior_friendly)),
-      expenses(id,amount,currency,category,note,paid_at)
+      expenses(id,amount,currency,category,note,paid_at),
+      bookings(id),
+      packing_items(id,is_packed)
     `)
     .eq("id", id)
     .single();
@@ -38,6 +40,9 @@ export default async function TripDetailPage({ params }: { params: Promise<{ id:
   const members = [...(trip.trip_members || [])].sort((a, b) => String(a.created_at).localeCompare(String(b.created_at)));
   const days = [...(trip.trip_days || [])].sort((a, b) => String(a.trip_date).localeCompare(String(b.trip_date)));
   const expenses = [...(trip.expenses || [])].sort((a, b) => String(b.paid_at).localeCompare(String(a.paid_at)));
+  const bookings = trip.bookings || [];
+  const packingItems = trip.packing_items || [];
+  const packedItems = packingItems.filter((item) => item.is_packed).length;
   const totalActivities = days.reduce((sum, day) => sum + (day.activities?.length || 0), 0);
   const plannedDays = days.filter((day) => (day.activities?.length || 0) > 0).length;
   const progress = days.length ? Math.round((plannedDays / days.length) * 100) : 0;
@@ -51,7 +56,7 @@ export default async function TripDetailPage({ params }: { params: Promise<{ id:
         <AppHeader />
 
         <section className="hero compact-hero trip-hero">
-          <div className="eyebrow">Trip dashboard</div>
+          <div className="eyebrow">Trip dashboard · V4 Zero-cost</div>
           <h1>{trip.title}</h1>
           <p>{trip.cities?.join(" • ")}</p>
           <div className="hero-row">
@@ -74,11 +79,12 @@ export default async function TripDetailPage({ params }: { params: Promise<{ id:
           </div>
         </section>
 
-        <section className="quick-actions v3-quick-actions">
-          {firstDay && <Link className="quick-action primary" href={`/trips/${trip.id}/days/${firstDay.id}`}><span>🗓️</span><strong>จัด Day 1</strong><small>เปิด Day Planner</small></Link>}
-          <Link className="quick-action" href={`/trips/${trip.id}/family`}><span>👨‍👩‍👧‍👵</span><strong>Family</strong><small>โปรไฟล์แบบละเอียด</small></Link>
-          <Link className="quick-action" href={`/trips/${trip.id}/map`}><span>🗺️</span><strong>Map</strong><small>พิกัด + Pace Score</small></Link>
-          <a className="quick-action" href="#budget"><span>💴</span><strong>Budget</strong><small>บันทึกค่าใช้จ่าย</small></a>
+        <section className="quick-actions v4-quick-actions">
+          {firstDay && <Link className="quick-action primary" href={`/trips/${trip.id}/days/${firstDay.id}`}><span>🗓️</span><strong>Day Planner Pro</strong><small>เรียง • ย้าย • คัดลอก</small></Link>}
+          <Link className="quick-action" href={`/trips/${trip.id}/family`}><span>👨‍👩‍👧‍👵</span><strong>Family</strong><small>โปรไฟล์ครอบครัว</small></Link>
+          <Link className="quick-action" href={`/trips/${trip.id}/map`}><span>🗺️</span><strong>Maps</strong><small>ลิงก์ Maps ฟรี</small></Link>
+          <Link className="quick-action" href={`/trips/${trip.id}/packing`}><span>🧳</span><strong>Packing</strong><small>{packingItems.length ? `${packedItems}/${packingItems.length} พร้อม` : "Checklist"}</small></Link>
+          <Link className="quick-action" href={`/trips/${trip.id}/wallet`}><span>👛</span><strong>Wallet</strong><small>{bookings.length} booking</small></Link>
         </section>
 
         <section className="section">
@@ -131,7 +137,7 @@ export default async function TripDetailPage({ params }: { params: Promise<{ id:
         </section>
 
         <section className="section" id="budget">
-          <div className="section-head"><h2>ค่าใช้จ่าย</h2><Link href="/wallet" className="link">ดู Wallet ›</Link></div>
+          <div className="section-head"><h2>ค่าใช้จ่าย</h2><Link href={`/trips/${trip.id}/wallet`} className="link">เปิด Wallet ›</Link></div>
           <div className="grid2">
             <div className="card metric"><span className="metric-icon">💴</span><strong>¥{jpySpent.toLocaleString("th-TH")}</strong><span>ค่าใช้จ่าย JPY</span></div>
             <div className="card metric"><span className="metric-icon">💳</span><strong>฿{thbSpent.toLocaleString("th-TH")}</strong><span>{trip.budget ? `งบ ฿${Number(trip.budget).toLocaleString("th-TH")}` : "ยังไม่ตั้งงบ"}</span></div>
