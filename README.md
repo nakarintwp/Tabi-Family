@@ -2,11 +2,12 @@
 
 Mobile-first family trip planner built with **Next.js + Supabase + Vercel**.
 
-## Current version: V4 Zero-cost Planner
+## Current version: V4.3 Email + Password + QR Family Sharing
 
 The project now supports:
 
-- Supabase Auth + RLS
+- Supabase Email + Password Auth + RLS
+- QR Family Sharing (Owner / Editor / Viewer)
 - Create/delete trips
 - Duplicate-trip protection
 - Family profiles
@@ -20,7 +21,7 @@ The project now supports:
 
 ## Zero-cost design
 
-V4 does **not require Google Maps API or an AI API**.
+V4.3 does **not require Google Maps API, AI API, or an external QR API**.
 
 For places and routes, the app stores place names / optional Google Maps links and opens normal Google Maps web URLs. This avoids the need to enable Google Maps Platform billing.
 
@@ -62,3 +63,15 @@ V4.1 เพิ่ม `/today` และ Route Map ที่ใช้ Browser Geo
 
 หน้าเข้าสู่ระบบใช้ Email OTP 6 หลักแทนการพึ่ง Magic Link อย่างเดียว ดูขั้นตอนตั้ง Supabase Email Template ใน `V4_2_UPGRADE.md`
 
+
+## V4.3 — Email + Password + QR Family Sharing
+
+V4.3 ใช้ Email + Password เป็น Login หลักและไม่ต้องพึ่ง Magic Link สำหรับการใช้งานประจำวัน เจ้าของ Trip สามารถสร้าง QR Invite ให้สมาชิกครอบครัวเข้าร่วมเป็น Editor หรือ Viewer ได้
+
+ก่อน Deploy ให้ Run:
+
+`supabase/migrations/20260923_v4_3_email_password_qr_sharing.sql`
+
+และตั้ง Supabase Email provider โดยปิด `Confirm email` หากต้องการ flow แบบ zero-cost ที่ไม่ส่งลิงก์ยืนยันอีเมล
+
+ดูขั้นตอนทั้งหมดใน `V4_3_UPGRADE.md`

@@ -56,13 +56,16 @@ export default async function FamilyPage({ params }: { params: Promise<{ id: str
     .single();
   if (!trip) notFound();
 
+  const { data: accessRole } = await supabase.rpc("trip_access_role", { p_trip_id: id });
+  const role = (accessRole || "viewer") as "owner" | "editor" | "viewer";
+  const canEdit = role === "owner" || role === "editor";
   const members = [...(trip.trip_members || [])].sort((a, b) => String(a.created_at).localeCompare(String(b.created_at)));
 
   return (
     <main className="shell">
       <div className="container day-planner-container">
         <AppHeader />
-        <div className="planner-topbar"><Link href={`/trips/${trip.id}`} className="back-link">‹ Dashboard</Link><span className="planner-counter">V3 Family Profile</span></div>
+        <div className="planner-topbar"><Link href={`/trips/${trip.id}`} className="back-link">‹ Dashboard</Link><span className={`role-badge ${role}`}>{role === "owner" ? "Owner" : role === "editor" ? "Editor" : "Viewer"}</span></div>
         <section className="planner-hero family-hero">
           <div><div className="eyebrow">Family profile</div><h1>ครอบครัวของทริปนี้</h1><p>{trip.title} · {members.length} คน</p></div>
           <span className="planner-count-badge">👨‍👩‍👧‍👵 {members.length}</span>
@@ -71,7 +74,7 @@ export default async function FamilyPage({ params }: { params: Promise<{ id: str
         <div className="notice family-note"><span>🎯</span><div><strong>ข้อมูลส่วนนี้ใช้คำนวณ Family Pace Score</strong><br/><span className="muted">ระดับการเดิน เด็ก ผู้สูงอายุ การพัก และข้อจำกัดจะถูกนำไปประเมินความแน่นของแต่ละวัน</span></div></div>
 
         <section className="section">
-          <div className="section-head"><h2>สมาชิก</h2><span className="small muted">แก้ได้รายคน</span></div>
+          <div className="section-head"><h2>สมาชิก</h2><span className="small muted">{canEdit ? "แก้ได้รายคน" : "ดูอย่างเดียว"}</span></div>
           <div className="family-profile-list">
             {members.map((member) => (
               <article className="family-profile-card" key={member.id}>
@@ -88,7 +91,7 @@ export default async function FamilyPage({ params }: { params: Promise<{ id: str
                     </div>
                   </div>
                 </div>
-                <details className="activity-editor family-editor">
+                {canEdit && <details className="activity-editor family-editor">
                   <summary>แก้ไขโปรไฟล์</summary>
                   <form className="inline-form" action={updateMember}>
                     <input type="hidden" name="trip_id" value={trip.id} />
@@ -100,13 +103,13 @@ export default async function FamilyPage({ params }: { params: Promise<{ id: str
                     <input type="hidden" name="trip_id" value={trip.id} /><input type="hidden" name="member_id" value={member.id} />
                     <SubmitButton className="btn btn-danger btn-small" pendingText="กำลังลบ...">ลบสมาชิก</SubmitButton>
                   </form>
-                </details>
+                </details>}
               </article>
             ))}
           </div>
         </section>
 
-        <section className="section">
+        {canEdit && <section className="section">
           <details className="add-activity-panel" open={!members.length}>
             <summary><span className="plus-circle">＋</span><span><strong>เพิ่มสมาชิก</strong><small>ข้อมูลละเอียดสำหรับการจัดแผนครอบครัว</small></span></summary>
             <form className="inline-form add-activity-form" action={createMember}>
@@ -115,7 +118,7 @@ export default async function FamilyPage({ params }: { params: Promise<{ id: str
               <SubmitButton className="btn btn-primary btn-full" pendingText="กำลังเพิ่ม...">+ เพิ่มสมาชิก</SubmitButton>
             </form>
           </details>
-        </section>
+        </section>}
       </div>
       <BottomNav active="/trips" />
     </main>

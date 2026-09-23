@@ -25,7 +25,6 @@ export default async function HomePage() {
       const { data } = await supabase
         .from("trips")
         .select("id,title,start_date,end_date,cities,pace,budget")
-        .eq("owner_id", userId)
         .order("start_date", { ascending: true, nullsFirst: false })
         .limit(1)
         .maybeSingle();
@@ -60,12 +59,12 @@ export default async function HomePage() {
           </section>
 
           <section className="section">
-            <div className="section-head"><h2>สิ่งที่พร้อมใช้แล้ว</h2><span className="badge success">V4.1</span></div>
+            <div className="section-head"><h2>สิ่งที่พร้อมใช้แล้ว</h2><span className="badge success">V4.3</span></div>
             <div className="feature-grid">
               <div className="card feature-card"><span>👨‍👩‍👧‍👵</span><strong>Family Profile</strong><small>อายุ การเดิน อาหาร ความสนใจ และ mobility</small></div>
               <div className="card feature-card"><span>☀️</span><strong>Today + Route</strong><small>ใช้ตำแหน่งมือถือเป็นต้นทาง โดยไม่ใช้ Maps API</small></div>
               <div className="card feature-card"><span>💴</span><strong>Budget</strong><small>บันทึกค่าใช้จ่าย JPY / THB</small></div>
-              <div className="card feature-card"><span>🔐</span><strong>Secure</strong><small>Supabase Auth + RLS แยกข้อมูลแต่ละบัญชี</small></div>
+              <div className="card feature-card"><span>📲</span><strong>Family Sharing</strong><small>Email + Password + QR พร้อม Owner / Editor / Viewer</small></div>
             </div>
           </section>
 

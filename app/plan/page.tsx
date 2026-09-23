@@ -14,7 +14,7 @@ export default async function PlanPage() {
     const { data: claimsData } = await supabase.auth.getClaims();
     const userId = claimsData?.claims?.sub;
     if (userId) {
-      const { data } = await supabase.from("trips").select("id,title").eq("owner_id", userId).order("start_date", { ascending: true, nullsFirst: false }).limit(1).maybeSingle();
+      const { data } = await supabase.from("trips").select("id,title").order("start_date", { ascending: true, nullsFirst: false }).limit(1).maybeSingle();
       trip = data;
       if (trip) {
         const { data: dayRows } = await supabase.from("trip_days").select("id,trip_date,title").eq("trip_id", trip.id).order("trip_date");

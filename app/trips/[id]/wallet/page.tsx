@@ -34,6 +34,10 @@ export default async function TripWalletPage({ params }: { params: Promise<{ id:
     .single();
   if (!trip) notFound();
 
+  const { data: accessRole } = await supabase.rpc("trip_access_role", { p_trip_id: id });
+  const role = (accessRole || "viewer") as "owner" | "editor" | "viewer";
+  const canEdit = role === "owner" || role === "editor";
+
   const bookings = [...(trip.bookings || [])].sort((a, b) => String(a.start_at || a.created_at).localeCompare(String(b.start_at || b.created_at)));
   const expenses = [...(trip.expenses || [])].sort((a, b) => String(b.paid_at).localeCompare(String(a.paid_at)));
   const thb = expenses.filter((e) => e.currency === "THB").reduce((sum, e) => sum + Number(e.amount), 0);
@@ -42,7 +46,7 @@ export default async function TripWalletPage({ params }: { params: Promise<{ id:
 
   return (
     <main className="shell"><div className="container"><AppHeader />
-      <div className="planner-topbar"><Link href={`/trips/${trip.id}`} className="back-link">‹ Dashboard</Link><span className="planner-counter">Wallet</span></div>
+      <div className="planner-topbar"><Link href={`/trips/${trip.id}`} className="back-link">‹ Dashboard</Link><div className="planner-role-row"><span className="planner-counter">Wallet</span><span className={`role-badge ${role}`}>{role === "owner" ? "Owner" : role === "editor" ? "Editor" : "Viewer"}</span></div></div>
       <section className="planner-hero wallet-hero"><div><div className="eyebrow">Booking + Expense</div><h1>👛 Trip Wallet</h1><p>{trip.title}</p></div><span className="planner-count-badge">{bookings.length} booking</span></section>
 
       <section className="dashboard-grid wallet-metrics">
@@ -67,12 +71,12 @@ export default async function TripWalletPage({ params }: { params: Promise<{ id:
                 {booking.notes && <p className="muted">{booking.notes}</p>}
                 {booking.confirmation_url && <a className="micro-link" href={booking.confirmation_url} target="_blank" rel="noreferrer">เปิด Confirmation ↗</a>}
               </div>
-              <form action={deleteBooking}><input type="hidden" name="trip_id" value={trip.id} /><input type="hidden" name="booking_id" value={booking.id} /><button className="icon-danger" aria-label="ลบ booking">×</button></form>
+              {canEdit && <form action={deleteBooking}><input type="hidden" name="trip_id" value={trip.id} /><input type="hidden" name="booking_id" value={booking.id} /><button className="icon-danger" aria-label="ลบ booking">×</button></form>}
             </article>;
           }) : <div className="empty-mini">ยังไม่มี Booking — เพิ่ม Flight, Hotel, Train หรือตั๋วไว้ที่นี่</div>}
         </div>
 
-        <details className="add-activity-panel">
+        {canEdit && <details className="add-activity-panel">
           <summary><span className="plus-circle">＋</span><span><strong>เพิ่ม Booking</strong><small>เก็บเลขจองและลิงก์ confirmation</small></span></summary>
           <form className="inline-form" action={addBooking}>
             <input type="hidden" name="trip_id" value={trip.id} />
@@ -83,7 +87,7 @@ export default async function TripWalletPage({ params }: { params: Promise<{ id:
             <textarea className="textarea" name="notes" rows={3} placeholder="Seat, terminal, check-in note..." />
             <SubmitButton className="btn btn-primary btn-full" pendingText="กำลังบันทึก...">+ บันทึก Booking</SubmitButton>
           </form>
-        </details>
+        </details>}
       </section>
 
       <section className="section">
@@ -93,11 +97,11 @@ export default async function TripWalletPage({ params }: { params: Promise<{ id:
             <div className="expense-icon">{expenseIcon[expense.category] || "💴"}</div>
             <div className="expense-copy"><strong>{expense.note || expense.category}</strong><small>{new Date(expense.paid_at).toLocaleDateString("th-TH")} · {expense.category}</small></div>
             <strong className="expense-amount">{expense.currency === "JPY" ? "¥" : "฿"}{Number(expense.amount).toLocaleString("th-TH")}</strong>
-            <form action={deleteExpense}><input type="hidden" name="trip_id" value={trip.id} /><input type="hidden" name="expense_id" value={expense.id} /><button className="icon-danger" aria-label="ลบค่าใช้จ่าย">×</button></form>
+            {canEdit && <form action={deleteExpense}><input type="hidden" name="trip_id" value={trip.id} /><input type="hidden" name="expense_id" value={expense.id} /><button className="icon-danger" aria-label="ลบค่าใช้จ่าย">×</button></form>}
           </div>) : <div className="empty-mini">ยังไม่มีค่าใช้จ่าย</div>}
         </div>
 
-        <details className="add-activity-panel">
+        {canEdit && <details className="add-activity-panel">
           <summary><span className="plus-circle">＋</span><span><strong>บันทึกค่าใช้จ่าย</strong><small>JPY / THB โดยไม่ต้องต่อ API ค่าเงิน</small></span></summary>
           <form className="inline-form" action={addExpense}>
             <input type="hidden" name="trip_id" value={trip.id} />
@@ -106,7 +110,7 @@ export default async function TripWalletPage({ params }: { params: Promise<{ id:
             <input className="input" name="note" placeholder="เช่น Dinner at Shibuya" />
             <SubmitButton className="btn btn-primary btn-full" pendingText="กำลังบันทึก...">+ บันทึกค่าใช้จ่าย</SubmitButton>
           </form>
-        </details>
+        </details>}
       </section>
     </div><BottomNav active="/wallet" /></main>
   );

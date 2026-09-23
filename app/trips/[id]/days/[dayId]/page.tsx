@@ -52,6 +52,10 @@ export default async function DayPlannerPage({ params }: { params: Promise<{ id:
 
   if (!trip || !day) notFound();
 
+  const { data: accessRole } = await supabase.rpc("trip_access_role", { p_trip_id: id });
+  const role = (accessRole || "viewer") as "owner" | "editor" | "viewer";
+  const canEdit = role === "owner" || role === "editor";
+
   const days = [...(trip.trip_days || [])].sort((a, b) => String(a.trip_date).localeCompare(String(b.trip_date)));
   const dayIndex = days.findIndex((item) => item.id === day.id);
   const previousDay = dayIndex > 0 ? days[dayIndex - 1] : null;
@@ -74,12 +78,12 @@ export default async function DayPlannerPage({ params }: { params: Promise<{ id:
 
         <div className="planner-topbar">
           <Link href={`/trips/${trip.id}`} className="back-link">‹ Dashboard</Link>
-          <span className="planner-counter">Day {dayIndex + 1} / {days.length}</span>
+          <div className="planner-role-row"><span className="planner-counter">Day {dayIndex + 1} / {days.length}</span><span className={`role-badge ${role}`}>{role === "owner" ? "Owner" : role === "editor" ? "Editor" : "Viewer"}</span></div>
         </div>
 
         <section className="planner-hero v4-hero">
           <div>
-            <div className="eyebrow">Day Planner Pro · V4.1</div>
+            <div className="eyebrow">Day Planner Pro · V4.3</div>
             <h1>{day.title || `Day ${dayIndex + 1}`}</h1>
             <p>{longDate(day.trip_date)}</p>
           </div>
@@ -102,8 +106,10 @@ export default async function DayPlannerPage({ params }: { params: Promise<{ id:
           <CurrentLocationRoute destinations={routeDestinations} title="Route Map" />
         </section>
 
+        {!canEdit && <div className="notice viewer-notice"><span>👀</span><div><strong>Viewer mode</strong><br/><span className="muted">คุณเปิดดู Timeline และนำทางได้ แต่แก้ไขกิจกรรมไม่ได้</span></div></div>}
+
         <section className="section planner-section">
-          <div className="section-head"><h2>Timeline</h2><span className="small muted">เรียง • คัดลอก • ย้ายวัน</span></div>
+          <div className="section-head"><h2>Timeline</h2><span className="small muted">{canEdit ? "เรียง • คัดลอก • ย้ายวัน" : "Viewer mode"}</span></div>
 
           {activities.length ? (
             <div className="planner-timeline">
@@ -126,6 +132,7 @@ export default async function DayPlannerPage({ params }: { params: Promise<{ id:
                         </div>
                       </div>
 
+                      {canEdit && <>
                       <div className="activity-quick-tools">
                         <form action={reorderActivity}>
                           <input type="hidden" name="trip_id" value={trip.id} /><input type="hidden" name="day_id" value={day.id} /><input type="hidden" name="activity_id" value={activity.id} /><input type="hidden" name="direction" value="up" />
@@ -167,6 +174,7 @@ export default async function DayPlannerPage({ params }: { params: Promise<{ id:
                         </form>
                         <form action={deleteActivity} className="delete-form"><input type="hidden" name="trip_id" value={trip.id} /><input type="hidden" name="day_id" value={day.id} /><input type="hidden" name="activity_id" value={activity.id} /><SubmitButton className="btn btn-danger btn-small" pendingText="กำลังลบ...">ลบกิจกรรม</SubmitButton></form>
                       </details>
+                      </>}
                     </div>
                   </article>
                 );
@@ -175,6 +183,7 @@ export default async function DayPlannerPage({ params }: { params: Promise<{ id:
           ) : <div className="empty-planner"><div>🗓️</div><strong>วันนี้ยังว่างอยู่</strong><p>เพิ่มสถานที่ ร้านอาหาร การเดินทาง หรือโรงแรมด้านล่าง</p></div>}
         </section>
 
+        {canEdit && <>
         <section className="section add-activity-section">
           <details className="add-activity-panel" open={!activities.length}>
             <summary><span className="plus-circle">＋</span><span><strong>เพิ่มกิจกรรม</strong><small>ไม่ใช้ API • ใส่ชื่อสถานที่หรือลิงก์ Maps ได้</small></span></summary>
@@ -191,8 +200,9 @@ export default async function DayPlannerPage({ params }: { params: Promise<{ id:
             </form>
           </details>
         </section>
+        </>}
 
-        {otherDays.length > 0 && activities.length > 0 && (
+        {canEdit && otherDays.length > 0 && activities.length > 0 && (
           <section className="section">
             <details className="details-card">
               <summary>⧉ คัดลอกแผนทั้งวันนี้ไปวันอื่น</summary>
@@ -206,7 +216,7 @@ export default async function DayPlannerPage({ params }: { params: Promise<{ id:
           </section>
         )}
 
-        <section className="section"><details className="details-card"><summary>📝 ชื่อวันและโน้ตประจำวัน</summary><form className="inline-form" action={updateDay}><input type="hidden" name="trip_id" value={trip.id} /><input type="hidden" name="day_id" value={day.id} /><input className="input" name="day_title" defaultValue={day.title || `Day ${dayIndex + 1}`} placeholder="เช่น Tokyo East Side" /><textarea className="textarea" name="day_notes" defaultValue={day.notes || ""} rows={4} placeholder="โน้ตของวันนี้" /><SubmitButton className="btn btn-secondary" pendingText="กำลังบันทึก...">บันทึก</SubmitButton></form></details></section>
+        {canEdit && <section className="section"><details className="details-card"><summary>📝 ชื่อวันและโน้ตประจำวัน</summary><form className="inline-form" action={updateDay}><input type="hidden" name="trip_id" value={trip.id} /><input type="hidden" name="day_id" value={day.id} /><input className="input" name="day_title" defaultValue={day.title || `Day ${dayIndex + 1}`} placeholder="เช่น Tokyo East Side" /><textarea className="textarea" name="day_notes" defaultValue={day.notes || ""} rows={4} placeholder="โน้ตของวันนี้" /><SubmitButton className="btn btn-secondary" pendingText="กำลังบันทึก...">บันทึก</SubmitButton></form></details></section>}
       </div>
       <BottomNav active="/plan" />
     </main>

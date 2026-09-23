@@ -13,7 +13,7 @@ export default async function WalletPage() {
   const { data: claimsData } = await supabase.auth.getClaims();
   const userId = claimsData?.claims?.sub;
   if (!userId) redirect("/auth/login?next=/wallet");
-  const { data: trip } = await supabase.from("trips").select("id").eq("owner_id", userId).order("start_date", { ascending: true, nullsFirst: false }).limit(1).maybeSingle();
+  const { data: trip } = await supabase.from("trips").select("id").order("start_date", { ascending: true, nullsFirst: false }).limit(1).maybeSingle();
   if (trip) redirect(`/trips/${trip.id}/wallet`);
   return <main className="shell"><div className="container"><AppHeader /><h1 className="page-title">Trip Wallet</h1><div className="empty-state"><div className="empty-icon">👛</div><h2>ยังไม่มีทริป</h2><p>สร้างทริปก่อน แล้วใช้ Wallet เก็บ Booking และค่าใช้จ่ายได้ฟรี</p><Link className="btn btn-primary" href="/trips/new">สร้างทริป</Link></div></div><BottomNav active="/wallet" /></main>;
 }
