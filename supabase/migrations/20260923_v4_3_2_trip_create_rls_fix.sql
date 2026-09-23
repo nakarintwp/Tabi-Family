@@ -1,12 +1,12 @@
--- Tabi Family V3.2 — duplicate-trip guard + safe cleanup helper
--- Run once in Supabase SQL Editor after V3/V3.1.
-
-alter table public.trips
-  add column if not exists create_request_id uuid;
-
-create unique index if not exists trips_owner_create_request_uidx
-  on public.trips(owner_id, create_request_id)
-  where create_request_id is not null;
+-- Tabi Family V4.3.2 — Trip Create RLS Fix
+-- Run once in Supabase SQL Editor after V4.3/V4.3.1.
+--
+-- Why this patch exists:
+-- create_trip_bundle_once() previously ran as SECURITY INVOKER. That meant its
+-- INSERT into public.trips was evaluated through the caller's RLS path again.
+-- The function already derives owner_id exclusively from auth.uid(), so we can
+-- safely make this narrowly-scoped RPC SECURITY DEFINER while keeping the
+-- caller unable to choose another owner.
 
 create or replace function public.create_trip_bundle_once(
   p_request_id uuid,
@@ -55,7 +55,7 @@ begin
     raise exception 'Invalid pace';
   end if;
 
-  -- Same form submission can arrive more than once. Only the first creates rows.
+  -- owner_id always comes from the authenticated JWT. The caller cannot supply it.
   insert into public.trips (
     owner_id, title, start_date, end_date, cities, pace, budget, currency, create_request_id
   )
@@ -67,11 +67,12 @@ begin
   do nothing
   returning id into v_trip_id;
 
+  -- Idempotent retry: return the trip created by the first copy of this request.
   if v_trip_id is null then
-    select id into v_trip_id
-    from public.trips
-    where owner_id = v_user_id
-      and create_request_id = p_request_id
+    select t.id into v_trip_id
+    from public.trips t
+    where t.owner_id = v_user_id
+      and t.create_request_id = p_request_id
     limit 1;
 
     if v_trip_id is null then
@@ -82,7 +83,7 @@ begin
   end if;
 
   insert into public.trip_members (trip_id, name, member_type, walking_level, needs)
-  select v_trip_id, 'Adult ' || n, 'adult', 3, '{}'
+  select v_trip_id, 'Adult ' || n, 'adult', 3, '{}'::text[]
   from generate_series(1, greatest(coalesce(p_adults, 0), 0)) as n;
 
   insert into public.trip_members (trip_id, name, member_type, walking_level, needs)
@@ -104,54 +105,7 @@ begin
 end;
 $$;
 
+-- Do not leave the SECURITY DEFINER RPC executable by anon/public.
 revoke all on function public.create_trip_bundle_once(uuid,text,date,date,text[],text,numeric,integer,integer,integer) from public;
 revoke all on function public.create_trip_bundle_once(uuid,text,date,date,text[],text,numeric,integer,integer,integer) from anon;
 grant execute on function public.create_trip_bundle_once(uuid,text,date,date,text[],text,numeric,integer,integer,integer) to authenticated;
-
--- Deletes only exact-looking duplicates that belong to the currently signed-in user.
--- Keeps the oldest record in each duplicate group. Child rows disappear via ON DELETE CASCADE.
-create or replace function public.remove_my_duplicate_trips()
-returns integer
-language plpgsql
-security invoker
-set search_path = public
-as $$
-declare
-  v_user_id uuid := auth.uid();
-  v_deleted integer := 0;
-begin
-  if v_user_id is null then
-    raise exception 'Authentication required';
-  end if;
-
-  with ranked as (
-    select
-      id,
-      row_number() over (
-        partition by
-          owner_id,
-          lower(btrim(title)),
-          start_date,
-          end_date,
-          cities,
-          pace,
-          budget,
-          currency
-        order by created_at asc, id asc
-      ) as rn
-    from public.trips
-    where owner_id = v_user_id
-  ), deleted as (
-    delete from public.trips t
-    using ranked r
-    where t.id = r.id
-      and r.rn > 1
-    returning t.id
-  )
-  select count(*)::integer into v_deleted from deleted;
-
-  return coalesce(v_deleted, 0);
-end;
-$$;
-
-grant execute on function public.remove_my_duplicate_trips() to authenticated;

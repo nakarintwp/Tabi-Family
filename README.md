@@ -87,3 +87,6 @@ V4.3.1 ป้องกันกรณี Browser ยังถือ session เ�
 - **ไม่ต้อง Run SQL เพิ่ม**
 
 ดูรายละเอียดใน `V4_3_1_SESSION_FIX.md`
+
+## V4.3.2 — Trip Create RLS Fix
+If trip creation reports `new row violates row-level security policy for table "trips"`, run `supabase/migrations/20260923_v4_3_2_trip_create_rls_fix.sql` once in the Supabase SQL Editor. This keeps normal RLS enabled while hardening the transactional trip-creation RPC around the authenticated user's `auth.uid()`.
