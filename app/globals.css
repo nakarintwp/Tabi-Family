@@ -276,3 +276,66 @@ button { cursor: pointer; }
   .page-heading-row { display: block; }
   .speed-chip { display: inline-flex; margin: -8px 0 14px; }
 }
+
+/* V3 Family Profile + Google Maps/Places + Pace Score */
+.v3-quick-actions { grid-template-columns: repeat(4, 1fr); }
+.place-picker { display: grid; gap: 5px; }
+.place-hint { color: var(--muted); font-size: 9px; line-height: 1.35; }
+.google-map { width: 100%; height: 420px; border-radius: 24px; overflow: hidden; border: 1px solid var(--border); background: #e9eef1; }
+.google-map.compact { height: 260px; border-radius: 20px; }
+.map-fallback { min-height: 320px; display: grid; place-items: center; align-content: center; text-align: center; gap: 7px; padding: 30px; border-radius: 24px; border: 1px dashed #c8d4db; background: linear-gradient(145deg,#eef4f2,#f8fafb); }
+.map-fallback.compact { min-height: 200px; border-radius: 20px; }
+.map-fallback > div { font-size: 34px; }
+.map-fallback strong { font-size: 15px; }
+.map-fallback p { margin: 0; max-width: 320px; color: var(--muted); font-size: 10px; line-height: 1.55; }
+.map-fallback code { font-size: 9px; }
+.map-setup-hint { margin: 7px 4px 0; color: var(--muted); font-size: 9px; line-height: 1.45; }
+.micro-link { display: inline-flex; margin-top: 5px; color: var(--primary-2); font-size: 9px; font-weight: 800; }
+
+.pace-section { margin-top: 5px; }
+.pace-card { display: grid; grid-template-columns: 74px 1fr; gap: 14px; align-items: center; padding: 15px; border-radius: 22px; border: 1px solid var(--border); background: #fff; }
+.pace-score-ring { width: 74px; height: 74px; border-radius: 50%; display: grid; place-items: center; align-content: center; background: #eef6f1; border: 6px solid #cfe5d7; }
+.pace-score-ring strong { font-size: 24px; line-height: 1; }
+.pace-score-ring span { margin-top: 2px; color: var(--muted); font-size: 8px; }
+.pace-copy h3 { margin: 3px 0 3px; font-size: 18px; }
+.pace-copy p { margin: 0; color: var(--muted); font-size: 9px; line-height: 1.45; }
+.pace-copy ul { margin: 7px 0 0; padding-left: 15px; color: #56626a; font-size: 9px; line-height: 1.45; }
+.pace-balanced .pace-score-ring { background: #fff8e9; border-color: #f0dca7; }
+.pace-busy .pace-score-ring { background: #fff2e9; border-color: #efc8aa; }
+.pace-hard .pace-score-ring { background: #fff0f0; border-color: #efc2c2; }
+.pace-mini { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; background: #eef6f1; color: #2f6c48; font-size: 11px; font-weight: 900; }
+.pace-mini.pace-balanced { background: #fff8e9; color: #8a6416; }
+.pace-mini.pace-busy { background: #fff2e9; color: #9a562a; }
+.pace-mini.pace-hard { background: #fff0f0; color: #983d3d; }
+
+.family-hero h1, .map-hero h1 { font-size: 28px; }
+.family-note { margin: 3px 0 16px; }
+.family-profile-list { display: grid; gap: 10px; }
+.family-profile-card { border: 1px solid var(--border); border-radius: 22px; background: #fff; overflow: hidden; }
+.family-profile-summary { display: grid; grid-template-columns: 58px 1fr; gap: 12px; align-items: center; padding: 15px; }
+.family-avatar-large { width: 58px; height: 58px; display: grid; place-items: center; border-radius: 18px; background: #eef4f7; font-size: 29px; }
+.family-profile-copy { min-width: 0; }
+.family-name-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.family-name-row strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 15px; }
+.family-profile-copy p { margin: 4px 0 0; color: var(--muted); font-size: 10px; }
+.family-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.family-tags span { padding: 4px 7px; border-radius: 999px; background: #f2f6f8; color: #51616c; font-size: 8px; font-weight: 750; }
+.family-editor { border-top: 1px solid var(--border); }
+.family-checks { padding: 4px 0; }
+
+.map-day-list { display: grid; gap: 10px; }
+.map-day-card { padding: 14px; }
+.map-day-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.map-day-head strong, .map-day-head small { display: block; }
+.map-day-head small { margin-top: 3px; color: var(--muted); font-size: 9px; }
+.map-day-stats { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.map-day-stats span { padding: 5px 7px; border-radius: 999px; background: #f2f6f8; color: #56636c; font-size: 8px; font-weight: 750; }
+.map-day-actions { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; margin-top: 12px; font-size: 9px; }
+
+@media (max-width: 520px) {
+  .v3-quick-actions { grid-template-columns: 1fr 1fr; }
+  .v3-quick-actions .quick-action.primary { grid-column: 1 / -1; }
+  .pace-card { grid-template-columns: 62px 1fr; gap: 11px; }
+  .pace-score-ring { width: 62px; height: 62px; border-width: 5px; }
+  .pace-score-ring strong { font-size: 20px; }
+}

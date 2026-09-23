@@ -73,9 +73,10 @@ export default async function TripDetailPage({ params }: { params: Promise<{ id:
           </div>
         </section>
 
-        <section className="quick-actions">
+        <section className="quick-actions v3-quick-actions">
           {firstDay && <Link className="quick-action primary" href={`/trips/${trip.id}/days/${firstDay.id}`}><span>🗓️</span><strong>จัด Day 1</strong><small>เปิด Day Planner</small></Link>}
-          <a className="quick-action" href="#family"><span>👨‍👩‍👧‍👵</span><strong>Family</strong><small>เพิ่มสมาชิก</small></a>
+          <Link className="quick-action" href={`/trips/${trip.id}/family`}><span>👨‍👩‍👧‍👵</span><strong>Family</strong><small>โปรไฟล์แบบละเอียด</small></Link>
+          <Link className="quick-action" href={`/trips/${trip.id}/map`}><span>🗺️</span><strong>Map</strong><small>พิกัด + Pace Score</small></Link>
           <a className="quick-action" href="#budget"><span>💴</span><strong>Budget</strong><small>บันทึกค่าใช้จ่าย</small></a>
         </section>
 
@@ -104,7 +105,7 @@ export default async function TripDetailPage({ params }: { params: Promise<{ id:
         </section>
 
         <section className="section" id="family">
-          <div className="section-head"><h2>สมาชิกครอบครัว</h2><span className="link">Family Profile</span></div>
+          <div className="section-head"><h2>สมาชิกครอบครัว</h2><Link href={`/trips/${trip.id}/family`} className="link">แก้ Family Profile ›</Link></div>
           <div className="family">
             {members.map((member) => (
               <div className="person" key={member.id}>

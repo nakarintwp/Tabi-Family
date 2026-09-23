@@ -1,0 +1,20 @@
+V3 major additions
+- app/trips/[id]/family/page.tsx
+- app/trips/[id]/family/actions.ts
+- app/trips/[id]/map/page.tsx
+- components/PlacePicker.tsx
+- components/TripMap.tsx
+- components/PaceScore.tsx
+- lib/trip-metrics.ts
+- supabase/migrations/20260923_v3_family_maps_pace.sql
+
+V3 updated
+- app/trips/[id]/days/[dayId]/page.tsx
+- app/trips/[id]/days/[dayId]/actions.ts
+- app/trips/[id]/page.tsx
+- app/map/page.tsx
+- components/BottomNav.tsx
+- app/globals.css
+- .env.example
+- supabase/schema.sql
+- README.md

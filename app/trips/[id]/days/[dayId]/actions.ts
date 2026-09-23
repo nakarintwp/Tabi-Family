@@ -14,7 +14,16 @@ async function requireUser() {
 function paths(tripId: string, dayId: string) {
   revalidatePath(`/trips/${tripId}`);
   revalidatePath(`/trips/${tripId}/days/${dayId}`);
+  revalidatePath(`/trips/${tripId}/map`);
   revalidatePath("/plan");
+  revalidatePath("/map");
+}
+
+function nullableCoordinate(value: FormDataEntryValue | null) {
+  const text = String(value || "").trim();
+  if (!text) return null;
+  const parsed = Number(text);
+  return Number.isFinite(parsed) ? parsed : null;
 }
 
 export async function addActivity(formData: FormData) {
@@ -34,6 +43,8 @@ export async function addActivity(formData: FormData) {
     start_time: String(formData.get("start_time") || "") || null,
     duration_minutes: Number.isFinite(duration) && duration > 0 ? duration : null,
     location_name: String(formData.get("location_name") || "").trim() || null,
+    latitude: nullableCoordinate(formData.get("latitude")),
+    longitude: nullableCoordinate(formData.get("longitude")),
     notes: String(formData.get("notes") || "").trim() || null,
     child_friendly: formData.get("child_friendly") === "on",
     senior_friendly: formData.get("senior_friendly") === "on",
@@ -57,6 +68,8 @@ export async function updateActivity(formData: FormData) {
     start_time: String(formData.get("start_time") || "") || null,
     duration_minutes: Number.isFinite(duration) && duration > 0 ? duration : null,
     location_name: String(formData.get("location_name") || "").trim() || null,
+    latitude: nullableCoordinate(formData.get("latitude")),
+    longitude: nullableCoordinate(formData.get("longitude")),
     notes: String(formData.get("notes") || "").trim() || null,
     child_friendly: formData.get("child_friendly") === "on",
     senior_friendly: formData.get("senior_friendly") === "on",

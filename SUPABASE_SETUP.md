@@ -1,17 +1,14 @@
-# Supabase setup checklist
-
-Use this after deploying Tabi Family to Vercel.
+# Supabase setup checklist — Tabi Family V3
 
 1. Create a Supabase project.
-2. Run `supabase/schema.sql` in SQL Editor.
-3. Copy Project URL and Publishable Key.
-4. Add both values to Vercel Environment Variables.
-5. Redeploy Vercel.
-6. In Supabase Auth URL Configuration set:
-   - Site URL: `https://tabi-family.vercel.app`
-   - Redirect URL: `https://tabi-family.vercel.app/**`
-   - Redirect URL: `http://localhost:3000/**`
-7. Open `/auth/login` and request a Magic Link.
-8. Create the first trip at `/trips/new`.
-9. Confirm rows appear in Supabase Table Editor under `trips`, `trip_days`, and `trip_members`.
-10. Add one activity and one expense to verify RLS-backed writes.
+2. Fresh install: run `supabase/schema.sql` in SQL Editor.
+3. Existing V2 install: run `supabase/migrations/20260923_v3_family_maps_pace.sql` once.
+4. Add Supabase Project URL + Publishable Key to Vercel.
+5. Redeploy.
+6. Set Supabase Auth Site URL to `https://tabi-family.vercel.app`.
+7. Add redirect URLs `https://tabi-family.vercel.app/**` and `http://localhost:3000/**`.
+8. Login using `/auth/login`.
+9. Open a trip → Family and save a detailed member profile.
+10. Open Day Planner and verify activity writes.
+11. Optional: configure `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` for Places + Maps.
+12. Verify coordinates appear on activities and `/trips/[id]/map` shows markers.

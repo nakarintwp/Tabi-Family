@@ -60,10 +60,10 @@ export default async function HomePage() {
           </section>
 
           <section className="section">
-            <div className="section-head"><h2>สิ่งที่พร้อมใช้แล้ว</h2><span className="badge success">V1</span></div>
+            <div className="section-head"><h2>สิ่งที่พร้อมใช้แล้ว</h2><span className="badge success">V3</span></div>
             <div className="feature-grid">
-              <div className="card feature-card"><span>👨‍👩‍👧‍👵</span><strong>Family Profile</strong><small>ผู้ใหญ่ เด็ก ผู้สูงอายุ และระดับการเดิน</small></div>
-              <div className="card feature-card"><span>📅</span><strong>Daily Plan</strong><small>สร้างวันทริปอัตโนมัติและเพิ่มกิจกรรม</small></div>
+              <div className="card feature-card"><span>👨‍👩‍👧‍👵</span><strong>Family Profile</strong><small>อายุ การเดิน อาหาร ความสนใจ และ mobility</small></div>
+              <div className="card feature-card"><span>📅</span><strong>Maps + Pace</strong><small>พิกัด Google Places และ Family Pace Score</small></div>
               <div className="card feature-card"><span>💴</span><strong>Budget</strong><small>บันทึกค่าใช้จ่าย JPY / THB</small></div>
               <div className="card feature-card"><span>🔐</span><strong>Secure</strong><small>Supabase Auth + RLS แยกข้อมูลแต่ละบัญชี</small></div>
             </div>
