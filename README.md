@@ -1,16 +1,8 @@
-# Tabi Family — V7.3.2 Deploy + Snow Fix
+# Tabi Family — V7.3.4 CSS Parser Build Fix
 
-> Current build: **V7.3.2**
+> Current build: **V7.3.4**
 
-# Tabi Family — V7.3.1
-
-Create Trip destination/interest picker visibility fix.
-
-# Tabi Family
-
-**Current version: V7.3 — Trip Interests**
-
-Mobile-first Japan family trip planner built with **Next.js + Supabase + Vercel**.
+This release fixes the Vercel/Turbopack CSS parser failure while preserving the V7.3 Trip city/interest picker and snow-only atmosphere.
 
 ## V7 highlights
 

@@ -1312,11 +1312,16 @@ body::before {
   color: rgba(255,255,255,.92);
   text-shadow: 0 1px 5px rgba(74,143,183,.18);
   font-style: normal;
-  font-size: calc(10px + (var(--i) % 5) * 3px);
-  opacity: calc(.46 + (var(--i) % 5) * .10);
-  animation: live-snow-fall calc(8s + (var(--i) % 7) * 1.3s) linear infinite;
-  animation-delay: calc((var(--i) % 11) * -1.45s);
+  font-size: 14px;
+  opacity: .72;
+  animation: live-snow-fall 11s linear infinite;
+  animation-delay: -2s;
 }
+.weather-snowfall i:nth-child(5n+1) { font-size: 11px; opacity: .52; animation-duration: 9s; animation-delay: -1s; }
+.weather-snowfall i:nth-child(5n+2) { font-size: 16px; opacity: .80; animation-duration: 12s; animation-delay: -4s; }
+.weather-snowfall i:nth-child(5n+3) { font-size: 20px; opacity: .92; animation-duration: 14s; animation-delay: -7s; }
+.weather-snowfall i:nth-child(5n+4) { font-size: 13px; opacity: .66; animation-duration: 10s; animation-delay: -9s; }
+.weather-snowfall i:nth-child(5n) { font-size: 17px; opacity: .84; animation-duration: 13s; animation-delay: -6s; }
 @keyframes live-snow-fall {
   0% { transform: translate3d(0,-10vh,0) rotate(0deg); }
   45% { transform: translate3d(24px,46vh,0) rotate(160deg); }
@@ -1326,13 +1331,16 @@ body::before {
 .weather-rainfall i {
   top: -15vh;
   width: 2px;
-  height: calc(14px + (var(--i) % 5) * 6px);
+  height: 24px;
   border-radius: 999px;
   background: rgba(68,151,203,.42);
   transform: rotate(12deg);
-  animation: live-rain-fall calc(.72s + (var(--i) % 5) * .12s) linear infinite;
-  animation-delay: calc((var(--i) % 9) * -.14s);
+  animation: live-rain-fall .9s linear infinite;
+  animation-delay: -.2s;
 }
+.weather-rainfall i:nth-child(3n+1) { height: 18px; animation-duration: .78s; animation-delay: -.1s; }
+.weather-rainfall i:nth-child(3n+2) { height: 28px; animation-duration: 1.02s; animation-delay: -.4s; }
+.weather-rainfall i:nth-child(3n) { height: 22px; animation-duration: .88s; animation-delay: -.7s; }
 @keyframes live-rain-fall {
   from { translate: -20px -10vh; }
   to { translate: 25px 120vh; }
@@ -1596,9 +1604,12 @@ body::before {
   opacity: .46;
 }
 .snow-only-atmosphere .snow-depth-back i {
-  font-size: calc(7px + (var(--i) % 4) * 2px);
-  animation-duration: calc(13s + (var(--i) % 7) * 1.7s);
+  font-size: 9px;
+  animation-duration: 16s;
 }
+.snow-only-atmosphere .snow-depth-back i:nth-child(3n+1) { font-size: 7px; animation-duration: 14s; }
+.snow-only-atmosphere .snow-depth-back i:nth-child(3n+2) { font-size: 10px; animation-duration: 18s; }
+.snow-only-atmosphere .snow-depth-back i:nth-child(3n) { font-size: 8px; animation-duration: 16s; }
 .snow-only-atmosphere .snow-depth-front {
   opacity: .90;
 }

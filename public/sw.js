@@ -1,4 +1,4 @@
-const CACHE = "tabi-family-v7-3-2-shell";
+const CACHE = "tabi-family-v7-3-4-shell";
 const SNAPSHOT_KEY = "/__tabi_offline_snapshot.json";
 const SHELL = ["/icons/icon-192.png", "/icons/icon-512.png"];
 
