@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Tabi Family",
     short_name: "Tabi Family",
-    description: "Family trip planner with offline Today mode, collaboration and weather planning.",
+    description: "Family trip planner with Japan discovery, wishlist, templates, calendar, transport, offline mode and collaboration.",
     start_url: "/",
     display: "standalone",
     background_color: "#f4fbff",

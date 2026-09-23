@@ -3,9 +3,9 @@ import Link from "next/link";
 const items = [
   ["/", "⌂", "Home"],
   ["/today", "☀", "Today"],
+  ["/explore", "✨", "Explore"],
   ["/trips", "🗾", "Trips"],
   ["/plan", "☷", "Plan"],
-  ["/wallet", "▣", "Wallet"],
 ] as const;
 
 export function BottomNav({ active }: { active: string }) {

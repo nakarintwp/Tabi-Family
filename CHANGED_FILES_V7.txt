@@ -1,0 +1,29 @@
+V7 major additions
+- lib/discovery.ts
+- lib/trip-readiness.ts
+- components/ReadinessCard.tsx
+- app/explore/*
+- app/templates/*
+- app/trips/[id]/wishlist/*
+- app/trips/[id]/calendar/page.tsx
+- app/trips/[id]/transport/*
+- app/trips/[id]/cover/*
+- app/trips/[id]/readiness/page.tsx
+- supabase/migrations/20260923_v7_discovery_planning.sql
+
+V7 updated
+- app/trips/new/page.tsx
+- app/trips/new/actions.ts
+- app/trips/[id]/page.tsx
+- app/trips/page.tsx
+- app/trips/[id]/export/page.tsx
+- components/ExportTools.tsx
+- components/BottomNav.tsx
+- components/AppHeader.tsx
+- app/page.tsx
+- app/globals.css
+- app/layout.tsx
+- package.json
+- README.md
+- SUPABASE_SETUP.md
+- supabase/schema.sql

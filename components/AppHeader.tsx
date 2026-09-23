@@ -7,7 +7,7 @@ export function AppHeader() {
         <span className="brand-mark">TF</span>
         <span className="brand-copy">
           <strong>Tabi Family</strong>
-          <small>Family Trip Planner · Cartoon Blue</small>
+          <small>Discover · Plan · Go</small>
         </span>
       </Link>
       <Link className="avatar cartoon-avatar" href="/account" aria-label="Account">

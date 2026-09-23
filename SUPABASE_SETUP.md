@@ -20,3 +20,11 @@
 `supabase/migrations/20260923_v6_complete_trip_experience.sql`
 
 เพื่อเปิดใช้ Today statuses, Rain Plan metadata และ Collaboration Activity Feed
+
+## V7 migration
+
+After V6, run:
+
+`supabase/migrations/20260923_v7_discovery_planning.sql`
+
+This adds Trip Cover metadata, Wishlist, Transport Segments and their RLS policies. No new environment variable is required.

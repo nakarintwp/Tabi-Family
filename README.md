@@ -1,45 +1,34 @@
-# Tabi Family — V6.1 Cartoon Blue Theme
+# Tabi Family — V7 Discovery & Planning Experience
 
-ธีมการ์ตูนฟ้า-ขาว-เหลืองแบบ playful โดยไม่ใช้ภาพ/โลโก้ตัวละครลิขสิทธิ์ และคงฟังก์ชัน V6 ทั้งหมด
+Mobile-first Japan family trip planner built with **Next.js + Supabase + Vercel**.
 
-ดู `V6_1_CARTOON_BLUE_THEME.md` สำหรับรายละเอียดการอัปเกรด
+## V7 highlights
 
-# Tabi Family — Japan Family Trip Planner
+- Explore Japan with curated family-friendly places
+- Wishlist → save now, schedule later
+- Ready-made Trip Templates
+- Calendar Overview
+- Transport Segments for train/bus/flight/car/etc.
+- Trip Cover presets
+- Trip Readiness score (0–100)
+- Family Profile + Day Planner Pro
+- Today Mode + current-location route
+- PWA + Offline snapshot
+- QR collaboration (Owner / Editor / Viewer)
+- Packing, Booking Wallet and Expense Tracker
+- Export / Backup
+- Weather / Rain Plan with Open-Meteo
+- Live weather atmosphere
 
-Mobile-first family trip planner built with **Next.js + Supabase + Vercel**.
+## Upgrade from V6.2
 
-## Current version: V4.3.1 Session Fix
+Run this migration once:
 
-The project now supports:
+```text
+supabase/migrations/20260923_v7_discovery_planning.sql
+```
 
-- Supabase Email + Password Auth + RLS
-- QR Family Sharing (Owner / Editor / Viewer)
-- Create/delete trips
-- Duplicate-trip protection
-- Family profiles
-- Day Planner Pro
-- Family Smart Pace
-- Google Maps links without Maps API
-- Packing checklist
-- Booking Wallet
-- Expense Tracker
-- Mobile-first UI
-
-## Zero-cost design
-
-V4.3 does **not require Google Maps API, AI API, or an external QR API**.
-
-For places and routes, the app stores place names / optional Google Maps links and opens normal Google Maps web URLs. This avoids the need to enable Google Maps Platform billing.
-
-## Upgrade from V3.2
-
-Read `V4_UPGRADE.md`.
-
-Run:
-
-`supabase/migrations/20260923_v4_zero_cost_planner.sql`
-
-before using Packing / Booking Wallet / Maps URL fields.
+Then deploy the source to Vercel. Full instructions are in `V7_DISCOVERY_PLANNING_UPGRADE.md`.
 
 ## Environment variables
 
@@ -47,6 +36,8 @@ before using Packing / Booking Wallet / Maps URL fields.
 NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_KEY
 ```
+
+No Google Maps API key, AI API key, QR API, or paid weather API is required for V7.
 
 ## Local development
 
@@ -59,59 +50,21 @@ Open `http://localhost:3000`.
 
 ## Deploy
 
-Push to GitHub. Vercel will redeploy automatically.
+Push to GitHub. Vercel redeploys automatically.
 
-## V4.1 — Current Location Route + Today Mode
+## Fresh Supabase project
 
-V4.1 เพิ่ม `/today` และ Route Map ที่ใช้ Browser Geolocation จากมือถือเป็นต้นทาง จึงใช้ปลายทางเพียง 1 จุดได้ ไม่ต้องใช้ Google Maps API key ดูขั้นตอนอัปเกรดใน `V4_1_UPGRADE.md`
+Run `supabase/schema.sql`. For an existing project, apply migrations in sequence through V6 and then V7.
 
-## V4.2 — Mobile OTP Login
+## Key routes
 
-หน้าเข้าสู่ระบบใช้ Email OTP 6 หลักแทนการพึ่ง Magic Link อย่างเดียว ดูขั้นตอนตั้ง Supabase Email Template ใน `V4_2_UPGRADE.md`
-
-
-## V4.3 — Email + Password + QR Family Sharing
-
-V4.3 ใช้ Email + Password เป็น Login หลักและไม่ต้องพึ่ง Magic Link สำหรับการใช้งานประจำวัน เจ้าของ Trip สามารถสร้าง QR Invite ให้สมาชิกครอบครัวเข้าร่วมเป็น Editor หรือ Viewer ได้
-
-ก่อน Deploy ให้ Run:
-
-`supabase/migrations/20260923_v4_3_email_password_qr_sharing.sql`
-
-และตั้ง Supabase Email provider โดยปิด `Confirm email` หากต้องการ flow แบบ zero-cost ที่ไม่ส่งลิงก์ยืนยันอีเมล
-
-ดูขั้นตอนทั้งหมดใน `V4_3_UPGRADE.md`
-
-## V4.3.1 — Session Fix
-
-V4.3.1 ป้องกันกรณี Browser ยังถือ session เก่าหลังจาก User ถูกลบ/เปลี่ยนใน Supabase โดยเปลี่ยนหน้าที่สำคัญและ Server Actions จากการเชื่อ JWT claims อย่างเดียว เป็นการตรวจ User จริงกับ Supabase Auth ผ่าน `getUser()` ก่อนทำงาน
-
-- ถ้า User ยังมีอยู่ → ทำงานต่อปกติ
-- ถ้า session เก่า / User ถูกลบ → กลับหน้า Login
-- หน้า Login จะล้าง local session เก่าอัตโนมัติ
-- Create Trip / Delete Trip / QR Join / Share / Day Planner / Packing / Wallet / Account ใช้ verified user
-- **ไม่ต้อง Run SQL เพิ่ม**
-
-ดูรายละเอียดใน `V4_3_1_SESSION_FIX.md`
-
-## V4.3.2 — Trip Create RLS Fix
-If trip creation reports `new row violates row-level security policy for table "trips"`, run `supabase/migrations/20260923_v4_3_2_trip_create_rls_fix.sql` once in the Supabase SQL Editor. This keeps normal RLS enabled while hardening the transactional trip-creation RPC around the authenticated user's `auth.uid()`.
-
-## V5 Modern Winter UI
-
-See `V5_JAPANESE_WINTER_UI.md`. No SQL migration is required.
-
-
-## V5.1 — Modern Winter UI
-Removed Japanese visual motifs and red theme. The UI now uses Arctic Blue / Ice / White with CSS-only falling snow. No SQL migration required.
-
-## V6 — Complete Trip Experience
-
-ดู `V6_COMPLETE_UPGRADE.md` สำหรับขั้นตอนอัปเกรด
-
-V6 รวม PWA/Offline, Today Mode Pro, Collaboration Activity Feed, Export/Backup และ Weather/Rain Plan โดยไม่เพิ่ม paid API
-
-
-## V6.2 — Live Weather Atmosphere
-
-พื้นหลังเปลี่ยนตามสภาพอากาศจริงจากตำแหน่งปัจจุบัน: แจ่มใส / เมฆ / ฝน / หิมะ / หมอก / พายุ โดยใช้ Open-Meteo ฟรีและไม่ต้องใช้ API key ดูรายละเอียดที่ `V6_2_LIVE_WEATHER_ATMOSPHERE.md`.
+```text
+/explore                       Explore Japan
+/templates                     Trip Templates
+/trips/[id]/wishlist           Wishlist
+/trips/[id]/calendar           Calendar Overview
+/trips/[id]/transport          Transport Segments
+/trips/[id]/cover              Trip Cover
+/trips/[id]/readiness          Trip Readiness
+/today                         Today Mode Pro
+```

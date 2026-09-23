@@ -1,16 +1,17 @@
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { AppHeader } from "@/components/AppHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { SubmitButton } from "@/components/SubmitButton";
 import { DeleteTripButton } from "@/components/DeleteTripButton";
+import { ReadinessCard } from "@/components/ReadinessCard";
 import { addExpense, addMember, deleteTrip } from "./actions";
 import { requireVerifiedUser } from "@/lib/supabase/auth";
+import { calculateReadiness } from "@/lib/trip-readiness";
 
 function dateLabel(value: string) {
   return new Intl.DateTimeFormat("th-TH", { weekday: "short", day: "numeric", month: "short" }).format(new Date(`${value}T00:00:00`));
 }
-
 function activityIcon(type: string) {
   return type === "food" ? "🍜" : type === "transport" ? "🚆" : type === "shopping" ? "🛍️" : type === "hotel" ? "🏨" : "📍";
 }
@@ -23,21 +24,22 @@ export default async function TripDetailPage({ params, searchParams }: { params:
   const { data: trip } = await supabase
     .from("trips")
     .select(`
-      id,owner_id,title,start_date,end_date,cities,pace,budget,currency,
+      id,owner_id,title,start_date,end_date,cities,pace,budget,currency,cover_style,cover_emoji,cover_tagline,template_key,
       trip_members(id,name,member_type,walking_level,needs,created_at),
-      trip_days(id,trip_date,title,notes,activities(id,title,activity_type,start_time,location_name,sort_order,duration_minutes,notes,child_friendly,senior_friendly)),
+      trip_days(id,trip_date,title,notes,activities(id,title,activity_type,start_time,location_name,sort_order,duration_minutes,notes,child_friendly,senior_friendly,status)),
       expenses(id,amount,currency,category,note,paid_at),
-      bookings(id),
+      bookings(id,booking_type),
       packing_items(id,is_packed)
     `)
     .eq("id", id)
     .single();
-
   if (!trip) notFound();
 
-  const [{ data: accessRole }, { data: activityFeed }] = await Promise.all([
+  const [{ data: accessRole }, { data: activityFeed }, { count: transportCount }, { count: wishlistCount }] = await Promise.all([
     supabase.rpc("trip_access_role", { p_trip_id: id }),
     supabase.rpc("get_trip_activity_feed", { p_trip_id: id, p_limit: 8 }),
+    supabase.from("transport_segments").select("id", { count: "exact", head: true }).eq("trip_id", id),
+    supabase.from("trip_wishlist").select("id", { count: "exact", head: true }).eq("trip_id", id),
   ]);
   const role = (accessRole || (trip.owner_id === userId ? "owner" : "viewer")) as "owner" | "editor" | "viewer";
   const canEdit = role === "owner" || role === "editor";
@@ -55,6 +57,19 @@ export default async function TripDetailPage({ params, searchParams }: { params:
   const jpySpent = expenses.filter((e) => e.currency === "JPY").reduce((sum, e) => sum + Number(e.amount), 0);
   const thbSpent = expenses.filter((e) => e.currency === "THB").reduce((sum, e) => sum + Number(e.amount), 0);
   const firstDay = days[0];
+  const readiness = calculateReadiness({
+    startDate: trip.start_date,
+    endDate: trip.end_date,
+    cities: trip.cities,
+    membersCount: members.length,
+    daysCount: days.length,
+    plannedDays,
+    bookings,
+    packingCount: packingItems.length,
+    packedCount: packedItems,
+    transportCount: transportCount || 0,
+  });
+  const coverStyle = trip.cover_style || "sky";
 
   return (
     <main className="shell">
@@ -62,25 +77,27 @@ export default async function TripDetailPage({ params, searchParams }: { params:
         <AppHeader />
         {query.joined === "1" && <div className="success-box">เข้าร่วมทริปเรียบร้อยแล้ว ✓</div>}
 
-        <section className="hero compact-hero trip-hero">
-          <div className="trip-hero-role-row"><div className="eyebrow">Trip dashboard · V6 Complete</div><span className={`role-badge ${role}`}>{role === "owner" ? "Owner" : role === "editor" ? "Editor" : "Viewer"}</span></div>
-          <h1>{trip.title}</h1>
-          <p>{trip.cities?.join(" • ")}</p>
-          <div className="hero-row">
-            <div className="hero-stat"><strong>{days.length} วัน</strong><span>{trip.pace} pace</span></div>
-            <div className="pill">👨‍👩‍👧‍👵 {members.length} คน</div>
-          </div>
+        <section className={`hero compact-hero trip-hero trip-cover cover-${coverStyle}`}>
+          <div className="trip-hero-role-row"><div className="eyebrow">Trip dashboard · V7 Discovery</div><span className={`role-badge ${role}`}>{role === "owner" ? "Owner" : role === "editor" ? "Editor" : "Viewer"}</span></div>
+          <div className="hero-cover-title"><span className="hero-cover-emoji">{trip.cover_emoji || "🧳"}</span><div><h1>{trip.title}</h1><p>{trip.cover_tagline || trip.cities?.join(" • ")}</p></div></div>
+          <div className="hero-row"><div className="hero-stat"><strong>{days.length} วัน</strong><span>{trip.pace} pace</span></div><div className="pill">👨‍👩‍👧‍👵 {members.length} คน</div></div>
         </section>
 
-        {!canEdit && <div className="notice viewer-notice"><span>👀</span><div><strong>Viewer mode</strong><br/><span className="muted">คุณดูแผน Today, Route, Packing และ Wallet ได้ แต่การแก้ไขถูกปิดด้วย RLS</span></div></div>}
+        {!canEdit && <div className="notice viewer-notice"><span>👀</span><div><strong>Viewer mode</strong><br/><span className="muted">คุณดูแผน Today, Calendar, Transport, Wishlist และ Wallet ได้ แต่การแก้ไขถูกปิดด้วย RLS</span></div></div>}
 
         <section className="dashboard-grid">
           <div className="card dashboard-metric"><span>วางแผนแล้ว</span><strong>{plannedDays}/{days.length} วัน</strong><div className="progress-track"><span style={{ width: `${progress}%` }} /></div><small>{progress}% ของทริป</small></div>
-          <div className="card dashboard-metric"><span>กิจกรรมทั้งหมด</span><strong>{totalActivities} จุด</strong><small>{canEdit ? "เพิ่ม/แก้ไขจาก Day Planner" : "เปิดดูจาก Day Planner"}</small></div>
+          <div className="card dashboard-metric"><span>Discovery</span><strong>{wishlistCount || 0} Wishlist</strong><small>{transportCount || 0} transport segment</small></div>
         </section>
 
-        <section className="quick-actions v4-quick-actions">
+        <ReadinessCard tripId={trip.id} score={readiness.score} label={readiness.label} items={readiness.items} compact />
+
+        <section className="quick-actions v7-quick-actions">
           {firstDay && <Link className="quick-action primary" href={`/trips/${trip.id}/days/${firstDay.id}`}><span>🗓️</span><strong>Day Planner</strong><small>{canEdit ? "เรียง • ย้าย • คัดลอก" : "ดู Timeline"}</small></Link>}
+          <Link className="quick-action" href={`/trips/${trip.id}/calendar`}><span>📆</span><strong>Calendar</strong><small>ภาพรวมทั้งทริป</small></Link>
+          <Link className="quick-action" href={`/trips/${trip.id}/wishlist`}><span>♡</span><strong>Wishlist</strong><small>{wishlistCount || 0} สถานที่</small></Link>
+          <Link className="quick-action" href="/explore"><span>✨</span><strong>Explore</strong><small>ค้นไอเดียญี่ปุ่น</small></Link>
+          <Link className="quick-action" href={`/trips/${trip.id}/transport`}><span>🚆</span><strong>Transport</strong><small>{transportCount || 0} ช่วง</small></Link>
           <Link className="quick-action" href="/today"><span>☀️</span><strong>Today</strong><small>แผนวันนี้ + GPS</small></Link>
           <Link className="quick-action" href={`/trips/${trip.id}/family`}><span>👨‍👩‍👧‍👵</span><strong>Family</strong><small>โปรไฟล์ครอบครัว</small></Link>
           <Link className="quick-action" href={`/trips/${trip.id}/map`}><span>🧭</span><strong>Route</strong><small>Current location</small></Link>
@@ -88,31 +105,28 @@ export default async function TripDetailPage({ params, searchParams }: { params:
           <Link className="quick-action" href={`/trips/${trip.id}/wallet`}><span>👛</span><strong>Wallet</strong><small>{bookings.length} booking</small></Link>
           <Link className="quick-action" href={`/trips/${trip.id}/weather`}><span>🌦️</span><strong>Weather</strong><small>Rain Plan ฟรี</small></Link>
           <Link className="quick-action" href={`/trips/${trip.id}/export`}><span>⬇️</span><strong>Export</strong><small>PDF • CSV • Backup</small></Link>
+          <Link className="quick-action" href={`/trips/${trip.id}/readiness`}><span>✅</span><strong>Readiness</strong><small>{readiness.score}% พร้อม</small></Link>
+          {isOwner && <Link className="quick-action" href={`/trips/${trip.id}/cover`}><span>🎨</span><strong>Trip Cover</strong><small>สี • Emoji • Tagline</small></Link>}
           {isOwner && <Link className="quick-action share-quick-action" href={`/trips/${trip.id}/share`}><span>📲</span><strong>แชร์ทริป</strong><small>QR • Editor • Viewer</small></Link>}
         </section>
 
         <section className="section">
-          <div className="section-head"><h2>Itinerary</h2><span className="small muted">แตะวันเพื่อ{canEdit ? "จัด" : "ดู"}รายละเอียด</span></div>
+          <div className="section-head"><h2>Itinerary</h2><Link href={`/trips/${trip.id}/calendar`} className="link">Calendar Overview ›</Link></div>
           <div className="day-dashboard-list">
             {days.map((day, index) => {
               const activities = [...(day.activities || [])].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
-              return (
-                <Link className="day-dashboard-card" href={`/trips/${trip.id}/days/${day.id}`} key={day.id}>
-                  <div className="day-number"><span>DAY</span><strong>{index + 1}</strong></div>
-                  <div className="day-dashboard-main">
-                    <div className="day-dashboard-head"><div><strong>{day.title || `Day ${index + 1}`}</strong><small>{dateLabel(day.trip_date)}</small></div><span className={activities.length ? "badge success" : "badge"}>{activities.length ? `${activities.length} จุด` : "ยังว่าง"}</span></div>
-                    {activities.length ? <div className="mini-timeline">{activities.slice(0, 3).map((activity) => <span key={activity.id}>{activityIcon(activity.activity_type)} {activity.start_time?.slice(0,5) || "—"} {activity.title}</span>)}{activities.length > 3 && <span className="muted">+ อีก {activities.length - 3} จุด</span>}</div> : <div className="empty-day">{canEdit ? "+ เริ่มวางแผนวันนี้" : "ยังไม่มีแผนวันนี้"}</div>}
-                  </div>
-                  <span className="chevron">›</span>
-                </Link>
-              );
+              return <Link className="day-dashboard-card" href={`/trips/${trip.id}/days/${day.id}`} key={day.id}>
+                <div className="day-number"><span>DAY</span><strong>{index + 1}</strong></div>
+                <div className="day-dashboard-main"><div className="day-dashboard-head"><div><strong>{day.title || `Day ${index + 1}`}</strong><small>{dateLabel(day.trip_date)}</small></div><span className={activities.length ? "badge success" : "badge"}>{activities.length ? `${activities.length} จุด` : "ยังว่าง"}</span></div>{activities.length ? <div className="mini-timeline">{activities.slice(0, 3).map((activity) => <span key={activity.id}>{activityIcon(activity.activity_type)} {activity.start_time?.slice(0,5) || "—"} {activity.title}</span>)}{activities.length > 3 && <span className="muted">+ อีก {activities.length - 3} จุด</span>}</div> : <div className="empty-day">{canEdit ? "+ เริ่มวางแผนวันนี้" : "ยังไม่มีแผนวันนี้"}</div>}</div>
+                <span className="chevron">›</span>
+              </Link>;
             })}
           </div>
         </section>
 
         <section className="section">
           <div className="section-head"><h2>การเปลี่ยนแปลงล่าสุด</h2>{isOwner && <Link href={`/trips/${trip.id}/share`} className="link">จัดการสมาชิก ›</Link>}</div>
-          {(activityFeed || []).length ? <div className="activity-feed">{(activityFeed || []).map((item:any) => <div className="activity-feed-row" key={item.id}><div className="activity-feed-dot">•</div><div><strong>{item.summary}</strong><small>{item.actor_email || "System"} · {new Intl.DateTimeFormat("th-TH", { dateStyle: "short", timeStyle: "short" }).format(new Date(item.created_at))}</small></div></div>)}</div> : <div className="empty-mini">ยังไม่มีประวัติการแก้ไขหลังอัปเกรด V6</div>}
+          {(activityFeed || []).length ? <div className="activity-feed">{(activityFeed || []).map((item:any) => <div className="activity-feed-row" key={item.id}><div className="activity-feed-dot">•</div><div><strong>{item.summary}</strong><small>{item.actor_email || "System"} · {new Intl.DateTimeFormat("th-TH", { dateStyle: "short", timeStyle: "short" }).format(new Date(item.created_at))}</small></div></div>)}</div> : <div className="empty-mini">ยังไม่มีประวัติการแก้ไข</div>}
         </section>
 
         <section className="section" id="family">

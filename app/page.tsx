@@ -12,7 +12,7 @@ function formatRange(start: string | null, end: string | null) {
 
 export default async function HomePage() {
   let userId: string | undefined;
-  let trip: null | { id: string; title: string; start_date: string | null; end_date: string | null; cities: string[]; pace: string; budget: number | null } = null;
+  let trip: null | { id: string; title: string; start_date: string | null; end_date: string | null; cities: string[]; pace: string; budget: number | null; cover_style?: string | null; cover_emoji?: string | null; cover_tagline?: string | null } = null;
   let memberCount = 0;
   let dayCount = 0;
   let expenseTotalTHB = 0;
@@ -23,7 +23,7 @@ export default async function HomePage() {
     if (userId) {
       const { data } = await supabase
         .from("trips")
-        .select("id,title,start_date,end_date,cities,pace,budget")
+        .select("id,title,start_date,end_date,cities,pace,budget,cover_style,cover_emoji,cover_tagline")
         .order("start_date", { ascending: true, nullsFirst: false })
         .limit(1)
         .maybeSingle();
@@ -58,12 +58,12 @@ export default async function HomePage() {
           </section>
 
           <section className="section">
-            <div className="section-head"><h2>สิ่งที่พร้อมใช้แล้ว</h2><span className="badge success">V4.3</span></div>
+            <div className="section-head"><h2>สิ่งที่พร้อมใช้แล้ว</h2><span className="badge success">V7</span></div>
             <div className="feature-grid">
-              <div className="card feature-card"><span>👨‍👩‍👧‍👵</span><strong>Family Profile</strong><small>อายุ การเดิน อาหาร ความสนใจ และ mobility</small></div>
-              <div className="card feature-card"><span>☀️</span><strong>Today + Route</strong><small>ใช้ตำแหน่งมือถือเป็นต้นทาง โดยไม่ใช้ Maps API</small></div>
-              <div className="card feature-card"><span>💴</span><strong>Budget</strong><small>บันทึกค่าใช้จ่าย JPY / THB</small></div>
-              <div className="card feature-card"><span>📲</span><strong>Family Sharing</strong><small>Email + Password + QR พร้อม Owner / Editor / Viewer</small></div>
+              <div className="card feature-card"><span>✨</span><strong>Explore Japan</strong><small>เลือกสถานที่ curated แล้วเก็บลง Wishlist</small></div>
+              <div className="card feature-card"><span>🧩</span><strong>Trip Templates</strong><small>เริ่มทริปจากแผนตัวอย่างสำหรับครอบครัว</small></div>
+              <div className="card feature-card"><span>📆</span><strong>Calendar + Transport</strong><small>เห็นภาพรวมทั้งทริปและช่วงรถไฟ/รถบัส</small></div>
+              <div className="card feature-card"><span>✅</span><strong>Trip Readiness</strong><small>เช็กความพร้อมก่อนเดินทางแบบ 0–100%</small></div>
             </div>
           </section>
 
@@ -80,10 +80,9 @@ export default async function HomePage() {
     <main className="shell">
       <div className="container">
         <AppHeader />
-        <section className="hero">
+        <section className={`hero trip-cover cover-${trip.cover_style || "sky"}`}>
           <div className="eyebrow">Current family trip</div>
-          <h1>{trip.title}</h1>
-          <p>{trip.cities?.join(" • ")} · {formatRange(trip.start_date, trip.end_date)}</p>
+          <div className="hero-cover-title"><span className="hero-cover-emoji">{trip.cover_emoji || "🧳"}</span><div><h1>{trip.title}</h1><p>{trip.cover_tagline || trip.cities?.join(" • ")} · {formatRange(trip.start_date, trip.end_date)}</p></div></div>
           <div className="hero-row">
             <div className="hero-stat"><strong>{dayCount} วัน</strong><span>{trip.pace} pace</span></div>
             <div className="pill">👨‍👩‍👧‍👵 {memberCount} คน</div>
@@ -92,10 +91,11 @@ export default async function HomePage() {
 
         <section className="section">
           <div className="section-head"><h2>จัดการทริป</h2><Link className="link" href={`/trips/${trip.id}`}>เปิดทั้งหมด ›</Link></div>
-          <div className="quick-grid">
+          <div className="quick-grid v7-home-grid">
             <Link className="card quick-card" href="/today"><span>☀️</span><strong>Today</strong><small>แผนวันนี้ + GPS</small></Link>
-            <Link className="card quick-card" href={`/trips/${trip.id}`}><span>📅</span><strong>Itinerary</strong><small>{dayCount} วัน</small></Link>
-            <Link className="card quick-card" href="/wallet"><span>💴</span><strong>Budget</strong><small>฿{expenseTotalTHB.toLocaleString("th-TH")}</small></Link>
+            <Link className="card quick-card" href="/explore"><span>✨</span><strong>Explore</strong><small>หาไอเดียสถานที่</small></Link>
+            <Link className="card quick-card" href={`/trips/${trip.id}/calendar`}><span>📆</span><strong>Calendar</strong><small>{dayCount} วัน</small></Link>
+            <Link className="card quick-card" href={`/trips/${trip.id}/readiness`}><span>✅</span><strong>Readiness</strong><small>เช็กก่อนเดินทาง</small></Link>
           </div>
         </section>
 

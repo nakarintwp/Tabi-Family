@@ -23,6 +23,10 @@ type TripRow = {
   budget: number | null;
   currency: string | null;
   created_at: string;
+  cover_style?: string | null;
+  cover_emoji?: string | null;
+  cover_tagline?: string | null;
+  template_key?: string | null;
 };
 
 function duplicateKey(trip: TripRow) {
@@ -45,7 +49,7 @@ export default async function TripsPage({ searchParams }: { searchParams: Promis
   // RLS returns both owned trips and trips shared with this account.
   const { data: trips, error } = await supabase
     .from("trips")
-    .select("id,owner_id,title,start_date,end_date,cities,pace,budget,currency,created_at")
+    .select("id,owner_id,title,start_date,end_date,cities,pace,budget,currency,created_at,cover_style,cover_emoji,cover_tagline,template_key")
     .order("start_date", { ascending: true, nullsFirst: false });
 
   const rows = (trips || []) as TripRow[];
@@ -105,7 +109,8 @@ export default async function TripsPage({ searchParams }: { searchParams: Promis
             {rows.map((trip) => {
               const role = trip.owner_id === userId ? "owner" : (roleMap.get(trip.id) || "viewer");
               return (
-                <Link className="card trip-card" href={`/trips/${trip.id}`} key={trip.id}>
+                <Link className="card trip-card v7-trip-card" href={`/trips/${trip.id}`} key={trip.id}>
+                  <div className={`trip-list-cover trip-cover cover-${trip.cover_style || "sky"}`}><span>{trip.cover_emoji || "🧳"}</span><div><strong>{trip.cover_tagline || trip.cities?.join(" • ") || "Family journey"}</strong>{trip.template_key && <small>Template trip</small>}</div></div>
                   <div className="trip-card-top"><div className="trip-badge-row"><span className="badge">{trip.pace}</span><span className={`role-badge ${role}`}>{role === "owner" ? "Owner" : role === "editor" ? "Editor" : "Viewer"}</span></div><span className="small muted">{dateLabel(trip.start_date)} → {dateLabel(trip.end_date)}</span></div>
                   <h2>{trip.title}</h2>
                   <p>{trip.cities?.join(" • ") || "Japan"}</p>

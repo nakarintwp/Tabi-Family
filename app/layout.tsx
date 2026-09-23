@@ -5,7 +5,7 @@ import { PwaRegister } from "@/components/PwaRegister";
 
 export const metadata: Metadata = {
   title: "Tabi Family — Family Trip Planner",
-  description: "Mobile-first family trip planner with offline mode, collaboration, exports and weather planning.",
+  description: "Mobile-first family trip planner with Japan discovery, wishlist, templates, calendar, transport, readiness, offline mode and family collaboration.",
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, statusBarStyle: "default", title: "Tabi Family" },
 };
