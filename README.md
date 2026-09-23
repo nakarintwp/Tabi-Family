@@ -110,3 +110,8 @@ Removed Japanese visual motifs and red theme. The UI now uses Arctic Blue / Ice 
 ดู `V6_COMPLETE_UPGRADE.md` สำหรับขั้นตอนอัปเกรด
 
 V6 รวม PWA/Offline, Today Mode Pro, Collaboration Activity Feed, Export/Backup และ Weather/Rain Plan โดยไม่เพิ่ม paid API
+
+
+## V6.2 — Live Weather Atmosphere
+
+พื้นหลังเปลี่ยนตามสภาพอากาศจริงจากตำแหน่งปัจจุบัน: แจ่มใส / เมฆ / ฝน / หิมะ / หมอก / พายุ โดยใช้ Open-Meteo ฟรีและไม่ต้องใช้ API key ดูรายละเอียดที่ `V6_2_LIVE_WEATHER_ATMOSPHERE.md`.

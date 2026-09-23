@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { CartoonAtmosphere } from "@/components/CartoonAtmosphere";
+import { WeatherAtmosphere } from "@/components/WeatherAtmosphere";
 import { PwaRegister } from "@/components/PwaRegister";
 
 export const metadata: Metadata = {
@@ -20,7 +20,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="th">
       <body>
-        <CartoonAtmosphere />
+        <WeatherAtmosphere />
         <PwaRegister />
         {children}
       </body>
