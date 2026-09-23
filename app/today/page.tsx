@@ -14,14 +14,18 @@ export default async function TodayPage() {
 
   const { data: trips } = await supabase
     .from("trips")
-    .select("id,title,cities,start_date,end_date,trip_days(id,trip_date,title,activities(id,title,activity_type,start_time,duration_minutes,location_name,maps_url,latitude,longitude,notes,sort_order))")
+    .select("id,title,cities,start_date,end_date,trip_days(id,trip_date,title,activities(id,title,activity_type,start_time,duration_minutes,location_name,maps_url,latitude,longitude,notes,sort_order,status,is_outdoor,rain_alternative))")
     .order("start_date", { ascending: true, nullsFirst: false });
+
+  const tripRows = trips || [];
+  const roles = await Promise.all(tripRows.map(async (trip) => { const { data } = await supabase.rpc("trip_access_role", { p_trip_id: trip.id }); return data; }));
+  const tripsWithAccess = tripRows.map((trip, index) => ({ ...trip, canEdit: roles[index] === "owner" || roles[index] === "editor" }));
 
   return (
     <main className="shell">
       <div className="container today-container">
         <AppHeader />
-        <TodayMode trips={trips || []} />
+        <TodayMode trips={tripsWithAccess} />
       </div>
       <BottomNav active="/today" />
     </main>

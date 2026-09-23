@@ -6,6 +6,7 @@ import { SubmitButton } from "@/components/SubmitButton";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
 import { requireVerifiedUser } from "@/lib/supabase/auth";
 import { changePassword, signOut } from "./actions";
+import { PwaInstallCard } from "@/components/PwaInstallCard";
 
 export default async function AccountPage({ searchParams }: { searchParams: Promise<{ password_changed?: string; password_error?: string }> }) {
   const query = await searchParams;
@@ -29,6 +30,7 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
           <div className="profile-avatar">👤</div>
           <div><strong>{user.email}</strong><p className="small muted">Email + Password · {user.id.slice(0, 8)}…</p></div>
         </div>
+        <PwaInstallCard />
         <div className="stack section">
           <Link className="card action-link" href="/trips"><span>🗾 ทริปของฉัน</span><span>›</span></Link>
           <Link className="card action-link" href="/trips/new"><span>＋ สร้างทริปใหม่</span><span>›</span></Link>

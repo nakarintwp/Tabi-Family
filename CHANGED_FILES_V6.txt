@@ -1,0 +1,34 @@
+V6 Complete Trip Experience
+
+Added:
+- app/manifest.ts
+- app/offline/page.tsx
+- app/today/actions.ts
+- app/trips/[id]/weather/page.tsx
+- app/trips/[id]/export/page.tsx
+- components/PwaRegister.tsx
+- components/PwaInstallCard.tsx
+- components/OfflineSnapshot.tsx
+- components/OfflineView.tsx
+- components/ExportTools.tsx
+- lib/weather.ts
+- public/sw.js
+- public/icons/icon-192.png
+- public/icons/icon-512.png
+- public/icons/icon-512-maskable.png
+- supabase/migrations/20260923_v6_complete_trip_experience.sql
+- V6_COMPLETE_UPGRADE.md
+
+Updated:
+- app/layout.tsx
+- app/today/page.tsx
+- components/TodayMode.tsx
+- app/trips/[id]/page.tsx
+- app/trips/[id]/days/[dayId]/page.tsx
+- app/trips/[id]/days/[dayId]/actions.ts
+- app/account/page.tsx
+- app/globals.css
+- proxy.ts
+- package.json
+- README.md
+- SUPABASE_SETUP.md

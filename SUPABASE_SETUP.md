@@ -12,3 +12,11 @@
 10. ทดสอบด้วย 2 บัญชี: Owner สร้าง QR → บัญชีที่สองสแกน → Join
 
 ดูรายละเอียดใน `V4_3_UPGRADE.md`
+
+## V6 migration
+
+หลังจาก V5.1 ให้รัน:
+
+`supabase/migrations/20260923_v6_complete_trip_experience.sql`
+
+เพื่อเปิดใช้ Today statuses, Rain Plan metadata และ Collaboration Activity Feed

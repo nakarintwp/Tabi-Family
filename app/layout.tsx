@@ -1,10 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { WinterAtmosphere } from "@/components/WinterAtmosphere";
+import { PwaRegister } from "@/components/PwaRegister";
 
 export const metadata: Metadata = {
   title: "Tabi Family — Family Trip Planner",
-  description: "Mobile-first family trip planner with a clean modern winter experience, built with Next.js, Supabase and Vercel.",
+  description: "Mobile-first family trip planner with offline mode, collaboration, exports and weather planning.",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: { capable: true, statusBarStyle: "default", title: "Tabi Family" },
 };
 
 export const viewport: Viewport = {
@@ -18,6 +21,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="th">
       <body>
         <WinterAtmosphere />
+        <PwaRegister />
         {children}
       </body>
     </html>

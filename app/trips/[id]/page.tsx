@@ -35,7 +35,10 @@ export default async function TripDetailPage({ params, searchParams }: { params:
 
   if (!trip) notFound();
 
-  const { data: accessRole } = await supabase.rpc("trip_access_role", { p_trip_id: id });
+  const [{ data: accessRole }, { data: activityFeed }] = await Promise.all([
+    supabase.rpc("trip_access_role", { p_trip_id: id }),
+    supabase.rpc("get_trip_activity_feed", { p_trip_id: id, p_limit: 8 }),
+  ]);
   const role = (accessRole || (trip.owner_id === userId ? "owner" : "viewer")) as "owner" | "editor" | "viewer";
   const canEdit = role === "owner" || role === "editor";
   const isOwner = role === "owner";
@@ -60,7 +63,7 @@ export default async function TripDetailPage({ params, searchParams }: { params:
         {query.joined === "1" && <div className="success-box">เข้าร่วมทริปเรียบร้อยแล้ว ✓</div>}
 
         <section className="hero compact-hero trip-hero">
-          <div className="trip-hero-role-row"><div className="eyebrow">Trip dashboard · V4.3 Sharing</div><span className={`role-badge ${role}`}>{role === "owner" ? "Owner" : role === "editor" ? "Editor" : "Viewer"}</span></div>
+          <div className="trip-hero-role-row"><div className="eyebrow">Trip dashboard · V6 Complete</div><span className={`role-badge ${role}`}>{role === "owner" ? "Owner" : role === "editor" ? "Editor" : "Viewer"}</span></div>
           <h1>{trip.title}</h1>
           <p>{trip.cities?.join(" • ")}</p>
           <div className="hero-row">
@@ -83,6 +86,8 @@ export default async function TripDetailPage({ params, searchParams }: { params:
           <Link className="quick-action" href={`/trips/${trip.id}/map`}><span>🧭</span><strong>Route</strong><small>Current location</small></Link>
           <Link className="quick-action" href={`/trips/${trip.id}/packing`}><span>🧳</span><strong>Packing</strong><small>{packingItems.length ? `${packedItems}/${packingItems.length} พร้อม` : "Checklist"}</small></Link>
           <Link className="quick-action" href={`/trips/${trip.id}/wallet`}><span>👛</span><strong>Wallet</strong><small>{bookings.length} booking</small></Link>
+          <Link className="quick-action" href={`/trips/${trip.id}/weather`}><span>🌦️</span><strong>Weather</strong><small>Rain Plan ฟรี</small></Link>
+          <Link className="quick-action" href={`/trips/${trip.id}/export`}><span>⬇️</span><strong>Export</strong><small>PDF • CSV • Backup</small></Link>
           {isOwner && <Link className="quick-action share-quick-action" href={`/trips/${trip.id}/share`}><span>📲</span><strong>แชร์ทริป</strong><small>QR • Editor • Viewer</small></Link>}
         </section>
 
@@ -103,6 +108,11 @@ export default async function TripDetailPage({ params, searchParams }: { params:
               );
             })}
           </div>
+        </section>
+
+        <section className="section">
+          <div className="section-head"><h2>การเปลี่ยนแปลงล่าสุด</h2>{isOwner && <Link href={`/trips/${trip.id}/share`} className="link">จัดการสมาชิก ›</Link>}</div>
+          {(activityFeed || []).length ? <div className="activity-feed">{(activityFeed || []).map((item:any) => <div className="activity-feed-row" key={item.id}><div className="activity-feed-dot">•</div><div><strong>{item.summary}</strong><small>{item.actor_email || "System"} · {new Intl.DateTimeFormat("th-TH", { dateStyle: "short", timeStyle: "short" }).format(new Date(item.created_at))}</small></div></div>)}</div> : <div className="empty-mini">ยังไม่มีประวัติการแก้ไขหลังอัปเกรด V6</div>}
         </section>
 
         <section className="section" id="family">

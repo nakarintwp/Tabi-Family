@@ -42,7 +42,7 @@ export default async function DayPlannerPage({ params }: { params: Promise<{ id:
       .single(),
     supabase
       .from("trip_days")
-      .select("id,trip_id,trip_date,title,notes,activities(id,title,activity_type,start_time,duration_minutes,location_name,maps_url,latitude,longitude,notes,child_friendly,senior_friendly,sort_order,created_at)")
+      .select("id,trip_id,trip_date,title,notes,activities(id,title,activity_type,start_time,duration_minutes,location_name,maps_url,latitude,longitude,notes,child_friendly,senior_friendly,sort_order,created_at,status,is_outdoor,rain_alternative)")
       .eq("id", dayId)
       .eq("trip_id", id)
       .single(),
@@ -81,7 +81,7 @@ export default async function DayPlannerPage({ params }: { params: Promise<{ id:
 
         <section className="planner-hero v4-hero">
           <div>
-            <div className="eyebrow">Day Planner Pro · V4.3</div>
+            <div className="eyebrow">Day Planner Pro · V6</div>
             <h1>{day.title || `Day ${dayIndex + 1}`}</h1>
             <p>{longDate(day.trip_date)}</p>
           </div>
@@ -126,6 +126,8 @@ export default async function DayPlannerPage({ params }: { params: Promise<{ id:
                           {activity.location_name && <p>📍 {activity.location_name}</p>}
                           {mapUrl && <a className="micro-link" target="_blank" rel="noreferrer" href={mapUrl}>เปิด Google Maps ↗</a>}
                           {activity.notes && <p className="activity-notes">{activity.notes}</p>}
+                          {activity.is_outdoor && <span className="weather-sensitive-badge">☁️ Outdoor</span>}
+                          {activity.rain_alternative && <p className="activity-notes">☔ สำรองฝน: {activity.rain_alternative}</p>}
                           <div className="friendly-row">{activity.child_friendly && <span>👧 เด็ก</span>}{activity.senior_friendly && <span>👵 ผู้สูงอายุ</span>}</div>
                         </div>
                       </div>
@@ -167,7 +169,7 @@ export default async function DayPlannerPage({ params }: { params: Promise<{ id:
                           <input className="input" name="maps_url" type="url" defaultValue={activity.maps_url || ""} placeholder="วางลิงก์ Google Maps (ไม่บังคับ)" />
                           <input className="input" name="duration_minutes" type="number" min="0" step="5" defaultValue={activity.duration_minutes || ""} placeholder="ระยะเวลา (นาที)" />
                           <textarea className="textarea" name="notes" defaultValue={activity.notes || ""} placeholder="หมายเหตุ" rows={3} />
-                          <div className="check-row"><label><input type="checkbox" name="child_friendly" defaultChecked={activity.child_friendly} /> เหมาะกับเด็ก</label><label><input type="checkbox" name="senior_friendly" defaultChecked={activity.senior_friendly} /> เหมาะกับผู้สูงอายุ</label></div>
+                          <div className="check-row"><label><input type="checkbox" name="child_friendly" defaultChecked={activity.child_friendly} /> เหมาะกับเด็ก</label><label><input type="checkbox" name="senior_friendly" defaultChecked={activity.senior_friendly} /> เหมาะกับผู้สูงอายุ</label><label><input type="checkbox" name="is_outdoor" defaultChecked={activity.is_outdoor} /> กลางแจ้ง / อ่อนไหวต่ออากาศ</label></div><input className="input" name="rain_alternative" defaultValue={activity.rain_alternative || ""} placeholder="แผนสำรองถ้าฝนตก เช่น Tokyo National Museum" />
                           <SubmitButton className="btn btn-secondary" pendingText="กำลังบันทึก...">บันทึกการแก้ไข</SubmitButton>
                         </form>
                         <form action={deleteActivity} className="delete-form"><input type="hidden" name="trip_id" value={trip.id} /><input type="hidden" name="day_id" value={day.id} /><input type="hidden" name="activity_id" value={activity.id} /><SubmitButton className="btn btn-danger btn-small" pendingText="กำลังลบ...">ลบกิจกรรม</SubmitButton></form>
@@ -193,7 +195,7 @@ export default async function DayPlannerPage({ params }: { params: Promise<{ id:
               <div className="field"><label>Google Maps URL (ไม่บังคับ)</label><input className="input" name="maps_url" type="url" placeholder="https://maps.app.goo.gl/..." /><small className="field-help">ถ้าไม่ใส่ ระบบจะสร้างลิงก์ค้นหา Google Maps จากชื่อสถานที่ให้เอง</small></div>
               <div className="field"><label>ระยะเวลาโดยประมาณ (นาที)</label><input className="input" name="duration_minutes" type="number" min="0" step="5" placeholder="90" /></div>
               <div className="field"><label>หมายเหตุ</label><textarea className="textarea" name="notes" rows={3} placeholder="Ticket, จุดนัดพบ, สิ่งที่ต้องเตรียม..." /></div>
-              <div className="check-row"><label><input type="checkbox" name="child_friendly" defaultChecked /> เหมาะกับเด็ก</label><label><input type="checkbox" name="senior_friendly" defaultChecked /> เหมาะกับผู้สูงอายุ</label></div>
+              <div className="check-row"><label><input type="checkbox" name="child_friendly" defaultChecked /> เหมาะกับเด็ก</label><label><input type="checkbox" name="senior_friendly" defaultChecked /> เหมาะกับผู้สูงอายุ</label><label><input type="checkbox" name="is_outdoor" /> กลางแจ้ง / อ่อนไหวต่ออากาศ</label></div><div className="field"><label>แผนสำรองถ้าฝนตก (ไม่บังคับ)</label><input className="input" name="rain_alternative" placeholder="เช่น Tokyo National Museum" /></div>
               <SubmitButton className="btn btn-primary btn-full" pendingText="กำลังเพิ่มกิจกรรม...">+ เพิ่มลง Timeline</SubmitButton>
             </form>
           </details>

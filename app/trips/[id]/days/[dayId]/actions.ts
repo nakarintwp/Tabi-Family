@@ -64,6 +64,9 @@ export async function addActivity(formData: FormData) {
     notes: textOrNull(formData.get("notes")),
     child_friendly: formData.get("child_friendly") === "on",
     senior_friendly: formData.get("senior_friendly") === "on",
+    is_outdoor: formData.get("is_outdoor") === "on",
+    rain_alternative: textOrNull(formData.get("rain_alternative")),
+    status: "planned",
     sort_order: sortOrder,
   });
   if (error) throw new Error(`เพิ่มกิจกรรมไม่สำเร็จ: ${error.message}`);
@@ -91,6 +94,8 @@ export async function updateActivity(formData: FormData) {
     notes: textOrNull(formData.get("notes")),
     child_friendly: formData.get("child_friendly") === "on",
     senior_friendly: formData.get("senior_friendly") === "on",
+    is_outdoor: formData.get("is_outdoor") === "on",
+    rain_alternative: textOrNull(formData.get("rain_alternative")),
   }).eq("id", activityId).eq("day_id", dayId);
   if (error) throw new Error(`แก้ไขกิจกรรมไม่สำเร็จ: ${error.message}`);
   paths(tripId, dayId);
@@ -145,7 +150,7 @@ export async function duplicateActivity(formData: FormData) {
 
   const { data: source, error } = await supabase
     .from("activities")
-    .select("title,activity_type,start_time,duration_minutes,location_name,maps_url,latitude,longitude,reservation_required,child_friendly,senior_friendly,notes")
+    .select("title,activity_type,start_time,duration_minutes,location_name,maps_url,latitude,longitude,reservation_required,child_friendly,senior_friendly,notes,is_outdoor,rain_alternative,status")
     .eq("id", activityId)
     .eq("day_id", dayId)
     .single();
@@ -182,7 +187,7 @@ export async function copyDayPlan(formData: FormData) {
   if (!tripId || !sourceDayId || !targetDayId || sourceDayId === targetDayId) return;
 
   const [{ data: sourceRows }, { data: targetDay }] = await Promise.all([
-    supabase.from("activities").select("title,activity_type,start_time,duration_minutes,location_name,maps_url,latitude,longitude,reservation_required,child_friendly,senior_friendly,notes,sort_order").eq("day_id", sourceDayId).order("sort_order"),
+    supabase.from("activities").select("title,activity_type,start_time,duration_minutes,location_name,maps_url,latitude,longitude,reservation_required,child_friendly,senior_friendly,notes,is_outdoor,rain_alternative,status,sort_order").eq("day_id", sourceDayId).order("sort_order"),
     supabase.from("trip_days").select("id").eq("id", targetDayId).eq("trip_id", tripId).maybeSingle(),
   ]);
   if (!targetDay || !sourceRows?.length) return;

@@ -98,3 +98,9 @@ See `V5_JAPANESE_WINTER_UI.md`. No SQL migration is required.
 
 ## V5.1 — Modern Winter UI
 Removed Japanese visual motifs and red theme. The UI now uses Arctic Blue / Ice / White with CSS-only falling snow. No SQL migration required.
+
+## V6 — Complete Trip Experience
+
+ดู `V6_COMPLETE_UPGRADE.md` สำหรับขั้นตอนอัปเกรด
+
+V6 รวม PWA/Offline, Today Mode Pro, Collaboration Activity Feed, Export/Backup และ Weather/Rain Plan โดยไม่เพิ่ม paid API
