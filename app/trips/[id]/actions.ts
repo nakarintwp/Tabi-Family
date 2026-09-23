@@ -61,3 +61,27 @@ export async function addExpense(formData: FormData) {
   revalidatePath(`/trips/${tripId}`);
   revalidatePath("/wallet");
 }
+export async function deleteTrip(formData: FormData) {
+  const { supabase, userId } = await requireUser();
+  const tripId = String(formData.get("trip_id") || "");
+  if (!tripId) return;
+
+  // RLS already restricts DELETE to the owner. The explicit owner_id filter is
+  // an additional guard so this action can never delete another user's trip.
+  const { error } = await supabase
+    .from("trips")
+    .delete()
+    .eq("id", tripId)
+    .eq("owner_id", userId);
+
+  if (error) {
+    throw new Error(`ลบทริปไม่สำเร็จ: ${error.message}`);
+  }
+
+  revalidatePath("/");
+  revalidatePath("/trips");
+  revalidatePath("/plan");
+  revalidatePath("/map");
+  revalidatePath("/wallet");
+  redirect("/trips?deleted=1");
+}

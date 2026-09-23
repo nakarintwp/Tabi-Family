@@ -10,7 +10,8 @@ function dateLabel(value: string | null) {
   return new Intl.DateTimeFormat("th-TH", { day: "numeric", month: "short", year: "numeric" }).format(new Date(`${value}T00:00:00`));
 }
 
-export default async function TripsPage() {
+export default async function TripsPage({ searchParams }: { searchParams: Promise<{ deleted?: string }> }) {
+  const query = await searchParams;
   if (!hasSupabaseEnv()) redirect("/auth/login?error=missing_env");
   const supabase = await createClient();
   const { data: claimsData } = await supabase.auth.getClaims();
@@ -32,6 +33,7 @@ export default async function TripsPage() {
           <Link className="btn btn-primary mini-btn" href="/trips/new">+ ใหม่</Link>
         </div>
 
+        {query.deleted === "1" && <div className="success-box">ลบทริปเรียบร้อยแล้ว</div>}
         {error && <div className="error-box">โหลดข้อมูลไม่สำเร็จ: {error.message}</div>}
 
         {!trips?.length ? (

@@ -339,3 +339,17 @@ button { cursor: pointer; }
   .pace-score-ring { width: 62px; height: 62px; border-width: 5px; }
   .pace-score-ring strong { font-size: 20px; }
 }
+
+/* Trip deletion / danger zone */
+.danger-zone { margin-bottom: 96px; }
+.danger-zone-copy { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 18px; border: 1px solid #f1caca; border-radius: 22px; background: #fffafa; }
+.danger-zone-copy > div { min-width: 0; }
+.danger-kicker { display: block; margin-bottom: 3px; color: #a94747; font-size: 9px; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
+.danger-zone h2 { margin: 0; font-size: 16px; color: #7f3030; }
+.danger-zone p { max-width: 520px; margin: 6px 0 0; color: #7d5b5b; font-size: 10px; line-height: 1.55; }
+.delete-trip-button { min-width: 122px; border: 1px solid #e7b4b4; cursor: pointer; }
+.delete-trip-button:disabled { opacity: .55; cursor: wait; }
+@media (max-width: 560px) {
+  .danger-zone-copy { align-items: stretch; flex-direction: column; }
+  .delete-trip-button { width: 100%; }
+}

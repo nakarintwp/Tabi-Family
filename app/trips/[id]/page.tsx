@@ -3,8 +3,9 @@ import { notFound, redirect } from "next/navigation";
 import { AppHeader } from "@/components/AppHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { SubmitButton } from "@/components/SubmitButton";
+import { DeleteTripButton } from "@/components/DeleteTripButton";
 import { createClient } from "@/lib/supabase/server";
-import { addExpense, addMember } from "./actions";
+import { addExpense, addMember, deleteTrip } from "./actions";
 
 function dateLabel(value: string) {
   return new Intl.DateTimeFormat("th-TH", { weekday: "short", day: "numeric", month: "short" }).format(new Date(`${value}T00:00:00`));
@@ -144,6 +145,17 @@ export default async function TripDetailPage({ params }: { params: Promise<{ id:
               <SubmitButton className="btn btn-secondary" pendingText="กำลังบันทึก...">บันทึกค่าใช้จ่าย</SubmitButton>
             </form>
           </details>
+        </section>
+
+        <section className="section danger-zone">
+          <div className="danger-zone-copy">
+            <div>
+              <span className="danger-kicker">จัดการทริป</span>
+              <h2>ลบทริป</h2>
+              <p>ลบได้เฉพาะทริปที่เป็นของบัญชีที่ล็อกอินอยู่ การลบจะลบวันเดินทาง กิจกรรม สมาชิก การจอง และค่าใช้จ่ายของทริปนี้ทั้งหมด</p>
+            </div>
+            <DeleteTripButton action={deleteTrip} tripId={trip.id} tripTitle={trip.title} />
+          </div>
         </section>
       </div>
       <BottomNav active="/trips" />
