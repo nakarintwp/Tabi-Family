@@ -28,3 +28,10 @@ After V6, run:
 `supabase/migrations/20260923_v7_discovery_planning.sql`
 
 This adds Trip Cover metadata, Wishlist, Transport Segments and their RLS policies. No new environment variable is required.
+
+
+## V7.3 migration
+
+สำหรับเพิ่มกิจกรรมที่สนใจระดับ Trip และใช้กับ Explore ให้ Run:
+
+`supabase/migrations/20260923_v7_3_trip_interests.sql`

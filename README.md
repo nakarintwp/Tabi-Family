@@ -1,4 +1,6 @@
-# Tabi Family — V7.2 Trip-Scoped Explore
+# Tabi Family
+
+**Current version: V7.3 — Trip Interests**
 
 Mobile-first Japan family trip planner built with **Next.js + Supabase + Vercel**.
 
@@ -85,3 +87,7 @@ Run `supabase/schema.sql`. For an existing project, apply migrations in sequence
 - Fixes trip deletion after the V6/V7 activity-feed triggers.
 - Run `supabase/migrations/20260923_v7_2_1_delete_trip_fix.sql` before testing delete.
 - Delete failures now show a readable database error instead of the generic server-error page.
+
+
+## V7.3 — Trip Interests
+เลือกเมืองและกิจกรรมที่สนใจตอนสร้าง Trip จากนั้น Explore จะใช้สองข้อมูลนี้เพื่อคัดพื้นที่และเรียงสถานที่แนะนำให้ตรงกับทริปมากขึ้น ดู `V7_3_TRIP_INTERESTS.md`

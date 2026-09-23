@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { AppHeader } from "@/components/AppHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { SubmitButton } from "@/components/SubmitButton";
-import { DISCOVERY_DESTINATIONS, getTemplate } from "@/lib/discovery";
+import { DEFAULT_TRIP_INTERESTS, DISCOVERY_DESTINATIONS, TRIP_INTERESTS, getTemplate } from "@/lib/discovery";
 import { createTrip } from "./actions";
 
 export default async function NewTripPage({ searchParams }: { searchParams: Promise<{ error?: string; template?: string }> }) {
@@ -11,6 +11,7 @@ export default async function NewTripPage({ searchParams }: { searchParams: Prom
   const template = templateId ? getTemplate(templateId) : undefined;
   const createRequestId = randomUUID();
   const selectedCities = new Set(template?.cities || ["Nagoya", "Takayama", "Shirakawa-go"]);
+  const selectedInterests = new Set(DEFAULT_TRIP_INTERESTS);
 
   return (
     <main className="shell">
@@ -54,6 +55,20 @@ export default async function NewTripPage({ searchParams }: { searchParams: Prom
               ))}
             </div>
             <p className="small muted form-hint">ตัวอย่างทริป Chubu: Nagoya → Takayama → Shirakawa-go เมื่อเข้า Explore จะเห็นเฉพาะพื้นที่ของทริปนี้</p>
+          </div>
+
+          <div className="field">
+            <div className="field-label-row"><label>กิจกรรมที่สนใจ</label><span className="small muted">Explore จะเรียงสถานที่ที่ตรงใจขึ้นก่อน</span></div>
+            <div className="interest-picker">
+              {TRIP_INTERESTS.map((interest) => (
+                <label className="interest-option" key={interest.id}>
+                  <input type="checkbox" name="interests" value={interest.id} defaultChecked={selectedInterests.has(interest.id)} />
+                  <span className="interest-option-emoji">{interest.emoji}</span>
+                  <span><strong>{interest.label}</strong><small>{interest.subtitle}</small></span>
+                </label>
+              ))}
+            </div>
+            <p className="small muted form-hint">เลือกได้หลายแบบ เช่น ❄️ หิมะ · 🎡 สวนสนุก · 🛍️ ช้อปปิ้ง · 📍 สถานที่เที่ยวชม · 🍎 ตลาด</p>
           </div>
 
           <div className="grid2">

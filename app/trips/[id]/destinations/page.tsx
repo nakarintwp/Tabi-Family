@@ -4,21 +4,22 @@ import { AppHeader } from "@/components/AppHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { SubmitButton } from "@/components/SubmitButton";
 import { requireVerifiedUser } from "@/lib/supabase/auth";
-import { DISCOVERY_DESTINATIONS } from "@/lib/discovery";
+import { DISCOVERY_DESTINATIONS, TRIP_INTERESTS } from "@/lib/discovery";
 import { updateTripDestinations } from "./actions";
 
 export default async function TripDestinationsPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ saved?: string; error?: string }> }) {
   const { id } = await params;
   const query = await searchParams;
   const { supabase, userId } = await requireVerifiedUser(`/trips/${id}/destinations`);
-  const { data: trip } = await supabase.from("trips").select("id,title,owner_id,cities").eq("id", id).single();
+  const { data: trip } = await supabase.from("trips").select("id,title,owner_id,cities,interests").eq("id", id).single();
   if (!trip) notFound();
   const isOwner = trip.owner_id === userId;
   const selected = new Set<string>(trip.cities || []);
+  const selectedInterests = new Set<string>(trip.interests || []);
 
   return <main className="shell"><div className="container"><AppHeader />
-    <div className="planner-topbar"><Link href={`/trips/${id}`} className="back-link">‹ Dashboard</Link><span className="planner-counter">Destinations</span></div>
-    <section className="planner-hero destination-hero"><div><span className="eyebrow">TRIP SCOPE</span><h1>เมือง / พื้นที่ของทริป</h1><p>{trip.title}</p></div><Link className="btn btn-secondary" href={`/explore?trip=${id}`}>✨ เปิด Explore</Link></section>
+    <div className="planner-topbar"><Link href={`/trips/${id}`} className="back-link">‹ Dashboard</Link><span className="planner-counter">Destinations & Interests</span></div>
+    <section className="planner-hero destination-hero"><div><span className="eyebrow">TRIP SCOPE</span><h1>เมืองและกิจกรรมที่สนใจ</h1><p>{trip.title}</p></div><Link className="btn btn-secondary" href={`/explore?trip=${id}`}>✨ เปิด Explore</Link></section>
     {query.saved === "1" && <div className="success-box">อัปเดตพื้นที่ของ Trip แล้ว ✓</div>}
     {query.error && <div className="error-box">{query.error}</div>}
 
@@ -34,7 +35,16 @@ export default async function TripDestinationsPage({ params, searchParams }: { p
             <span><strong>{destination.label}</strong><small>{destination.subtitle}</small></span>
           </label>)}
         </div>
-        {isOwner && <SubmitButton className="btn btn-primary btn-full" pendingText="กำลังบันทึก...">บันทึกเมืองของ Trip</SubmitButton>}
+
+        <div className="section-head compact-head"><h2>กิจกรรมที่สนใจ</h2><span className="small muted">ใช้จัดลำดับคำแนะนำใน Explore</span></div>
+        <div className="interest-picker">
+          {TRIP_INTERESTS.map((interest) => <label className={`interest-option ${!isOwner ? "disabled" : ""}`} key={interest.id}>
+            <input type="checkbox" name="interests" value={interest.id} defaultChecked={selectedInterests.has(interest.id)} disabled={!isOwner} />
+            <span className="interest-option-emoji">{interest.emoji}</span>
+            <span><strong>{interest.label}</strong><small>{interest.subtitle}</small></span>
+          </label>)}
+        </div>
+        {isOwner && <SubmitButton className="btn btn-primary btn-full" pendingText="กำลังบันทึก...">บันทึกเมืองและความสนใจ</SubmitButton>}
       </form>
     </section>
 

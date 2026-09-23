@@ -3,7 +3,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { SubmitButton } from "@/components/SubmitButton";
 import { requireVerifiedUser } from "@/lib/supabase/auth";
-import { DISCOVERY_PLACES } from "@/lib/discovery";
+import { DISCOVERY_PLACES, TRIP_INTERESTS, getMatchingTripInterests } from "@/lib/discovery";
 import { savePlaceToWishlist } from "./actions";
 
 const categoryLabels: Record<string, string> = {
@@ -15,14 +15,14 @@ const categoryLabels: Record<string, string> = {
   shopping: "ช้อปปิ้ง",
 };
 
-type ExploreQuery = { city?: string; category?: string; trip?: string; saved?: string; error?: string };
+type ExploreQuery = { city?: string; category?: string; interest?: string; trip?: string; saved?: string; error?: string };
 
 export default async function ExplorePage({ searchParams }: { searchParams: Promise<ExploreQuery> }) {
   const query = await searchParams;
   const { supabase, userId } = await requireVerifiedUser("/explore");
   const { data: trips } = await supabase
     .from("trips")
-    .select("id,title,owner_id,cities,start_date")
+    .select("id,title,owner_id,cities,interests,start_date")
     .order("start_date", { ascending: true, nullsFirst: false });
 
   const rows = trips || [];
@@ -41,22 +41,29 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
   const availableCities = tripCities.length ? tripCities : allCities;
   const activeCity = query.city && availableCities.includes(query.city) ? query.city : "all";
   const activeCategory = query.category || "all";
+  const tripInterests = (selectedTrip?.interests || []).filter((value: string) => TRIP_INTERESTS.some((item) => item.id === value));
+  const activeInterest = query.interest && TRIP_INTERESTS.some((item) => item.id === query.interest) ? query.interest : "all";
 
   const filtered = DISCOVERY_PLACES.filter((place) =>
     (!tripCities.length || tripCities.includes(place.city)) &&
     (activeCity === "all" || place.city === activeCity) &&
-    (activeCategory === "all" || place.category === activeCategory)
-  );
+    (activeCategory === "all" || place.category === activeCategory) &&
+    (activeInterest === "all" || getMatchingTripInterests(place, [activeInterest]).length > 0)
+  ).sort((a, b) => {
+    if (!tripInterests.length) return 0;
+    return getMatchingTripInterests(b, tripInterests).length - getMatchingTripInterests(a, tripInterests).length;
+  });
 
-  const buildHref = (city: string, category: string, tripId = selectedTrip?.id) => {
+  const buildHref = (city: string, category: string, tripId = selectedTrip?.id, interest = activeInterest) => {
     const params = new URLSearchParams();
     if (tripId) params.set("trip", tripId);
     if (city !== "all") params.set("city", city);
     if (category !== "all") params.set("category", category);
+    if (interest !== "all") params.set("interest", interest);
     const qs = params.toString();
     return `/explore${qs ? `?${qs}` : ""}`;
   };
-  const returnTo = buildHref(activeCity, activeCategory);
+  const returnTo = buildHref(activeCity, activeCategory, selectedTrip?.id, activeInterest);
 
   return <main className="shell"><div className="container"><AppHeader />
     <section className="discovery-hero">
@@ -80,8 +87,9 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
       </div>
       {selectedTrip && <div className="trip-destination-summary">
         <div><strong>พื้นที่ของทริปนี้</strong><p>{tripCities.length ? tripCities.join(" → ") : "ยังไม่มีเมืองที่ตรงกับ Explore database"}</p></div>
-        {selectedTrip.owner_id === userId && <Link className="link" href={`/trips/${selectedTrip.id}/destinations`}>แก้เมือง ›</Link>}
+        {selectedTrip.owner_id === userId && <Link className="link" href={`/trips/${selectedTrip.id}/destinations`}>แก้เมือง / ความสนใจ ›</Link>}
       </div>}
+      {selectedTrip && tripInterests.length > 0 && <div className="trip-interest-summary"><strong>สนใจเป็นพิเศษ</strong><div>{tripInterests.map((id: string) => { const meta = TRIP_INTERESTS.find((item) => item.id === id); return meta ? <span key={id}>{meta.emoji} {meta.label}</span> : null; })}</div></div>}
     </section>}
 
     <section className="section">
@@ -94,6 +102,10 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
         <Link className={`filter-chip ${activeCategory === "all" ? "active" : ""}`} href={buildHref(activeCity, "all")}>ทุกประเภท</Link>
         {Object.entries(categoryLabels).map(([key, label]) => <Link key={key} className={`filter-chip ${activeCategory === key ? "active" : ""}`} href={buildHref(activeCity, key)}>{label}</Link>)}
       </div>
+      {selectedTrip && tripInterests.length > 0 && <div className="filter-chip-row compact-filter-row interest-filter-row">
+        <Link className={`filter-chip ${activeInterest === "all" ? "active" : ""}`} href={buildHref(activeCity, activeCategory, selectedTrip.id, "all")}>⭐ แนะนำทั้งหมด</Link>
+        {tripInterests.map((id: string) => { const meta = TRIP_INTERESTS.find((item) => item.id === id); return meta ? <Link key={id} className={`filter-chip ${activeInterest === id ? "active" : ""}`} href={buildHref(activeCity, activeCategory, selectedTrip.id, id)}>{meta.emoji} {meta.label}</Link> : null; })}
+      </div>}
     </section>
 
     {!rows.length && <div className="notice"><span>💡</span><div><strong>สร้างทริปก่อนเพื่อให้ Explore รู้ว่าคุณจะไปไหน</strong><br/><span className="muted">เมืองที่เลือกตอนสร้าง Trip จะกลายเป็นตัวกรองอัตโนมัติ</span><br/><Link className="link" href="/trips/new">สร้างทริปใหม่ ›</Link></div></div>}
@@ -101,8 +113,8 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
     {!filtered.length && <div className="empty-state"><div className="empty-icon">🗺️</div><h2>ยังไม่มีสถานที่ในพื้นที่นี้</h2><p>ลองเปลี่ยนเมืองหรือกลับไปแก้ Destinations ของ Trip</p>{selectedTrip && selectedTrip.owner_id === userId && <Link className="btn btn-primary" href={`/trips/${selectedTrip.id}/destinations`}>แก้เมืองในทริป</Link>}</div>}
 
     <section className="explore-grid">
-      {filtered.map((place) => <article className="place-card" key={place.slug}>
-        <div className="place-card-cover"><span>{place.emoji}</span><div className="place-city-badge">{place.city}</div></div>
+      {filtered.map((place) => { const matchedInterests = getMatchingTripInterests(place, tripInterests); return <article className="place-card" key={place.slug}>
+        <div className="place-card-cover"><span>{place.emoji}</span><div className="place-city-badge">{place.city}</div>{matchedInterests.length > 0 && <div className="interest-match-badge">⭐ ตรงใจ {matchedInterests.length}</div>}</div>
         <div className="place-card-body">
           <div className="place-meta">{place.area} · {categoryLabels[place.category] || place.category}</div>
           <h2>{place.title}</h2>
@@ -125,7 +137,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
             <SubmitButton className="btn btn-primary" pendingText="กำลังบันทึก...">♡ Wishlist</SubmitButton>
           </form> : <Link href="/trips/new" className="btn btn-primary btn-full">สร้างทริปเพื่อบันทึก</Link>}
         </div>
-      </article>)}
+      </article>})}
     </section>
   </div><BottomNav active="/explore" /></main>;
 }

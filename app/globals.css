@@ -1634,3 +1634,25 @@ body::before {
   .destination-picker { grid-template-columns: 1fr 1fr; }
   .trip-scope-chip { flex-basis: 310px; }
 }
+
+
+/* =========================================================
+   V7.3 — Trip Interests
+   ========================================================= */
+.interest-picker { display: grid; grid-template-columns: 1fr; gap: 9px; margin-top: 8px; }
+.interest-option { position: relative; display: grid; grid-template-columns: auto auto 1fr; align-items: center; gap: 10px; min-height: 64px; padding: 11px 13px; border: 1px solid #dbeaf2; border-radius: 20px; background: rgba(255,255,255,.94); cursor: pointer; box-shadow: 0 6px 18px rgba(47,118,153,.05); transition: border-color .15s ease, transform .15s ease, background .15s ease; }
+.interest-option:hover { border-color: #9fd5ee; transform: translateY(-1px); }
+.interest-option input { width: 18px; height: 18px; accent-color: #178dd1; }
+.interest-option-emoji { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 15px; background: #eef9ff; font-size: 22px; }
+.interest-option strong, .interest-option small { display: block; }
+.interest-option strong { color: #183d56; font-size: 14px; }
+.interest-option small { margin-top: 2px; color: #79909f; font-size: 11px; line-height: 1.35; }
+.interest-option:has(input:checked) { border-color: #58b4e2; background: linear-gradient(135deg,#fbfeff,#e9f8ff); box-shadow: 0 8px 22px rgba(23,141,209,.10); }
+.interest-option.disabled { cursor: default; opacity: .72; }
+.trip-interest-summary { margin-top: 9px; padding: 12px 14px; border-radius: 20px; border: 1px solid #d9edf8; background: rgba(249,253,255,.92); }
+.trip-interest-summary > strong { display: block; color: #1a4f6e; font-size: 12px; margin-bottom: 7px; }
+.trip-interest-summary > div { display: flex; gap: 6px; flex-wrap: wrap; }
+.trip-interest-summary span { padding: 6px 9px; border-radius: 999px; background: #eaf7ff; color: #39708f; font-size: 11px; font-weight: 800; }
+.interest-filter-row { padding-top: 4px; }
+.interest-match-badge { position: absolute; left: 10px; bottom: 9px; border-radius: 999px; background: rgba(255,255,255,.94); border: 1px solid #d8ecf6; color: #2275a6; padding: 5px 8px; font-size: 10px; font-weight: 900; box-shadow: 0 4px 14px rgba(33,112,161,.08); }
+@media (min-width: 700px) { .interest-picker { grid-template-columns: 1fr 1fr; } }

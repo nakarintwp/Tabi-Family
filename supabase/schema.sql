@@ -795,6 +795,8 @@ alter table public.trips add column if not exists cover_style text not null defa
 alter table public.trips add column if not exists cover_emoji text not null default '🧳';
 alter table public.trips add column if not exists cover_tagline text;
 alter table public.trips add column if not exists template_key text;
+alter table public.trips add column if not exists interests text[] not null default '{}';
+create index if not exists idx_trips_interests_gin on public.trips using gin (interests);
 
 create table if not exists public.trip_wishlist (
   id uuid primary key default gen_random_uuid(),

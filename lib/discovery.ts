@@ -47,6 +47,56 @@ export const DISCOVERY_DESTINATIONS = [
   { id: "Fuji", label: "Fuji / Kawaguchiko", subtitle: "Yamanashi", emoji: "🗻" },
 ] as const;
 
+export const TRIP_INTERESTS = [
+  { id: "snow", label: "หิมะ / Winter", emoji: "❄️", subtitle: "หิมะ วิวฤดูหนาว กระเช้า และหมู่บ้านหิมะ" },
+  { id: "theme-park", label: "สวนสนุก / Theme Park", emoji: "🎡", subtitle: "สวนสนุก ธีมพาร์ก และกิจกรรมสำหรับครอบครัว" },
+  { id: "shopping", label: "ช้อปปิ้ง", emoji: "🛍️", subtitle: "ห้าง ถนนช้อปปิ้ง ของฝาก และย่านการค้า" },
+  { id: "sightseeing", label: "สถานที่เที่ยวชม", emoji: "📍", subtitle: "แลนด์มาร์ก จุดชมวิว ปราสาท วัด และย่านเมืองเก่า" },
+  { id: "market", label: "ตลาด", emoji: "🍎", subtitle: "ตลาดเช้า ตลาดท้องถิ่น และของกินพื้นเมือง" },
+  { id: "food", label: "อาหาร", emoji: "🍜", subtitle: "ร้านอาหาร ของกินท้องถิ่น และคาเฟ่" },
+  { id: "museum", label: "พิพิธภัณฑ์", emoji: "🏛️", subtitle: "วิทยาศาสตร์ รถยนต์ ศิลปะ ประวัติศาสตร์ และกิจกรรมในร่ม" },
+  { id: "nature", label: "ธรรมชาติ / วิว", emoji: "🏔️", subtitle: "ภูเขา สวน จุดชมวิว และพื้นที่ธรรมชาติ" },
+  { id: "train", label: "รถไฟ / สถานี", emoji: "🚄", subtitle: "รถไฟ ชินคันเซ็น พิพิธภัณฑ์รถไฟ และจุดเกี่ยวกับการเดินทาง" },
+  { id: "culture", label: "วัฒนธรรม / เมืองเก่า", emoji: "⛩️", subtitle: "วัด ศาลเจ้า ปราสาท บ้านเก่า และมรดกท้องถิ่น" },
+  { id: "kids", label: "เด็ก / ครอบครัว", emoji: "👨‍👩‍👧", subtitle: "สถานที่เหมาะกับเด็กและครอบครัว" },
+  { id: "onsen", label: "ออนเซ็น", emoji: "♨️", subtitle: "บ่อน้ำพุร้อนและจุดพักผ่อน" },
+] as const;
+
+export type TripInterestId = (typeof TRIP_INTERESTS)[number]["id"];
+
+export const DEFAULT_TRIP_INTERESTS: TripInterestId[] = [
+  "snow",
+  "theme-park",
+  "shopping",
+  "sightseeing",
+  "market",
+];
+
+const INTEREST_RULES: Record<TripInterestId, (place: DiscoveryPlace) => boolean> = {
+  snow: (place) => place.tags.some((tag) => ["snow", "winter"].includes(tag)),
+  "theme-park": (place) => place.tags.includes("theme-park") || ["ghibli-park", "legoland-japan"].includes(place.slug),
+  shopping: (place) => place.category === "shopping" || place.tags.includes("shopping"),
+  sightseeing: (place) => place.category === "attraction" || place.tags.some((tag) => ["view", "photo", "castle", "temple", "old-town"].includes(tag)),
+  market: (place) => place.slug.includes("market") || place.title.toLowerCase().includes("market") || place.tags.includes("market"),
+  food: (place) => place.category === "food" || place.tags.includes("food"),
+  museum: (place) => place.category === "museum" || place.tags.includes("museum"),
+  nature: (place) => place.category === "nature" || place.tags.some((tag) => ["nature", "mountain", "river", "garden"].includes(tag)),
+  train: (place) => place.tags.includes("train") || /railway|train|station|shinkansen/i.test(`${place.title} ${place.summary}`),
+  culture: (place) => place.tags.some((tag) => ["culture", "heritage", "history", "castle", "temple"].includes(tag)) || ["attraction", "museum"].includes(place.category),
+  kids: (place) => place.childFriendly && (place.category === "family" || place.tags.some((tag) => ["kids", "family"].includes(tag))),
+  onsen: (place) => place.tags.some((tag) => ["onsen", "hot-spring"].includes(tag)) || /onsen|hot spring/i.test(`${place.title} ${place.summary}`),
+};
+
+export function getMatchingTripInterests(place: DiscoveryPlace, interests: string[]) {
+  const valid = new Set(TRIP_INTERESTS.map((item) => item.id));
+  return interests.filter((interest): interest is TripInterestId => valid.has(interest as TripInterestId))
+    .filter((interest) => INTEREST_RULES[interest](place));
+}
+
+export function getInterestMeta(id: string) {
+  return TRIP_INTERESTS.find((item) => item.id === id);
+}
+
 export const CHUBU_ROUTE_CITIES = ["Nagoya", "Takayama", "Shirakawa-go"] as const;
 
 export const DISCOVERY_PLACES: DiscoveryPlace[] = [

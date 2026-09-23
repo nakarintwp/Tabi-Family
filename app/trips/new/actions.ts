@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { requireVerifiedUser } from "@/lib/supabase/auth";
-import { getPlace, getTemplate, googleMapsSearchUrl } from "@/lib/discovery";
+import { TRIP_INTERESTS, getPlace, getTemplate, googleMapsSearchUrl } from "@/lib/discovery";
 
 function fail(message: string): never {
   return redirect(`/trips/new?error=${encodeURIComponent(message)}`);
@@ -36,6 +36,8 @@ export async function createTrip(formData: FormData) {
   const cityValues = formData.getAll("cities").map((value) => String(value).trim()).filter(Boolean);
   const legacyCities = String(formData.get("cities_text") || "").split(",").map((value) => value.trim()).filter(Boolean);
   const cities = Array.from(new Set(cityValues.length ? cityValues : legacyCities)).slice(0, 12);
+  const allowedInterests = new Set(TRIP_INTERESTS.map((item) => item.id));
+  const interests = Array.from(new Set(formData.getAll("interests").map((value) => String(value).trim()).filter((value) => allowedInterests.has(value as any)))).slice(0, 20);
   const pace = String(formData.get("pace") || "balanced");
   const budgetRaw = Number(formData.get("budget") || 0);
   const budget = Number.isFinite(budgetRaw) && budgetRaw > 0 ? budgetRaw : null;
@@ -53,6 +55,12 @@ export async function createTrip(formData: FormData) {
   if (!cities.length) fail("กรุณาระบุอย่างน้อย 1 เมือง");
   if (!["relaxed", "balanced", "packed"].includes(pace)) fail("รูปแบบทริปไม่ถูกต้อง");
 
+  // Fail before creating a Trip when the V7.3 database migration has not been applied yet.
+  const { error: interestsSchemaError } = await supabase.from("trips").select("id,interests").limit(1);
+  if (interestsSchemaError && /interests/i.test(interestsSchemaError.message)) {
+    fail("กรุณา Run SQL V7.3 เพื่อเพิ่มระบบกิจกรรมที่สนใจก่อนสร้างทริป");
+  }
+
   const requestId = String(formData.get("create_request_id") || "").trim();
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(requestId)) fail("รหัสคำขอสร้างทริปไม่ถูกต้อง กรุณารีเฟรชหน้าแล้วลองใหม่");
 
@@ -69,6 +77,11 @@ export async function createTrip(formData: FormData) {
     p_seniors: seniors,
   });
   if (createError || !tripId) fail(createError?.message || "สร้างทริปไม่สำเร็จ");
+
+  const { error: interestsError } = await supabase.from("trips").update({ interests }).eq("id", tripId);
+  if (interestsError) {
+    redirect(`/trips/${tripId}?setup_error=${encodeURIComponent(interestsError.message)}`);
+  }
 
   if (template) {
     const { data: tripMeta } = await supabase.from("trips").select("template_key").eq("id", tripId).single();
