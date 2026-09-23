@@ -2,13 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { requireVerifiedUser } from "@/lib/supabase/auth";
 
 async function requireOwner(tripId: string) {
-  const supabase = await createClient();
-  const { data: claimsData } = await supabase.auth.getClaims();
-  const userId = claimsData?.claims?.sub;
-  if (!userId) redirect(`/auth/login?next=/trips/${tripId}/share`);
+  const { supabase, userId } = await requireVerifiedUser(`/trips/${tripId}/share`);
   const { data: role } = await supabase.rpc("trip_access_role", { p_trip_id: tripId });
   if (role !== "owner") throw new Error("เฉพาะเจ้าของทริปเท่านั้นที่จัดการการแชร์ได้");
   return { supabase, userId };

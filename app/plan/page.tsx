@@ -2,7 +2,7 @@ import Link from "next/link";
 import { AppHeader } from "@/components/AppHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
-import { createClient } from "@/lib/supabase/server";
+import { getOptionalVerifiedUser } from "@/lib/supabase/auth";
 
 export default async function PlanPage() {
   let trip: null | { id: string; title: string } = null;
@@ -10,9 +10,8 @@ export default async function PlanPage() {
   let activities: Array<{ id: string; day_id: string; title: string; start_time: string | null; location_name: string | null; activity_type: string }> = [];
 
   if (hasSupabaseEnv()) {
-    const supabase = await createClient();
-    const { data: claimsData } = await supabase.auth.getClaims();
-    const userId = claimsData?.claims?.sub;
+    const { supabase, user } = await getOptionalVerifiedUser();
+    const userId = user?.id;
     if (userId) {
       const { data } = await supabase.from("trips").select("id,title").order("start_date", { ascending: true, nullsFirst: false }).limit(1).maybeSingle();
       trip = data;

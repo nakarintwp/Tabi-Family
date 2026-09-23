@@ -5,13 +5,11 @@ import { BottomNav } from "@/components/BottomNav";
 import { PaceScore } from "@/components/PaceScore";
 import { CurrentLocationRoute } from "@/components/CurrentLocationRoute";
 import { calculatePaceScore, mapsSearchUrl } from "@/lib/trip-metrics";
-import { createClient } from "@/lib/supabase/server";
+import { requireVerifiedUser } from "@/lib/supabase/auth";
 
 export default async function TripMapPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const supabase = await createClient();
-  const { data: claimsData } = await supabase.auth.getClaims();
-  if (!claimsData?.claims?.sub) redirect(`/auth/login?next=/trips/${id}/map`);
+  const { supabase } = await requireVerifiedUser(`/trips/${id}/map`);
 
   const { data: trip } = await supabase
     .from("trips")

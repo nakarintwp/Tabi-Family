@@ -4,8 +4,8 @@ import { AppHeader } from "@/components/AppHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { SubmitButton } from "@/components/SubmitButton";
 import { DeleteTripButton } from "@/components/DeleteTripButton";
-import { createClient } from "@/lib/supabase/server";
 import { addExpense, addMember, deleteTrip } from "./actions";
+import { requireVerifiedUser } from "@/lib/supabase/auth";
 
 function dateLabel(value: string) {
   return new Intl.DateTimeFormat("th-TH", { weekday: "short", day: "numeric", month: "short" }).format(new Date(`${value}T00:00:00`));
@@ -18,10 +18,7 @@ function activityIcon(type: string) {
 export default async function TripDetailPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ joined?: string }> }) {
   const { id } = await params;
   const query = await searchParams;
-  const supabase = await createClient();
-  const { data: claimsData } = await supabase.auth.getClaims();
-  const userId = claimsData?.claims?.sub;
-  if (!userId) redirect(`/auth/login?next=/trips/${id}`);
+  const { supabase, userId } = await requireVerifiedUser(`/trips/${id}`);
 
   const { data: trip } = await supabase
     .from("trips")

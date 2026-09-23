@@ -3,8 +3,8 @@ import { notFound, redirect } from "next/navigation";
 import { AppHeader } from "@/components/AppHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { SubmitButton } from "@/components/SubmitButton";
-import { createClient } from "@/lib/supabase/server";
 import { addBooking, addExpense, deleteBooking, deleteExpense } from "./actions";
+import { requireVerifiedUser } from "@/lib/supabase/auth";
 
 const bookingMeta: Record<string, { icon: string; label: string }> = {
   flight: { icon: "✈️", label: "Flight" },
@@ -23,9 +23,7 @@ function fmtDate(value: string | null) {
 
 export default async function TripWalletPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const supabase = await createClient();
-  const { data: claimsData } = await supabase.auth.getClaims();
-  if (!claimsData?.claims?.sub) redirect(`/auth/login?next=/trips/${id}/wallet`);
+  const { supabase } = await requireVerifiedUser(`/trips/${id}/wallet`);
 
   const { data: trip } = await supabase
     .from("trips")

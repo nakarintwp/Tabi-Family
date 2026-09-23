@@ -18,6 +18,8 @@ export async function updateSession(request: NextRequest) {
     },
   });
 
+  // Keep middleware fast: refresh/validate the JWT here. Protected pages and
+  // Server Actions perform a live getUser() check through requireVerifiedUser.
   await supabase.auth.getClaims();
   return response;
 }

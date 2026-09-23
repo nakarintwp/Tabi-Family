@@ -3,8 +3,8 @@ import { notFound, redirect } from "next/navigation";
 import { AppHeader } from "@/components/AppHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { SubmitButton } from "@/components/SubmitButton";
-import { createClient } from "@/lib/supabase/server";
 import { addPackingItem, deletePackingItem, seedPackingList, togglePackingItem } from "./actions";
+import { requireVerifiedUser } from "@/lib/supabase/auth";
 
 const categoryMeta: Record<string, { icon: string; label: string }> = {
   documents: { icon: "🪪", label: "เอกสาร" },
@@ -17,9 +17,7 @@ const categoryMeta: Record<string, { icon: string; label: string }> = {
 
 export default async function PackingPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const supabase = await createClient();
-  const { data: claimsData } = await supabase.auth.getClaims();
-  if (!claimsData?.claims?.sub) redirect(`/auth/login?next=/trips/${id}/packing`);
+  const { supabase } = await requireVerifiedUser(`/trips/${id}/packing`);
 
   const { data: trip } = await supabase
     .from("trips")

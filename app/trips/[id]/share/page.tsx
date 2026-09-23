@@ -5,8 +5,8 @@ import { AppHeader } from "@/components/AppHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { InviteQr } from "@/components/InviteQr";
 import { SubmitButton } from "@/components/SubmitButton";
-import { createClient } from "@/lib/supabase/server";
 import { changeCollaboratorRole, createInvite, removeCollaborator, revokeInvite } from "./actions";
+import { requireVerifiedUser } from "@/lib/supabase/auth";
 
 type Invite = {
   id: string;
@@ -32,9 +32,7 @@ function formatDate(value: string) {
 
 export default async function ShareTripPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const supabase = await createClient();
-  const { data: claimsData } = await supabase.auth.getClaims();
-  if (!claimsData?.claims?.sub) redirect(`/auth/login?next=/trips/${id}/share`);
+  const { supabase } = await requireVerifiedUser(`/trips/${id}/share`);
 
   const [{ data: trip }, { data: role }] = await Promise.all([
     supabase.from("trips").select("id,title,owner_id").eq("id", id).maybeSingle(),

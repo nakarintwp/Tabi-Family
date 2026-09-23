@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { requireVerifiedUser } from "@/lib/supabase/auth";
 
 function fail(message: string): never {
   redirect(`/trips/new?error=${encodeURIComponent(message)}`);
@@ -31,10 +31,7 @@ export async function createTrip(formData: FormData) {
     fail("ยังไม่ได้ตั้งค่า Supabase environment variables");
   }
 
-  const supabase = await createClient();
-  const { data: claimsData } = await supabase.auth.getClaims();
-  const userId = claimsData?.claims?.sub;
-  if (!userId) redirect("/auth/login?next=/trips/new");
+  const { supabase } = await requireVerifiedUser("/trips/new");
 
   const title = String(formData.get("title") || "Japan Family Trip").trim();
   const startDate = toIsoDate(formData.get("start_date"));

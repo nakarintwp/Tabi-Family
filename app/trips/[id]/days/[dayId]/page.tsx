@@ -6,7 +6,7 @@ import { PaceScore } from "@/components/PaceScore";
 import { CurrentLocationRoute } from "@/components/CurrentLocationRoute";
 import { SubmitButton } from "@/components/SubmitButton";
 import { calculatePaceScore, mapsSearchUrl } from "@/lib/trip-metrics";
-import { createClient } from "@/lib/supabase/server";
+import { requireVerifiedUser } from "@/lib/supabase/auth";
 import {
   addActivity,
   copyDayPlan,
@@ -32,9 +32,7 @@ function typeMeta(type: string) {
 
 export default async function DayPlannerPage({ params }: { params: Promise<{ id: string; dayId: string }> }) {
   const { id, dayId } = await params;
-  const supabase = await createClient();
-  const { data: claimsData } = await supabase.auth.getClaims();
-  if (!claimsData?.claims?.sub) redirect(`/auth/login?next=/trips/${id}/days/${dayId}`);
+  const { supabase } = await requireVerifiedUser(`/trips/${id}/days/${dayId}`);
 
   const [{ data: trip }, { data: day }] = await Promise.all([
     supabase

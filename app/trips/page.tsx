@@ -4,8 +4,8 @@ import { AppHeader } from "@/components/AppHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { SubmitButton } from "@/components/SubmitButton";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
-import { createClient } from "@/lib/supabase/server";
 import { removeDuplicateTrips } from "./actions";
+import { requireVerifiedUser } from "@/lib/supabase/auth";
 
 function dateLabel(value: string | null) {
   if (!value) return "ยังไม่กำหนด";
@@ -40,10 +40,7 @@ function duplicateKey(trip: TripRow) {
 export default async function TripsPage({ searchParams }: { searchParams: Promise<{ deleted?: string; deduped?: string; dedupe_error?: string }> }) {
   const query = await searchParams;
   if (!hasSupabaseEnv()) redirect("/auth/login?error=missing_env");
-  const supabase = await createClient();
-  const { data: claimsData } = await supabase.auth.getClaims();
-  const userId = claimsData?.claims?.sub;
-  if (!userId) redirect("/auth/login?next=/trips");
+  const { supabase, userId } = await requireVerifiedUser("/trips");
 
   // RLS returns both owned trips and trips shared with this account.
   const { data: trips, error } = await supabase

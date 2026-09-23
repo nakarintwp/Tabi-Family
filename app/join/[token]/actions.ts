@@ -1,14 +1,12 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { requireVerifiedUser } from "@/lib/supabase/auth";
 
 export async function acceptInvite(formData: FormData) {
   const token = String(formData.get("token") || "");
   if (!token) redirect("/trips");
-  const supabase = await createClient();
-  const { data: claimsData } = await supabase.auth.getClaims();
-  if (!claimsData?.claims?.sub) redirect(`/auth/login?next=/join/${encodeURIComponent(token)}`);
+  const { supabase } = await requireVerifiedUser(`/join/${encodeURIComponent(token)}`);
 
   const { data: tripId, error } = await supabase.rpc("accept_trip_invite", { p_token: token });
   if (error || !tripId) {

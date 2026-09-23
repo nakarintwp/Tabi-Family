@@ -2,7 +2,7 @@ import Link from "next/link";
 import { AppHeader } from "@/components/AppHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
-import { createClient } from "@/lib/supabase/server";
+import { getOptionalVerifiedUser } from "@/lib/supabase/auth";
 
 function formatRange(start: string | null, end: string | null) {
   if (!start || !end) return "ยังไม่กำหนดวันเดินทาง";
@@ -18,9 +18,8 @@ export default async function HomePage() {
   let expenseTotalTHB = 0;
 
   if (hasSupabaseEnv()) {
-    const supabase = await createClient();
-    const { data: claimsData } = await supabase.auth.getClaims();
-    userId = claimsData?.claims?.sub;
+    const { supabase, user } = await getOptionalVerifiedUser();
+    userId = user?.id;
     if (userId) {
       const { data } = await supabase
         .from("trips")

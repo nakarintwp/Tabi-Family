@@ -1,0 +1,26 @@
+V4.3.1 Session Fix
+
+Added:
+- lib/supabase/auth.ts
+- V4_3_1_SESSION_FIX.md
+- CHANGED_FILES_V4_3_1.txt
+
+Updated:
+- app/auth/login/LoginForm.tsx
+- app/auth/login/page.tsx
+- app/account/actions.ts
+- app/account/page.tsx
+- app/join/[token]/actions.ts
+- app/join/[token]/page.tsx
+- app/page.tsx
+- app/plan/page.tsx
+- app/map/page.tsx
+- app/today/page.tsx
+- app/wallet/page.tsx
+- app/trips/actions.ts
+- app/trips/page.tsx
+- app/trips/new/actions.ts
+- app/trips/[id]/... protected pages/actions
+- lib/supabase/proxy.ts (comment only; JWT refresh remains fast)
+- package.json
+- README.md

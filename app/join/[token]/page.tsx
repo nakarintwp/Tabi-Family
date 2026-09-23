@@ -2,19 +2,16 @@ import Link from "next/link";
 import { AppHeader } from "@/components/AppHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { SubmitButton } from "@/components/SubmitButton";
-import { createClient } from "@/lib/supabase/server";
 import { acceptInvite } from "./actions";
+import { getOptionalVerifiedUser } from "@/lib/supabase/auth";
 
 export default async function JoinTripPage({ params, searchParams }: { params: Promise<{ token: string }>; searchParams: Promise<{ error?: string }> }) {
   const { token } = await params;
   const query = await searchParams;
-  const supabase = await createClient();
-  const [{ data: previewRows }, { data: claimsData }] = await Promise.all([
-    supabase.rpc("get_trip_invite_preview", { p_token: token }),
-    supabase.auth.getClaims(),
-  ]);
+  const { supabase, user } = await getOptionalVerifiedUser();
+  const { data: previewRows } = await supabase.rpc("get_trip_invite_preview", { p_token: token });
   const preview = Array.isArray(previewRows) ? previewRows[0] : null;
-  const loggedIn = Boolean(claimsData?.claims?.sub);
+  const loggedIn = Boolean(user);
 
   if (!preview) {
     return <main className="shell"><div className="container"><AppHeader /><div className="empty-state"><div className="empty-icon">🔗</div><h1>ไม่พบคำเชิญ</h1><p>QR หรือลิงก์นี้ไม่ถูกต้อง หรือถูกยกเลิกแล้ว</p><Link className="btn btn-primary" href="/trips">ไปที่ทริปของฉัน</Link></div></div><BottomNav active="/trips" /></main>;

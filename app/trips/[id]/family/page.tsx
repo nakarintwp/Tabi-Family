@@ -3,8 +3,8 @@ import { notFound, redirect } from "next/navigation";
 import { AppHeader } from "@/components/AppHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { SubmitButton } from "@/components/SubmitButton";
-import { createClient } from "@/lib/supabase/server";
 import { createMember, deleteMember, updateMember } from "./actions";
+import { requireVerifiedUser } from "@/lib/supabase/auth";
 
 function icon(type: string) {
   return type === "child" ? "👧" : type === "senior" ? "👵" : "🧑";
@@ -45,9 +45,7 @@ function MemberFields({ member }: { member?: any }) {
 
 export default async function FamilyPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const supabase = await createClient();
-  const { data: claimsData } = await supabase.auth.getClaims();
-  if (!claimsData?.claims?.sub) redirect(`/auth/login?next=/trips/${id}/family`);
+  const { supabase } = await requireVerifiedUser(`/trips/${id}/family`);
 
   const { data: trip } = await supabase
     .from("trips")

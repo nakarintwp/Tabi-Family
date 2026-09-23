@@ -2,7 +2,7 @@
 
 Mobile-first family trip planner built with **Next.js + Supabase + Vercel**.
 
-## Current version: V4.3 Email + Password + QR Family Sharing
+## Current version: V4.3.1 Session Fix
 
 The project now supports:
 
@@ -75,3 +75,15 @@ V4.3 ใช้ Email + Password เป็น Login หลักและไม�
 และตั้ง Supabase Email provider โดยปิด `Confirm email` หากต้องการ flow แบบ zero-cost ที่ไม่ส่งลิงก์ยืนยันอีเมล
 
 ดูขั้นตอนทั้งหมดใน `V4_3_UPGRADE.md`
+
+## V4.3.1 — Session Fix
+
+V4.3.1 ป้องกันกรณี Browser ยังถือ session เก่าหลังจาก User ถูกลบ/เปลี่ยนใน Supabase โดยเปลี่ยนหน้าที่สำคัญและ Server Actions จากการเชื่อ JWT claims อย่างเดียว เป็นการตรวจ User จริงกับ Supabase Auth ผ่าน `getUser()` ก่อนทำงาน
+
+- ถ้า User ยังมีอยู่ → ทำงานต่อปกติ
+- ถ้า session เก่า / User ถูกลบ → กลับหน้า Login
+- หน้า Login จะล้าง local session เก่าอัตโนมัติ
+- Create Trip / Delete Trip / QR Join / Share / Day Planner / Packing / Wallet / Account ใช้ verified user
+- **ไม่ต้อง Run SQL เพิ่ม**
+
+ดูรายละเอียดใน `V4_3_1_SESSION_FIX.md`

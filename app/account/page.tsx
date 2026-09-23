@@ -4,15 +4,13 @@ import { AppHeader } from "@/components/AppHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { SubmitButton } from "@/components/SubmitButton";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
-import { createClient } from "@/lib/supabase/server";
+import { requireVerifiedUser } from "@/lib/supabase/auth";
 import { changePassword, signOut } from "./actions";
 
 export default async function AccountPage({ searchParams }: { searchParams: Promise<{ password_changed?: string; password_error?: string }> }) {
   const query = await searchParams;
   if (!hasSupabaseEnv()) redirect("/auth/login?error=missing_env");
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/auth/login?next=/account");
+  const { user } = await requireVerifiedUser("/account");
 
   const passwordError = query.password_error === "short"
     ? "รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร"

@@ -1,12 +1,12 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
 type Mode = "login" | "signup";
 
-export function LoginForm({ next, initialError }: { next: string; initialError?: string }) {
+export function LoginForm({ next, initialError, staleSession = false }: { next: string; initialError?: string; staleSession?: boolean }) {
   const [mode, setMode] = useState<Mode>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,6 +20,14 @@ export function LoginForm({ next, initialError }: { next: string; initialError?:
       process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
   );
   const normalizedEmail = useMemo(() => email.trim().toLowerCase(), [email]);
+
+  useEffect(() => {
+    if (!staleSession || !configured) return;
+    const supabase = createClient();
+    // Clear only this browser's cached auth session. The next login will create
+    // a fresh session for the currently existing Supabase user.
+    void supabase.auth.signOut({ scope: "local" });
+  }, [staleSession, configured]);
 
   function switchMode(nextMode: Mode) {
     setMode(nextMode);
