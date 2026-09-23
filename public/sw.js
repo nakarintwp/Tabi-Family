@@ -1,4 +1,4 @@
-const CACHE = "tabi-family-v7-3-1-shell";
+const CACHE = "tabi-family-v7-3-2-shell";
 const SNAPSHOT_KEY = "/__tabi_offline_snapshot.json";
 const SHELL = ["/icons/icon-192.png", "/icons/icon-512.png"];
 
@@ -39,7 +39,17 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(fetch(request).then((response) => response).catch(async () => new Response(await offlineHtml(), { headers: { "content-type": "text/html; charset=utf-8" } })));
     return;
   }
-  if (["style", "script", "image", "font"].includes(request.destination)) {
-    event.respondWith(caches.match(request).then((cached) => cached || fetch(request).then((response) => { const copy=response.clone(); caches.open(CACHE).then((cache)=>cache.put(request,copy)); return response; })));
+  // Next.js app assets are content-hashed. Always use the network so an old PWA
+  // cannot pin stale CSS/JS after a deployment. Icons may still be cached.
+  if (["style", "script", "font"].includes(request.destination)) {
+    event.respondWith(fetch(request).catch(() => caches.match(request)));
+    return;
+  }
+  if (request.destination === "image") {
+    event.respondWith(caches.match(request).then((cached) => cached || fetch(request).then((response) => {
+      const copy = response.clone();
+      caches.open(CACHE).then((cache) => cache.put(request, copy));
+      return response;
+    })));
   }
 });

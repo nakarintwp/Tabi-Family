@@ -1,3 +1,7 @@
+# Tabi Family — V7.3.2 Deploy + Snow Fix
+
+> Current build: **V7.3.2**
+
 # Tabi Family — V7.3.1
 
 Create Trip destination/interest picker visibility fix.

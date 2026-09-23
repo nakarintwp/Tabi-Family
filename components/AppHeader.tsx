@@ -10,9 +10,12 @@ export function AppHeader() {
           <small>Discover · Plan · Go</small>
         </span>
       </Link>
-      <Link className="avatar cartoon-avatar" href="/account" aria-label="Account">
-        <span aria-hidden="true">👤</span>
-      </Link>
+      <div className="header-actions">
+        <span className="global-build-chip" title="Build version">V7.3.2</span>
+        <Link className="avatar cartoon-avatar" href="/account" aria-label="Account">
+          <span aria-hidden="true">👤</span>
+        </Link>
+      </div>
     </header>
   );
 }

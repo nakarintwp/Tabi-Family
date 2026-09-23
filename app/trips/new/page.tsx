@@ -26,7 +26,7 @@ export default async function NewTripPage({ searchParams }: { searchParams: Prom
             <h1 className="page-title">สร้างทริปใหม่</h1>
             <p className="page-subtitle">{template ? `ใช้ ${template.title} เป็นจุดเริ่มต้น แล้วแก้ต่อได้ทุกจุด` : "สร้าง Trip, สมาชิก และวันเดินทางในครั้งเดียว"}</p>
           </div>
-          <div className="create-version-stack"><div className="speed-chip">⚡ Fast create</div><div className="build-chip">V7.3.1</div></div>
+          <div className="create-version-stack"><div className="speed-chip">⚡ Fast create</div><div className="build-chip">V7.3.2</div></div>
         </div>
 
         {template && <div className={`template-selected trip-cover cover-${template.coverStyle}`}><span>{template.coverEmoji}</span><div><strong>{template.title}</strong><small>{template.days} วัน · {template.cities.join(" • ")}</small></div><Link className="link" href="/templates">เปลี่ยน</Link></div>}
@@ -46,7 +46,7 @@ export default async function NewTripPage({ searchParams }: { searchParams: Prom
           </div>
           {template && <p className="small muted form-hint">Template นี้ออกแบบไว้ประมาณ {template.days} วัน — หากเลือกวันน้อยกว่า ระบบจะใส่เฉพาะ Day ที่มีอยู่</p>}
 
-          <div className="field">
+          <div className="field selection-panel">
             <div className="selection-section-title"><div><span className="selection-step">1</span><strong>เมือง / พื้นที่ที่จะไป</strong></div><span>ติ๊กเลือกได้หลายเมือง</span></div><p className="selection-note">เลือกพื้นที่ของทริปก่อน เพื่อให้ Explore แสดงเฉพาะสถานที่ที่เกี่ยวข้องกับเส้นทางนี้</p>
             <div className="destination-picker">
               {DISCOVERY_DESTINATIONS.map((destination) => (
@@ -60,7 +60,7 @@ export default async function NewTripPage({ searchParams }: { searchParams: Prom
             <p className="small muted form-hint">ตัวอย่างทริป Chubu: Nagoya → Takayama → Shirakawa-go เมื่อเข้า Explore จะเห็นเฉพาะพื้นที่ของทริปนี้</p>
           </div>
 
-          <div className="field">
+          <div className="field selection-panel">
             <div className="selection-section-title"><div><span className="selection-step">2</span><strong>กิจกรรมที่สนใจ</strong></div><span>เลือกได้หลายแบบ</span></div><p className="selection-note">ระบบจะใช้ความสนใจเหล่านี้จัดลำดับคำแนะนำใน Explore ให้ตรงกับทริปมากขึ้น</p>
             <div className="interest-picker">
               {TRIP_INTERESTS.map((interest) => (

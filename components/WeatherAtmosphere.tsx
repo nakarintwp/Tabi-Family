@@ -14,8 +14,8 @@ import type { CSSProperties } from "react";
  * this a UI-only upgrade with no database migration.
  */
 export function WeatherAtmosphere() {
-  const frontFlakes = useMemo(() => Array.from({ length: 34 }, (_, index) => index), []);
-  const backFlakes = useMemo(() => Array.from({ length: 26 }, (_, index) => index + 41), []);
+  const frontFlakes = useMemo(() => Array.from({ length: 42 }, (_, index) => index), []);
+  const backFlakes = useMemo(() => Array.from({ length: 32 }, (_, index) => index + 41), []);
 
   return (
     <div
@@ -29,7 +29,7 @@ export function WeatherAtmosphere() {
         {backFlakes.map((i) => (
           <i
             key={`back-${i}`}
-            style={{ "--i": i, left: `${(i * 43 + 11) % 100}%` } as CSSProperties}
+            style={{ "--i": i, "--static-top": `${(i * 29 + 7) % 94}%`, left: `${(i * 43 + 11) % 100}%` } as CSSProperties}
           >
             ❄
           </i>
@@ -40,7 +40,7 @@ export function WeatherAtmosphere() {
         {frontFlakes.map((i) => (
           <i
             key={`front-${i}`}
-            style={{ "--i": i, left: `${(i * 37 + 3) % 100}%` } as CSSProperties}
+            style={{ "--i": i, "--static-top": `${(i * 23 + 5) % 94}%`, left: `${(i * 37 + 3) % 100}%` } as CSSProperties}
           >
             ❄
           </i>
