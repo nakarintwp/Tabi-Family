@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { randomUUID } from "node:crypto";
 import { AppHeader } from "@/components/AppHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { SubmitButton } from "@/components/SubmitButton";
@@ -6,6 +7,7 @@ import { createTrip } from "./actions";
 
 export default async function NewTripPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const { error } = await searchParams;
+  const createRequestId = randomUUID();
 
   return (
     <main className="shell">
@@ -23,6 +25,7 @@ export default async function NewTripPage({ searchParams }: { searchParams: Prom
         {error && <div className="error-box">⚠️ {error}</div>}
 
         <form className="form-card" action={createTrip}>
+          <input type="hidden" name="create_request_id" value={createRequestId} />
           <div className="field">
             <label htmlFor="title">ชื่อทริป</label>
             <input className="input" id="title" name="title" defaultValue="Japan Family Trip 2026" required />
@@ -58,7 +61,7 @@ export default async function NewTripPage({ searchParams }: { searchParams: Prom
           </div>
 
           <SubmitButton className="btn btn-primary btn-full" pendingText="กำลังสร้างทริป...">สร้างทริปและวันเดินทาง</SubmitButton>
-          <p className="small muted form-hint">อย่ากดซ้ำระหว่างสร้าง ระบบจะพาไป Trip Dashboard อัตโนมัติ</p>
+          <p className="small muted form-hint">ระบบป้องกันการสร้างซ้ำจากการกดหรือการส่งคำขอซ้ำ และจะพาไป Trip Dashboard อัตโนมัติ</p>
         </form>
 
         <p className="small center-copy"><Link href="/trips" className="link">ดูทริปทั้งหมด</Link></p>

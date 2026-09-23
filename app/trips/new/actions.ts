@@ -60,9 +60,15 @@ export async function createTrip(formData: FormData) {
   if (!cities.length) fail("กรุณาระบุอย่างน้อย 1 เมือง");
   if (!["relaxed", "balanced", "packed"].includes(pace)) fail("รูปแบบทริปไม่ถูกต้อง");
 
-  // Fast path: one RPC = one database round-trip and one transaction.
-  // Run supabase/migrations/20260923_performance_day_planner.sql once to enable it.
-  const { data: rpcTripId, error: rpcError } = await supabase.rpc("create_trip_bundle", {
+  const requestId = String(formData.get("create_request_id") || "").trim();
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(requestId)) {
+    fail("รหัสคำขอสร้างทริปไม่ถูกต้อง กรุณารีเฟรชหน้าแล้วลองใหม่");
+  }
+
+  // V3.2 idempotent create: the same form submission can only create one trip,
+  // even if the browser/server retries the request.
+  const { data: tripId, error: createError } = await supabase.rpc("create_trip_bundle_once", {
+    p_request_id: requestId,
     p_title: title,
     p_start_date: startDate,
     p_end_date: endDate,
@@ -74,46 +80,9 @@ export async function createTrip(formData: FormData) {
     p_seniors: seniors,
   });
 
-  if (!rpcError && rpcTripId) {
-    redirect(`/trips/${rpcTripId}`);
+  if (createError || !tripId) {
+    fail(createError?.message || "สร้างทริปไม่สำเร็จ");
   }
 
-  // Backward-compatible fallback for databases that have not run the new migration yet.
-  const { data: trip, error: tripError } = await supabase
-    .from("trips")
-    .insert({
-      owner_id: userId,
-      title,
-      start_date: startDate,
-      end_date: endDate,
-      cities,
-      pace,
-      budget,
-      currency: "THB",
-    })
-    .select("id")
-    .single();
-
-  if (tripError || !trip) {
-    fail(rpcError?.message || tripError?.message || "สร้างทริปไม่สำเร็จ");
-  }
-
-  const memberRows: Array<{ trip_id: string; name: string; member_type: string; walking_level: number; needs: string[] }> = [];
-  for (let i = 0; i < adults; i++) memberRows.push({ trip_id: trip.id, name: `Adult ${i + 1}`, member_type: "adult", walking_level: 3, needs: [] });
-  for (let i = 0; i < children; i++) memberRows.push({ trip_id: trip.id, name: `Child ${i + 1}`, member_type: "child", walking_level: 2, needs: ["พักเป็นระยะ"] });
-  for (let i = 0; i < seniors; i++) memberRows.push({ trip_id: trip.id, name: `Senior ${i + 1}`, member_type: "senior", walking_level: 2, needs: ["หลีกเลี่ยงบันได", "พักเป็นระยะ"] });
-
-  const [memberResult, dayResult] = await Promise.all([
-    memberRows.length ? supabase.from("trip_members").insert(memberRows) : Promise.resolve({ error: null }),
-    supabase.from("trip_days").insert(
-      tripDates.map((tripDate, index) => ({ trip_id: trip.id, trip_date: tripDate, title: `Day ${index + 1}` })),
-    ),
-  ]);
-
-  if (memberResult.error || dayResult.error) {
-    await supabase.from("trips").delete().eq("id", trip.id);
-    fail(memberResult.error?.message || dayResult.error?.message || "สร้างข้อมูลทริปไม่สำเร็จ");
-  }
-
-  redirect(`/trips/${trip.id}`);
+  redirect(`/trips/${tripId}`);
 }
