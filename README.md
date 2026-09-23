@@ -57,3 +57,8 @@ Push to GitHub. Vercel will redeploy automatically.
 ## V4.1 — Current Location Route + Today Mode
 
 V4.1 เพิ่ม `/today` และ Route Map ที่ใช้ Browser Geolocation จากมือถือเป็นต้นทาง จึงใช้ปลายทางเพียง 1 จุดได้ ไม่ต้องใช้ Google Maps API key ดูขั้นตอนอัปเกรดใน `V4_1_UPGRADE.md`
+
+## V4.2 — Mobile OTP Login
+
+หน้าเข้าสู่ระบบใช้ Email OTP 6 หลักแทนการพึ่ง Magic Link อย่างเดียว ดูขั้นตอนตั้ง Supabase Email Template ใน `V4_2_UPGRADE.md`
+

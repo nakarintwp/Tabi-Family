@@ -497,3 +497,20 @@ button { cursor: pointer; }
   .today-next-card { grid-template-columns: 58px 1fr; }
   .today-next-time { min-height: 48px; font-size: 14px; }
 }
+
+/* V4.2 — mobile-friendly email OTP login */
+.otp-auth-card { overflow: hidden; }
+.otp-head { margin: 22px 0 20px; text-align: center; }
+.otp-head .page-title { margin-bottom: 7px; }
+.otp-head .page-subtitle { margin: 0 auto; max-width: 320px; line-height: 1.55; }
+.otp-icon { width: 58px; height: 58px; margin: 0 auto 12px; display: grid; place-items: center; border-radius: 18px; background: #eef4f7; font-size: 27px; }
+.otp-input { height: 62px; text-align: center; font-size: 28px; font-weight: 850; letter-spacing: .32em; padding-left: calc(16px + .32em); font-variant-numeric: tabular-nums; }
+.otp-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; }
+.text-button { min-height: 38px; padding: 0; border: 0; background: transparent; color: var(--primary-2); font: inherit; font-size: 11px; font-weight: 800; cursor: pointer; }
+.text-button:disabled { color: #9aa5ac; cursor: default; }
+.otp-fallback { font-size: 11px; }
+@media (max-width: 420px) {
+  .auth-wrap { padding: 16px 12px; }
+  .auth-card { padding: 20px 18px; border-radius: 24px; }
+  .otp-input { font-size: 25px; }
+}

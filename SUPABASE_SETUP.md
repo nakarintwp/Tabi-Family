@@ -21,3 +21,8 @@ Run `supabase/migrations/20260923_v4_zero_cost_planner.sql` after the V3.2 migra
 ## V4.1 Current Location
 
 ไม่ต้องรัน SQL เพิ่มจาก V4. Browser Geolocation ทำงานบน HTTPS ของ Vercel และตำแหน่งปัจจุบันไม่ได้ถูกบันทึกลง Supabase ในฟีเจอร์นี้.
+
+## V4.2 — Mobile OTP Login
+
+หน้าเข้าสู่ระบบใช้ Email OTP 6 หลักแทนการพึ่ง Magic Link อย่างเดียว ดูขั้นตอนตั้ง Supabase Email Template ใน `V4_2_UPGRADE.md`
+
