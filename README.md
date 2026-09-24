@@ -1,9 +1,19 @@
-# Tabi Family — V8.8 Trip Control Suite
+# Tabi Family — V8.9 Auto-linked Trip Documents
 
-> Current build: **V8.8**
+> Current build: **V8.9**
 
 
 Mobile-first Japan family trip planner built with Next.js App Router + Supabase. V8.8 adds the operational layer for using the plan before and during the trip: Master Plan, Booking Center, Budget, Rental Car Pro, Today Mode 2.0, rule-based conflict checks, Trip Documents and Emergency Japan. **V8.5 is intentionally not included.**
+
+
+## V8.9 — Auto-linked Trip Documents
+
+- Upload PDF/images/Word/Excel/TXT directly into a trip.
+- The current trip is linked automatically; no trip selector is required.
+- Private Supabase Storage bucket with trip-aware RLS.
+- Signed download links for authorized trip members.
+- URL-only documents remain supported.
+- One-time migration required: `supabase/migrations/20260924_v8_9_trip_document_storage.sql`.
 
 ## V8.0–V8.8 highlights
 

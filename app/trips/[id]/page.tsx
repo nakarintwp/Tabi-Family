@@ -80,7 +80,7 @@ export default async function TripDetailPage({ params, searchParams }: { params:
         {query.setup_error && <div className="error-box"><strong>ตั้งค่าทริปไม่สมบูรณ์</strong><br/><span>{query.setup_error}</span></div>}
 
         <section className={`hero compact-hero trip-hero trip-cover cover-${coverStyle}`}>
-          <div className="trip-hero-role-row"><div className="eyebrow">Trip dashboard · V8.8 Travel Control</div><span className={`role-badge ${role}`}>{role === "owner" ? "Owner" : role === "editor" ? "Editor" : "Viewer"}</span></div>
+          <div className="trip-hero-role-row"><div className="eyebrow">Trip dashboard · V8.9 Travel Control</div><span className={`role-badge ${role}`}>{role === "owner" ? "Owner" : role === "editor" ? "Editor" : "Viewer"}</span></div>
           <div className="hero-cover-title"><span className="hero-cover-emoji">{trip.cover_emoji || "🧳"}</span><div><h1>{trip.title}</h1><p>{trip.cover_tagline || trip.cities?.join(" • ")}</p></div></div>
           <div className="hero-row"><div className="hero-stat"><strong>{days.length} วัน</strong><span>{trip.pace} pace</span></div><div className="pill">👨‍👩‍👧‍👵 {members.length} คน</div></div>
         </section>

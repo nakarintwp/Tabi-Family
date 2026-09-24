@@ -1,0 +1,21 @@
+V8.9 — Auto-linked Trip Documents
+
+Added:
+- components/TripDocumentUploader.tsx
+- app/trips/[id]/documents/actions.ts
+- supabase/migrations/20260924_v8_9_trip_document_storage.sql
+- V8_9_AUTO_LINKED_TRIP_DOCUMENTS.md
+- CHANGED_FILES_V8_9.txt
+
+Updated:
+- app/trips/[id]/documents/page.tsx
+- app/globals.css
+- app/version/route.ts
+- components/AppHeader.tsx
+- components/PwaRegister.tsx
+- public/sw.js
+- app/trips/new/page.tsx
+- app/trips/[id]/page.tsx
+- package.json
+- supabase/schema.sql
+- README.md
