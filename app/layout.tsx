@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import "maplibre-gl/dist/maplibre-gl.css";
 import "./globals.css";
 import { PwaRegister } from "@/components/PwaRegister";
 
