@@ -104,32 +104,47 @@ export function RealMap({
   compact?: boolean;
   className?: string;
 }) {
+  const shellRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<any>(null);
+  const boundsRef = useRef<any>(null);
   const [failed, setFailed] = useState(false);
+  const [ready, setReady] = useState(false);
+  const [fullscreen, setFullscreen] = useState(false);
   const usable = useMemo(() => points.filter(validPoint), [points]);
 
   useEffect(() => {
     if (!containerRef.current || !usable.length) return;
     let cancelled = false;
-    let map: any = null;
+    let resizeObserver: ResizeObserver | null = null;
+    setFailed(false);
+    setReady(false);
 
     loadLeaflet()
       .then(() => {
         if (cancelled || !containerRef.current || !window.L?.map) return;
         const L = window.L;
-        map = L.map(containerRef.current, {
+        const map = L.map(containerRef.current, {
           zoomControl: true,
           attributionControl: true,
           scrollWheelZoom: false,
           tap: true,
+          preferCanvas: true,
         });
+        mapRef.current = map;
 
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        const streetLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
           maxZoom: 19,
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a> contributors',
         }).addTo(map);
+        const topoLayer = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
+          maxZoom: 17,
+          attribution: 'Map data &copy; OpenStreetMap contributors · Map style &copy; <a href="https://opentopomap.org" target="_blank" rel="noreferrer">OpenTopoMap</a>',
+        });
+        L.control.layers({ "ถนน": streetLayer, "ภูมิประเทศ": topoLayer }, undefined, { position: "topright", collapsed: true }).addTo(map);
 
         const bounds = L.latLngBounds([]);
+        boundsRef.current = bounds;
         usable.forEach((point, index) => {
           const latlng = [point.latitude, point.longitude];
           bounds.extend(latlng);
@@ -151,21 +166,45 @@ export function RealMap({
           ).addTo(map);
         }
 
-        if (usable.length === 1) {
-          map.setView([usable[0].latitude, usable[0].longitude], 15);
-        } else {
-          map.fitBounds(bounds, { padding: [34, 34], maxZoom: 15 });
-        }
+        if (usable.length === 1) map.setView([usable[0].latitude, usable[0].longitude], 15);
+        else map.fitBounds(bounds, { padding: [40, 40], maxZoom: 15 });
 
-        window.setTimeout(() => map?.invalidateSize?.(), 120);
+        const invalidate = () => map.invalidateSize?.({ pan: false });
+        window.setTimeout(invalidate, 80);
+        window.setTimeout(invalidate, 320);
+        if (typeof ResizeObserver !== "undefined" && shellRef.current) {
+          resizeObserver = new ResizeObserver(() => invalidate());
+          resizeObserver.observe(shellRef.current);
+        }
+        setReady(true);
       })
       .catch(() => setFailed(true));
 
     return () => {
       cancelled = true;
-      if (map) map.remove();
+      resizeObserver?.disconnect();
+      if (mapRef.current) mapRef.current.remove();
+      mapRef.current = null;
+      boundsRef.current = null;
     };
   }, [connectPoints, usable]);
+
+  useEffect(() => {
+    document.body.classList.toggle("map-fullscreen-open", fullscreen);
+    const timer = window.setTimeout(() => mapRef.current?.invalidateSize?.({ pan: false }), 80);
+    return () => {
+      window.clearTimeout(timer);
+      document.body.classList.remove("map-fullscreen-open");
+    };
+  }, [fullscreen]);
+
+  function fitAll() {
+    const map = mapRef.current;
+    const bounds = boundsRef.current;
+    if (!map || !bounds) return;
+    if (usable.length === 1) map.setView([usable[0].latitude, usable[0].longitude], 15);
+    else map.fitBounds(bounds, { padding: [40, 40], maxZoom: 15 });
+  }
 
   if (!usable.length) {
     return <div className={`map-fallback ${compact ? "compact" : ""}`}><div>📍</div><strong>ยังไม่มีพิกัด</strong><p>เพิ่มสถานที่ที่มีพิกัดก่อน แล้วแผนที่จริงจะแสดงที่นี่</p></div>;
@@ -175,5 +214,14 @@ export function RealMap({
     return <div className={`map-fallback ${compact ? "compact" : ""}`}><div>🗺️</div><strong>โหลดแผนที่ไม่สำเร็จ</strong><p>ลองเชื่อมต่ออินเทอร์เน็ตแล้วรีเฟรชอีกครั้ง รายชื่อสถานที่ด้านล่างยังเปิด Google Maps ได้ตามปกติ</p></div>;
   }
 
-  return <div ref={containerRef} className={`real-map ${compact ? "compact" : ""} ${className}`.trim()} aria-label="แผนที่จริงของสถานที่ในทริป" />;
+  return (
+    <div ref={shellRef} className={`real-map-shell ${fullscreen ? "fullscreen" : ""}`}>
+      {!ready && <div className="real-map-loading"><span />กำลังโหลดแผนที่จริง…</div>}
+      <div ref={containerRef} className={`real-map ${compact ? "compact" : ""} ${className}`.trim()} aria-label="แผนที่จริงของสถานที่ในทริป" />
+      <div className="real-map-toolbar" aria-label="เครื่องมือแผนที่">
+        <button type="button" onClick={fitAll}>ดูทุกจุด</button>
+        <button type="button" onClick={() => setFullscreen((value) => !value)}>{fullscreen ? "ย่อแผนที่" : "เต็มจอ"}</button>
+      </div>
+    </div>
+  );
 }

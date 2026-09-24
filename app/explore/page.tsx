@@ -3,9 +3,10 @@ import { AppHeader } from "@/components/AppHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { SubmitButton } from "@/components/SubmitButton";
 import { ExploreCoordinateMap } from "@/components/ExploreCoordinateMap";
+import { ExplorePhotoGallery } from "@/components/ExplorePhotoGallery";
 import { requireVerifiedUser } from "@/lib/supabase/auth";
 import { DISCOVERY_PLACES, FOOD_FILTERS, getPlaceGuide, getPlaceIntelligence, googleMapsSearchUrl, matchesFoodFilter } from "@/lib/discovery";
-import { addPlaceToDay, savePlaceToWishlist } from "./actions";
+import { addPlaceToTrip, savePlaceToWishlist } from "./actions";
 
 const categoryLabels: Record<string, string> = {
   attraction: "เที่ยว",
@@ -16,7 +17,7 @@ const categoryLabels: Record<string, string> = {
   shopping: "ช้อปปิ้ง",
 };
 
-type ExploreQuery = { city?: string; category?: string; trip?: string; popular?: string; food?: string; saved?: string; added?: string; error?: string };
+type ExploreQuery = { city?: string; category?: string; trip?: string; popular?: string; food?: string; filter?: string; saved?: string; added?: string; error?: string };
 type TripDay = { id: string; trip_date: string; title: string | null };
 type ExploreTrip = {
   id: string;
@@ -56,33 +57,45 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
   const availableCities: string[] = tripCities.length ? tripCities : allCities;
   const activeCity = query.city && availableCities.includes(query.city) ? query.city : "all";
   const activeFood = query.food || "all";
+  const activeFocus = ["all", "food", "shopping", "nature", "kids", "thai"].includes(query.filter || "") ? (query.filter || "all") : "all";
   const activeCategory = activeFood !== "all" ? "food" : (query.category || "all");
-  const thaiPopularOnly = query.popular === "thai";
+  const thaiPopularOnly = activeFocus === "thai" || query.popular === "thai";
+
+  const focusMatches = (place: (typeof DISCOVERY_PLACES)[number]) => {
+    if (activeFocus === "food") return place.category === "food";
+    if (activeFocus === "shopping") return place.category === "shopping";
+    if (activeFocus === "nature") return place.category === "nature" || place.tags.some((tag) => ["nature", "mountain", "river", "garden", "snow"].includes(tag));
+    if (activeFocus === "kids") return place.childFriendly === true;
+    if (activeFocus === "thai") return place.thaiPopular === true;
+    return true;
+  };
 
   const filtered = DISCOVERY_PLACES.filter((place) =>
     (!tripCities.length || tripCities.includes(place.city)) &&
     (activeCity === "all" || place.city === activeCity) &&
     (activeCategory === "all" || place.category === activeCategory) &&
+    focusMatches(place) &&
     (!thaiPopularOnly || place.thaiPopular === true) &&
     (activeFood === "all" || matchesFoodFilter(place, activeFood))
   );
 
-  const buildHref = (city: string, category: string, tripId = selectedTrip?.id, popular = thaiPopularOnly, food = activeFood) => {
+  const buildHref = (city: string, category: string, tripId = selectedTrip?.id, popular = false, food = "all", focus = activeFocus) => {
     const params = new URLSearchParams();
     if (tripId) params.set("trip", tripId);
     if (city !== "all") params.set("city", city);
     if (category !== "all") params.set("category", category);
     if (popular) params.set("popular", "thai");
     if (food !== "all") params.set("food", food);
+    if (focus !== "all") params.set("filter", focus);
     const qs = params.toString();
     return `/explore${qs ? `?${qs}` : ""}`;
   };
-  const returnTo = buildHref(activeCity, activeCategory, selectedTrip?.id, thaiPopularOnly, activeFood);
+  const returnTo = buildHref(activeCity, activeCategory, selectedTrip?.id, false, activeFood, activeFocus);
 
   return <main className="shell"><div className="container"><AppHeader />
     <section className="discovery-hero">
       <div>
-        <span className="eyebrow">V9.7 · PLACE INTELLIGENCE</span>
+        <span className="eyebrow">V11.8 · REAL PHOTO EXPLORE</span>
         <h1>{selectedTrip ? `Explore · ${selectedTrip.title}` : "Explore Japan"}</h1>
         <p>{selectedTrip ? "ค้นหา ดูพิกัด บันทึก Wishlist หรือเพิ่มลง Day Planner ได้จากหน้าเดียว" : "เลือกทริปก่อน แล้วระบบจะแสดงเฉพาะพื้นที่ที่คุณกำลังจะไป"}</p>
       </div>
@@ -93,13 +106,13 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
     </section>
 
     {query.saved === "1" && <div className="success-box">บันทึกลง Wishlist แล้ว ✓</div>}
-    {query.added === "1" && <div className="success-box">เพิ่มสถานที่ลง Day Planner แล้ว ✓</div>}
+    {query.added === "1" && <div className="success-box">เพิ่มสถานที่เข้า Trip แล้ว ✓</div>}
     {query.error && <div className="error-box">{query.error}</div>}
 
     {rows.length > 0 && <section className="section trip-scope-section">
       <div className="section-head"><h2>Explore ตามทริป</h2><span className="small muted">เมืองถูกกำหนดจาก Trip</span></div>
       <div className="trip-scope-row">
-        {rows.map((trip) => <Link key={trip.id} href={buildHref("all", "all", trip.id, false, "all")} className={`trip-scope-chip ${selectedTrip?.id === trip.id ? "active" : ""}`}>
+        {rows.map((trip) => <Link key={trip.id} href={buildHref("all", "all", trip.id, false, "all", "all")} className={`trip-scope-chip ${selectedTrip?.id === trip.id ? "active" : ""}`}>
           <span>🧳</span><div><strong>{trip.title}</strong><small>{(trip.cities || []).join(" • ") || "ยังไม่ได้เลือกเมือง"}</small></div>
         </Link>)}
       </div>
@@ -112,21 +125,26 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
     <section className="section">
       <div className="section-head"><h2>{selectedTrip ? "เมืองในทริป" : "เลือกเมือง"}</h2><span className="small muted">{filtered.length} สถานที่ · Curated · ¥0 Places API</span></div>
       <div className="filter-chip-row">
-        <Link className={`filter-chip ${activeCity === "all" ? "active" : ""}`} href={buildHref("all", activeCategory)}>ทั้งหมด</Link>
-        {availableCities.map((city: string) => <Link key={city} className={`filter-chip ${activeCity === city ? "active" : ""}`} href={buildHref(city, activeCategory)}>{city}</Link>)}
+        <Link className={`filter-chip ${activeCity === "all" ? "active" : ""}`} href={buildHref("all", activeCategory, selectedTrip?.id, false, activeFood, activeFocus)}>ทั้งหมด</Link>
+        {availableCities.map((city: string) => <Link key={city} className={`filter-chip ${activeCity === city ? "active" : ""}`} href={buildHref(city, activeCategory, selectedTrip?.id, false, activeFood, activeFocus)}>{city}</Link>)}
       </div>
-      <div className="filter-chip-row compact-filter-row">
-        <Link className={`filter-chip thai-popular-filter ${thaiPopularOnly ? "active" : ""}`} href={buildHref(activeCity, activeCategory, selectedTrip?.id, !thaiPopularOnly)}>คนไทยนิยม</Link>
-        <Link className={`filter-chip ${activeCategory === "all" ? "active" : ""}`} href={buildHref(activeCity, "all", selectedTrip?.id, thaiPopularOnly, "all")}>ทุกประเภท</Link>
-        {Object.entries(categoryLabels).map(([key, label]) => <Link key={key} className={`filter-chip ${activeCategory === key ? "active" : ""}`} href={buildHref(activeCity, key, selectedTrip?.id, thaiPopularOnly, "all")}>{label}</Link>)}
+      <div className="filter-chip-row compact-filter-row explore-focus-filters" aria-label="ตัวกรอง Explore">
+        {[
+          ["all", "ทั้งหมด"],
+          ["food", "อาหาร"],
+          ["shopping", "ช้อปปิ้ง"],
+          ["nature", "ธรรมชาติ"],
+          ["kids", "เด็ก"],
+          ["thai", "คนไทยนิยม"],
+        ].map(([key, label]) => <Link key={key} className={`filter-chip ${activeFocus === key ? "active" : ""}`} href={buildHref(activeCity, "all", selectedTrip?.id, false, "all", key)}>{label}</Link>)}
       </div>
-      {(activeCategory === "food" || activeFood !== "all") && <div className="filter-chip-row food-filter-row">
-        {FOOD_FILTERS.map((item) => <Link key={item.id} className={`filter-chip food-filter ${activeFood === item.id ? "active" : ""}`} href={buildHref(activeCity, "food", selectedTrip?.id, thaiPopularOnly, item.id)}>{item.label}</Link>)}
+      {activeFocus === "food" && <div className="filter-chip-row food-filter-row">
+        {FOOD_FILTERS.filter((item) => item.id !== "thai").map((item) => <Link key={item.id} className={`filter-chip food-filter ${activeFood === item.id ? "active" : ""}`} href={buildHref(activeCity, "food", selectedTrip?.id, false, item.id, "food")}>{item.label}</Link>)}
       </div>}
     </section>
 
     {filtered.length > 0 && <section className="section explore-map-section">
-      <div className="section-head"><h2>Explore Map</h2><span className="small muted">แตะหมายเลขเพื่อเปิด Google Maps</span></div>
+      <div className="section-head"><h2>Explore Map</h2><span className="small muted">แผนที่จริง · ซูม · เลื่อน · เปลี่ยนชั้นแผนที่ · เปิดเต็มจอ</span></div>
       <ExploreCoordinateMap places={filtered} />
     </section>}
 
@@ -139,7 +157,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
         const guide = getPlaceGuide(place.slug);
         const intelligence = getPlaceIntelligence(place);
         return <article className="place-card" key={place.slug}>
-          <div className="place-card-cover"><span>{place.emoji}</span><div className="place-city-badge">{place.city}</div>{place.thaiPopular && <div className="thai-popular-badge">คนไทยนิยม</div>}</div>
+          <div className="place-card-cover real-photo-cover"><ExplorePhotoGallery title={place.title} city={place.city} /><div className="place-city-badge">{place.city}</div>{place.thaiPopular && <div className="thai-popular-badge">คนไทยนิยม</div>}</div>
           <div className="place-card-body">
             <div className="place-meta">{place.area} · {categoryLabels[place.category] || place.category}</div>
             <h2>{place.title}</h2>
@@ -171,12 +189,19 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
 
             <a className="btn btn-secondary btn-full explore-map-link" href={googleMapsSearchUrl(place.title, place.city)} target="_blank" rel="noreferrer">เปิด Google Maps</a>
 
-            {selectedTrip && selectedTripEditable && selectedDays.length > 0 && <form action={addPlaceToDay} className="explore-add-day-form">
+            {selectedTrip && selectedTripEditable && selectedDays.length > 0 && <form action={addPlaceToTrip} className="explore-add-day-form explore-add-trip-form">
               <input type="hidden" name="place_slug" value={place.slug} />
               <input type="hidden" name="return_to" value={returnTo} />
               <input type="hidden" name="trip_id" value={selectedTrip.id} />
               <select className="select" name="day_id" defaultValue={selectedDays[0]?.id}>{selectedDays.map((day, index) => <option key={day.id} value={day.id}>{dayLabel(day.trip_date, index)}</option>)}</select>
-              <SubmitButton className="btn btn-primary" pendingText="กำลังเพิ่ม...">+ เพิ่มลง Day</SubmitButton>
+              <SubmitButton className="btn btn-primary" pendingText="กำลังเพิ่ม...">+ เพิ่มเข้า Trip</SubmitButton>
+            </form>}
+            {selectedTrip && selectedTripEditable && selectedDays.length === 0 && <form action={addPlaceToTrip} className="explore-add-trip-form single-action-form">
+              <input type="hidden" name="place_slug" value={place.slug} />
+              <input type="hidden" name="return_to" value={returnTo} />
+              <input type="hidden" name="trip_id" value={selectedTrip.id} />
+              <input type="hidden" name="day_id" value="" />
+              <SubmitButton className="btn btn-primary btn-full" pendingText="กำลังเพิ่ม...">+ เพิ่มเข้า Trip</SubmitButton>
             </form>}
 
             {selectedTrip ? (

@@ -10,15 +10,8 @@ function redirectWith(returnTo: string, key: string, value: string) {
   redirect(`${returnTo}${joiner}${key}=${encodeURIComponent(value)}`);
 }
 
-export async function savePlaceToWishlist(formData: FormData) {
-  const { supabase, userId } = await requireVerifiedUser("/explore");
-  const tripId = String(formData.get("trip_id") || "");
-  const placeSlug = String(formData.get("place_slug") || "");
-  const returnTo = String(formData.get("return_to") || "/explore");
-  const place = getPlace(placeSlug);
-  if (!tripId || !place) return redirectWith(returnTo, "error", "ข้อมูลสถานที่ไม่ถูกต้อง");
-
-  const { error } = await supabase.from("trip_wishlist").upsert({
+async function upsertPlaceToWishlist(supabase: any, userId: string, tripId: string, place: NonNullable<ReturnType<typeof getPlace>>) {
+  return supabase.from("trip_wishlist").upsert({
     trip_id: tripId,
     place_key: place.slug,
     title: place.title,
@@ -36,30 +29,17 @@ export async function savePlaceToWishlist(formData: FormData) {
     notes: getPlaceGuide(place.slug).bestTime ? `แนะนำช่วง: ${getPlaceGuide(place.slug).bestTime}` : null,
     created_by: userId,
   }, { onConflict: "trip_id,place_key" });
-
-  if (error) return redirectWith(returnTo, "error", error.message);
-  revalidatePath(`/trips/${tripId}/wishlist`);
-  revalidatePath(`/trips/${tripId}`);
-  return redirectWith(returnTo, "saved", "1");
 }
 
-export async function addPlaceToDay(formData: FormData) {
-  const { supabase } = await requireVerifiedUser("/explore");
-  const tripId = String(formData.get("trip_id") || "");
-  const dayId = String(formData.get("day_id") || "");
-  const placeSlug = String(formData.get("place_slug") || "");
-  const returnTo = String(formData.get("return_to") || "/explore");
-  const place = getPlace(placeSlug);
-  if (!tripId || !dayId || !place) return redirectWith(returnTo, "error", "เลือก Day หรือสถานที่ไม่ถูกต้อง");
-
+async function insertPlaceToDay(supabase: any, tripId: string, dayId: string, place: NonNullable<ReturnType<typeof getPlace>>) {
   const { data: day } = await supabase.from("trip_days").select("id").eq("id", dayId).eq("trip_id", tripId).maybeSingle();
-  if (!day) return redirectWith(returnTo, "error", "Day นี้ไม่อยู่ในทริปที่เลือก");
+  if (!day) return { error: { message: "Day นี้ไม่อยู่ในทริปที่เลือก" } };
 
   const { count } = await supabase.from("activities").select("id", { count: "exact", head: true }).eq("day_id", dayId);
   const guide = getPlaceGuide(place.slug);
   const activityType = ["food", "shopping"].includes(place.category) ? place.category : "attraction";
   const notes = [place.summary, guide.bestTime ? `แนะนำช่วง: ${guide.bestTime}` : "", guide.reservationNote ? `จอง: ${guide.reservationNote}` : ""].filter(Boolean).join(" · ");
-  const { error } = await supabase.from("activities").insert({
+  return supabase.from("activities").insert({
     day_id: dayId,
     title: place.title,
     activity_type: activityType,
@@ -75,11 +55,48 @@ export async function addPlaceToDay(formData: FormData) {
     status: "planned",
     sort_order: count || 0,
   });
+}
+
+export async function savePlaceToWishlist(formData: FormData) {
+  const { supabase, userId } = await requireVerifiedUser("/explore");
+  const tripId = String(formData.get("trip_id") || "");
+  const placeSlug = String(formData.get("place_slug") || "");
+  const returnTo = String(formData.get("return_to") || "/explore");
+  const place = getPlace(placeSlug);
+  if (!tripId || !place) return redirectWith(returnTo, "error", "ข้อมูลสถานที่ไม่ถูกต้อง");
+
+  const { error } = await upsertPlaceToWishlist(supabase, userId, tripId, place);
   if (error) return redirectWith(returnTo, "error", error.message);
+  revalidatePath(`/trips/${tripId}/wishlist`);
+  revalidatePath(`/trips/${tripId}`);
+  return redirectWith(returnTo, "saved", "1");
+}
+
+export async function addPlaceToTrip(formData: FormData) {
+  const { supabase, userId } = await requireVerifiedUser("/explore");
+  const tripId = String(formData.get("trip_id") || "");
+  const dayId = String(formData.get("day_id") || "");
+  const placeSlug = String(formData.get("place_slug") || "");
+  const returnTo = String(formData.get("return_to") || "/explore");
+  const place = getPlace(placeSlug);
+  if (!tripId || !place) return redirectWith(returnTo, "error", "ข้อมูลสถานที่ไม่ถูกต้อง");
+
+  if (dayId) {
+    const { error } = await insertPlaceToDay(supabase, tripId, dayId, place);
+    if (error) return redirectWith(returnTo, "error", error.message);
+    revalidatePath(`/trips/${tripId}/days/${dayId}`);
+    revalidatePath(`/trips/${tripId}/calendar`);
+    revalidatePath("/plan");
+  } else {
+    const { error } = await upsertPlaceToWishlist(supabase, userId, tripId, place);
+    if (error) return redirectWith(returnTo, "error", error.message);
+    revalidatePath(`/trips/${tripId}/wishlist`);
+  }
 
   revalidatePath(`/trips/${tripId}`);
-  revalidatePath(`/trips/${tripId}/days/${dayId}`);
-  revalidatePath(`/trips/${tripId}/calendar`);
-  revalidatePath("/plan");
   return redirectWith(returnTo, "added", "1");
+}
+
+export async function addPlaceToDay(formData: FormData) {
+  return addPlaceToTrip(formData);
 }

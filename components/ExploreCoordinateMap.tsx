@@ -8,14 +8,23 @@ function mapKind(category: string): RealMapPoint["kind"] {
   return "other";
 }
 
+const kindLabels: Array<[RealMapPoint["kind"], string]> = [
+  ["attraction", "เที่ยว"],
+  ["food", "อาหาร"],
+  ["shopping", "ช้อปปิ้ง"],
+  ["nature", "ธรรมชาติ"],
+  ["family", "ครอบครัว"],
+  ["museum", "พิพิธภัณฑ์"],
+];
+
 export function ExploreCoordinateMap({ places }: { places: DiscoveryPlace[] }) {
   const points: RealMapPoint[] = places
     .filter((place) => Number.isFinite(place.latitude) && Number.isFinite(place.longitude))
-    .slice(0, 60)
+    .slice(0, 80)
     .map((place) => ({
       id: place.slug,
       title: place.title,
-      subtitle: place.city,
+      subtitle: `${place.city} · ${place.area}`,
       latitude: Number(place.latitude),
       longitude: Number(place.longitude),
       kind: mapKind(place.category),
@@ -24,20 +33,25 @@ export function ExploreCoordinateMap({ places }: { places: DiscoveryPlace[] }) {
 
   if (!points.length) return <div className="explore-coordinate-empty">ยังไม่มีพิกัดในตัวกรองนี้</div>;
 
+  const visibleKinds = kindLabels.filter(([kind]) => points.some((point) => point.kind === kind));
+
   return (
     <div className="explore-coordinate-map real-map-card">
       <div className="explore-map-caption">
-        <div><strong>Map overview</strong><span>แผนที่จริง · เลื่อน/ซูม/แตะหมุดได้</span></div>
-        <small>OpenStreetMap · ไม่ต้องใช้ API key</small>
+        <div><strong>Map overview</strong><span>{points.length} จุด · แผนที่จริง · เลื่อน/ซูม/เปลี่ยนชั้นแผนที่/เปิดเต็มจอได้</span></div>
+        <small>OpenStreetMap + OpenTopoMap · ไม่ต้องใช้ API key</small>
       </div>
       <RealMap points={points} className="explore-real-map" />
+      <div className="map-kind-legend">
+        {visibleKinds.map(([kind, label]) => <span key={kind} className={`map-kind-chip kind-${kind}`}><i />{label}</span>)}
+      </div>
       <div className="explore-map-legend real-map-legend">
-        {points.slice(0, 10).map((place, index) => (
+        {points.slice(0, 12).map((place, index) => (
           <a key={place.id} href={place.mapsUrl || "#"} target="_blank" rel="noreferrer">
             <b>{index + 1}</b><span>{place.title}</span>
           </a>
         ))}
-        {points.length > 10 && <span className="muted">+ {points.length - 10} จุดบนแผนที่</span>}
+        {points.length > 12 && <span className="muted">+ {points.length - 12} จุดบนแผนที่</span>}
       </div>
     </div>
   );

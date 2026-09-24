@@ -2181,3 +2181,273 @@ body::before {
 .map-route-note{margin:7px 4px 0;color:#7b909b;font-size:8px;line-height:1.5}
 @media(max-width:820px){.real-map{height:360px}.trip-real-map{height:360px}.explore-map-caption{align-items:flex-start;flex-direction:column;gap:4px}}
 @media(max-width:520px){.real-map{height:320px}.trip-real-map{height:330px}.explore-map-caption strong{font-size:11px}.real-map-legend{padding:8px}.real-map-legend a{font-size:7px}}
+
+/* =========================================================
+   V11.5–V11.8 — Real photo Explore + complete maps + no snow
+   ========================================================= */
+
+/* Snow has been removed from the app shell in layout.tsx. Keep any legacy
+   decorative snow classes disabled so an older cached component cannot render. */
+.weather-atmosphere,
+.snow-only-atmosphere,
+.weather-snowfall,
+.snow-overlay,
+.snow-layer {
+  display: none !important;
+}
+
+/* Explore real photos */
+.place-card-cover.real-photo-cover {
+  min-height: 0;
+  height: 220px;
+  padding: 0;
+  display: block;
+  overflow: hidden;
+  background: #eaf3f7;
+}
+.explore-photo-gallery {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: linear-gradient(135deg, #dfeef5, #f3f8fa);
+}
+.explore-place-photo {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transform: scale(1.002);
+  transition: opacity .2s ease, transform .35s ease;
+}
+.place-card:hover .explore-place-photo { transform: scale(1.025); }
+.explore-photo-gallery::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(9,28,40,.03) 45%, rgba(9,28,40,.35) 100%);
+}
+.explore-photo-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 24px;
+  text-align: center;
+  color: #315f7e;
+  background:
+    radial-gradient(circle at 20% 15%, rgba(255,255,255,.88), transparent 32%),
+    linear-gradient(145deg, #dcecf3, #edf6f8 55%, #d7e8ef);
+}
+.explore-photo-placeholder strong { font-size: 15px; }
+.explore-photo-placeholder span { font-size: 10px; color: #6c8594; }
+.explore-photo-placeholder.loading::before {
+  content: "";
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 3px solid rgba(47,127,168,.18);
+  border-top-color: #2f7fa8;
+  animation: explore-photo-spin .8s linear infinite;
+}
+@keyframes explore-photo-spin { to { transform: rotate(360deg); } }
+.gallery-arrow {
+  position: absolute;
+  z-index: 4;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 34px;
+  height: 44px;
+  border: 0;
+  border-radius: 12px;
+  background: rgba(10,31,43,.62);
+  color: #fff;
+  font-size: 26px;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+}
+.gallery-arrow:hover { background: rgba(10,31,43,.78); }
+.gallery-arrow-prev { left: 9px; }
+.gallery-arrow-next { right: 9px; }
+.gallery-dots {
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+  padding: 5px 7px;
+  border-radius: 999px;
+  background: rgba(9,28,40,.42);
+  backdrop-filter: blur(8px);
+}
+.gallery-dots button {
+  width: 6px;
+  height: 6px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,.5);
+  cursor: pointer;
+}
+.gallery-dots button.active { width: 16px; border-radius: 999px; background: #fff; }
+.commons-photo-credit {
+  position: absolute;
+  z-index: 4;
+  right: 8px;
+  bottom: 8px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 7px;
+  font-weight: 700;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: rgba(9,28,40,.48);
+  backdrop-filter: blur(6px);
+}
+.gallery-dots + .commons-photo-credit { bottom: 38px; }
+.real-photo-cover .place-city-badge,
+.real-photo-cover .thai-popular-badge { z-index: 5; }
+
+/* V11.7 focused Explore filters */
+.explore-focus-filters {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #e7eff3;
+}
+.explore-focus-filters .filter-chip { min-width: 72px; justify-content: center; }
+.explore-add-trip-form {
+  margin-top: 12px;
+  padding: 10px;
+  border-radius: 16px;
+  background: #f4f9fb;
+  border: 1px solid #dceaf0;
+}
+.explore-add-trip-form .select { background: #fff; }
+
+/* V11.8 reliable real map presentation */
+.real-map-shell {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  background: #eaf3f6;
+  overflow: hidden;
+}
+.real-map-shell.fullscreen {
+  position: fixed;
+  z-index: 9999;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  padding: 0;
+  background: #eaf3f6;
+}
+.real-map-shell.fullscreen .real-map {
+  height: 100dvh !important;
+  border-radius: 0 !important;
+}
+body.map-fullscreen-open { overflow: hidden !important; }
+.real-map-loading {
+  position: absolute;
+  z-index: 700;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  background: rgba(234,243,246,.9);
+  color: #315f7e;
+  font-size: 11px;
+  font-weight: 800;
+}
+.real-map-loading span {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 3px solid rgba(47,127,168,.2);
+  border-top-color: #2f7fa8;
+  animation: explore-photo-spin .8s linear infinite;
+}
+.real-map-toolbar {
+  position: absolute;
+  z-index: 800;
+  right: 10px;
+  bottom: 12px;
+  display: flex;
+  gap: 6px;
+}
+.real-map-toolbar button {
+  border: 1px solid rgba(43,93,120,.16);
+  border-radius: 11px;
+  padding: 8px 10px;
+  background: rgba(255,255,255,.94);
+  color: #315f7e;
+  box-shadow: 0 6px 18px rgba(31,76,101,.12);
+  font-size: 9px;
+  font-weight: 850;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+}
+.real-map-toolbar button:hover { background: #fff; }
+.real-map-shell.fullscreen .real-map-toolbar { bottom: 22px; right: 18px; }
+.real-map-shell.fullscreen .real-map-toolbar button { padding: 11px 14px; font-size: 11px; }
+.real-map-shell .leaflet-control-layers {
+  border: 0 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 5px 18px rgba(31,76,101,.12) !important;
+}
+.real-map-shell .leaflet-control-layers-expanded {
+  color: #315f7e;
+  font-size: 10px;
+}
+.map-kind-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 12px 0;
+  background: #fff;
+}
+.map-kind-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: #f5f9fb;
+  border: 1px solid #e3edf1;
+  color: #567386;
+  font-size: 8px;
+  font-weight: 800;
+}
+.map-kind-chip i { width: 8px; height: 8px; border-radius: 50%; background: #2f7fa8; }
+.map-kind-chip.kind-food i { background: #e77747; }
+.map-kind-chip.kind-shopping i { background: #9b72d2; }
+.map-kind-chip.kind-nature i { background: #55a86b; }
+.map-kind-chip.kind-family i { background: #e5a92f; }
+.map-kind-chip.kind-museum i { background: #777f91; }
+.map-kind-chip.kind-attraction i { background: #2f7fa8; }
+.explore-coordinate-map .real-map-shell { border-top: 1px solid #e3eef3; border-bottom: 1px solid #e3eef3; }
+
+@media (max-width: 720px) {
+  .place-card-cover.real-photo-cover { height: 205px; }
+  .gallery-arrow { width: 32px; height: 40px; }
+  .explore-focus-filters { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 3px; }
+  .explore-focus-filters .filter-chip { flex: 0 0 auto; }
+  .real-map-toolbar { right: 8px; bottom: 10px; }
+  .real-map-toolbar button { padding: 7px 9px; font-size: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .explore-place-photo { transition: none; }
+  .explore-photo-placeholder.loading::before,
+  .real-map-loading span { animation: none; }
+}

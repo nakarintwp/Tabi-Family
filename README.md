@@ -1,4 +1,14 @@
-# Tabi Family — V11.2 Practical Intelligence Suite
+# Tabi Family — V11.8 Explore Visual & Map Polish
+
+
+## V11.5–V11.8 — Explore Visual & Map Polish
+
+- **V11.5 Real Photos** — Explore cards load real place photos from Wikimedia Commons instead of emoji/logo covers.
+- **V11.6 Multi-photo Gallery** — up to five real photos per place with previous/next controls and Commons source credit.
+- **V11.7 Focus Filters** — Food, Shopping, Nature, Kids, Thai-popular.
+- **V11.8 Add to Trip + Map Polish** — add a place directly to the selected Trip/Day, improved OpenStreetMap/OpenTopoMap controls, fit-all and fullscreen mode.
+- Decorative snowfall has been removed from the app shell. Weather data and weather-aware planning remain available.
+- No V11.5–V11.8 SQL migration is required.
 
 ## V11.4 — Real Interactive Maps
 
@@ -10,7 +20,7 @@ Explore **Map overview** and Trip Map now render a real interactive OpenStreetMa
 Primary navigation has been consolidated to **Today · Plan · Explore · Wallet · More**. Existing features remain available inside their parent hubs; no V11.3 SQL migration is required. See `V11_3_NAVIGATION_UX_CONSOLIDATION.md`.
 
 
-> Current build: **V11.2**
+> Current build: **V11.8**
 
 Mobile-first Japan family trip planner built with Next.js App Router + Supabase. V10.6–V11.2 focuses on real-trip operations: actual expenses, portable backups, browser OCR, an import review inbox, rule-based schedule checks, weather-aware planning, and richer rental-car route intelligence.
 
@@ -93,7 +103,7 @@ No new database table or column is required for this release. Booking metadata i
 - Packing, Booking Wallet and Expense Tracker.
 - Export / Backup.
 - Weather / Rain Plan with Open-Meteo.
-- Snow-only decorative atmosphere.
+- Clean blue travel atmosphere; decorative snowfall removed in V11.8.
 
 ## Database
 

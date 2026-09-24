@@ -1,0 +1,19 @@
+V11.5–V11.8 Explore Visual & Map Polish
+
+Modified:
+- app/explore/page.tsx
+- app/explore/actions.ts
+- app/layout.tsx
+- app/globals.css
+- app/version/route.ts
+- components/AppHeader.tsx
+- components/ExploreCoordinateMap.tsx
+- components/RealMap.tsx
+- public/sw.js
+- package.json
+- README.md
+
+Added:
+- components/ExplorePhotoGallery.tsx
+- V11_5_TO_V11_8_EXPLORE_VISUAL_MAP_POLISH.md
+- CHANGED_FILES_V11_8.txt

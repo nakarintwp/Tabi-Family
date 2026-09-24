@@ -11,7 +11,7 @@ export function AppHeader() {
         </span>
       </Link>
       <div className="header-actions">
-        <span className="global-build-chip" title="Build version">V11.4</span>
+        <span className="global-build-chip" title="Build version">V11.8</span>
         <Link className="avatar cartoon-avatar" href="/account" aria-label="Account">
           <span aria-hidden="true">👤</span>
         </Link>
