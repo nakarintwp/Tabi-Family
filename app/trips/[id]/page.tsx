@@ -24,7 +24,7 @@ export default async function TripDetailPage({ params, searchParams }: { params:
   const { data: trip } = await supabase
     .from("trips")
     .select(`
-      id,owner_id,title,start_date,end_date,cities,interests,pace,budget,currency,cover_style,cover_emoji,cover_tagline,template_key,
+      id,owner_id,title,start_date,end_date,cities,pace,budget,currency,cover_style,cover_emoji,cover_tagline,template_key,
       trip_members(id,name,member_type,walking_level,needs,created_at),
       trip_days(id,trip_date,title,notes,activities(id,title,activity_type,start_time,location_name,sort_order,duration_minutes,notes,child_friendly,senior_friendly,status)),
       expenses(id,amount,currency,category,note,paid_at),
@@ -50,7 +50,7 @@ export default async function TripDetailPage({ params, searchParams }: { params:
   const expenses = [...(trip.expenses || [])].sort((a, b) => String(b.paid_at).localeCompare(String(a.paid_at)));
   const bookings = trip.bookings || [];
   const packingItems = trip.packing_items || [];
-  const packedItems = packingItems.filter((item) => item.is_packed).length;
+  const packedItems = packingItems.filter((item: { is_packed: boolean }) => item.is_packed).length;
   const totalActivities = days.reduce((sum, day) => sum + (day.activities?.length || 0), 0);
   const plannedDays = days.filter((day) => (day.activities?.length || 0) > 0).length;
   const progress = days.length ? Math.round((plannedDays / days.length) * 100) : 0;
@@ -77,7 +77,7 @@ export default async function TripDetailPage({ params, searchParams }: { params:
         <AppHeader />
         {query.joined === "1" && <div className="success-box">เข้าร่วมทริปเรียบร้อยแล้ว ✓</div>}
         {query.delete_error && <div className="error-box"><strong>ลบทริปไม่สำเร็จ</strong><br/><span>{query.delete_error}</span></div>}
-        {query.setup_error && <div className="error-box"><strong>สร้างทริปแล้ว แต่บันทึกความสนใจไม่สำเร็จ</strong><br/><span>{query.setup_error}</span></div>}
+        {query.setup_error && <div className="error-box"><strong>ตั้งค่าทริปไม่สมบูรณ์</strong><br/><span>{query.setup_error}</span></div>}
 
         <section className={`hero compact-hero trip-hero trip-cover cover-${coverStyle}`}>
           <div className="trip-hero-role-row"><div className="eyebrow">Trip dashboard · V7 Discovery</div><span className={`role-badge ${role}`}>{role === "owner" ? "Owner" : role === "editor" ? "Editor" : "Viewer"}</span></div>
@@ -99,7 +99,7 @@ export default async function TripDetailPage({ params, searchParams }: { params:
           <Link className="quick-action" href={`/trips/${trip.id}/calendar`}><span>📆</span><strong>Calendar</strong><small>ภาพรวมทั้งทริป</small></Link>
           <Link className="quick-action" href={`/trips/${trip.id}/wishlist`}><span>♡</span><strong>Wishlist</strong><small>{wishlistCount || 0} สถานที่</small></Link>
           <Link className="quick-action" href={`/explore?trip=${trip.id}`}><span>✨</span><strong>Explore</strong><small>{trip.cities?.join(" • ") || "ค้นไอเดีย"}</small></Link>
-          <Link className="quick-action" href={`/trips/${trip.id}/destinations`}><span>📍</span><strong>Destinations</strong><small>{trip.cities?.length || 0} เมือง · {trip.interests?.length || 0} ความสนใจ</small></Link>
+          <Link className="quick-action" href={`/trips/${trip.id}/destinations`}><span>📍</span><strong>Destinations</strong><small>{trip.cities?.length || 0} เมือง</small></Link>
           <Link className="quick-action" href={`/trips/${trip.id}/transport`}><span>🚆</span><strong>Transport</strong><small>{transportCount || 0} ช่วง</small></Link>
           <Link className="quick-action" href="/today"><span>☀️</span><strong>Today</strong><small>แผนวันนี้ + GPS</small></Link>
           <Link className="quick-action" href={`/trips/${trip.id}/family`}><span>👨‍👩‍👧‍👵</span><strong>Family</strong><small>โปรไฟล์ครอบครัว</small></Link>

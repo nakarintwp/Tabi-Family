@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { AppHeader } from "@/components/AppHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { SubmitButton } from "@/components/SubmitButton";
-import { DEFAULT_TRIP_INTERESTS, DISCOVERY_DESTINATIONS, TRIP_INTERESTS, getTemplate } from "@/lib/discovery";
+import { DISCOVERY_DESTINATIONS, getTemplate } from "@/lib/discovery";
 import { createTrip } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -14,7 +14,6 @@ export default async function NewTripPage({ searchParams }: { searchParams: Prom
   const template = templateId ? getTemplate(templateId) : undefined;
   const createRequestId = randomUUID();
   const selectedCities = new Set(template?.cities || ["Nagoya", "Takayama", "Shirakawa-go"]);
-  const selectedInterests = new Set(DEFAULT_TRIP_INTERESTS);
 
   return (
     <main className="shell">
@@ -26,7 +25,7 @@ export default async function NewTripPage({ searchParams }: { searchParams: Prom
             <h1 className="page-title">สร้างทริปใหม่</h1>
             <p className="page-subtitle">{template ? `ใช้ ${template.title} เป็นจุดเริ่มต้น แล้วแก้ต่อได้ทุกจุด` : "สร้าง Trip, สมาชิก และวันเดินทางในครั้งเดียว"}</p>
           </div>
-          <div className="create-version-stack"><div className="speed-chip">⚡ Fast create</div><div className="build-chip">V7.3.5</div></div>
+          <div className="create-version-stack"><div className="speed-chip">⚡ Fast create</div><div className="build-chip">V7.3.6</div></div>
         </div>
 
         {template && <div className={`template-selected trip-cover cover-${template.coverStyle}`}><span>{template.coverEmoji}</span><div><strong>{template.title}</strong><small>{template.days} วัน · {template.cities.join(" • ")}</small></div><Link className="link" href="/templates">เปลี่ยน</Link></div>}
@@ -46,32 +45,19 @@ export default async function NewTripPage({ searchParams }: { searchParams: Prom
           </div>
           {template && <p className="small muted form-hint">Template นี้ออกแบบไว้ประมาณ {template.days} วัน — หากเลือกวันน้อยกว่า ระบบจะใส่เฉพาะ Day ที่มีอยู่</p>}
 
-          <div className="field selection-panel">
-            <div className="selection-section-title"><div><span className="selection-step">1</span><strong>เมือง / พื้นที่ที่จะไป</strong></div><span>ติ๊กเลือกได้หลายเมือง</span></div><p className="selection-note">เลือกพื้นที่ของทริปก่อน เพื่อให้ Explore แสดงเฉพาะสถานที่ที่เกี่ยวข้องกับเส้นทางนี้</p>
-            <div className="destination-picker">
+          <div className="field selection-panel compact-city-panel">
+            <div className="selection-section-title"><div><span className="selection-step">1</span><strong>เมือง / พื้นที่ที่จะไป</strong></div><span>{DISCOVERY_DESTINATIONS.length} เมือง · เลือกได้หลายเมือง</span></div>
+            <p className="selection-note">เลือกเฉพาะพื้นที่ที่ตั้งใจจะไป เพื่อให้ Explore แสดงข้อมูลตามเส้นทางของ Trip นี้</p>
+            <div className="destination-picker compact-city-picker">
               {DISCOVERY_DESTINATIONS.map((destination) => (
-                <label className="destination-option" key={destination.id}>
+                <label className="destination-option compact-city-option" key={destination.id} title={`${destination.label} · ${destination.subtitle}`}>
                   <input type="checkbox" name="cities" value={destination.id} defaultChecked={selectedCities.has(destination.id)} />
                   <span className="destination-option-emoji">{destination.emoji}</span>
-                  <span><strong>{destination.label}</strong><small>{destination.subtitle}</small></span>
+                  <strong>{destination.label}</strong>
                 </label>
               ))}
             </div>
-            <p className="small muted form-hint">ตัวอย่างทริป Chubu: Nagoya → Takayama → Shirakawa-go เมื่อเข้า Explore จะเห็นเฉพาะพื้นที่ของทริปนี้</p>
-          </div>
-
-          <div className="field selection-panel">
-            <div className="selection-section-title"><div><span className="selection-step">2</span><strong>กิจกรรมที่สนใจ</strong></div><span>เลือกได้หลายแบบ</span></div><p className="selection-note">ระบบจะใช้ความสนใจเหล่านี้จัดลำดับคำแนะนำใน Explore ให้ตรงกับทริปมากขึ้น</p>
-            <div className="interest-picker">
-              {TRIP_INTERESTS.map((interest) => (
-                <label className="interest-option" key={interest.id}>
-                  <input type="checkbox" name="interests" value={interest.id} defaultChecked={selectedInterests.has(interest.id)} />
-                  <span className="interest-option-emoji">{interest.emoji}</span>
-                  <span><strong>{interest.label}</strong><small>{interest.subtitle}</small></span>
-                </label>
-              ))}
-            </div>
-            <p className="small muted form-hint">เลือกได้หลายแบบ เช่น ❄️ หิมะ · 🎡 สวนสนุก · 🛍️ ช้อปปิ้ง · 📍 สถานที่เที่ยวชม · 🍎 ตลาด</p>
+            <p className="small muted form-hint">ค่าเริ่มต้น: Nagoya · Takayama · Shirakawa-go — ติ๊กเพิ่มหรือลบเมืองได้ตามแผนจริง</p>
           </div>
 
           <div className="grid2">

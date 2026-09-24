@@ -1,0 +1,20 @@
+V7.3.6 Compact Multi-City Picker
+
+Changed:
+- app/trips/new/page.tsx
+- app/trips/new/actions.ts
+- app/trips/[id]/destinations/page.tsx
+- app/trips/[id]/destinations/actions.ts
+- app/trips/[id]/page.tsx
+- app/explore/page.tsx
+- app/globals.css
+- app/version/route.ts
+- components/AppHeader.tsx
+- components/PwaRegister.tsx
+- lib/discovery.ts
+- public/sw.js
+- package.json
+- README.md
+- V7_3_6_COMPACT_CITY_PICKER.md
+
+No SQL migration required.

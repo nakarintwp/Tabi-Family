@@ -1,8 +1,8 @@
-# Tabi Family — V7.3.5 CSS Parser Build Fix
+# Tabi Family — V7.3.6 Compact Multi-City Picker
 
-> Current build: **V7.3.5**
+> Current build: **V7.3.6**
 
-This release fixes the Vercel/Turbopack CSS parser failure while preserving the V7.3 Trip city/interest picker and snow-only atmosphere.
+This release simplifies Create Trip: the Trip-level activity-interest step is removed, while the city picker becomes compact and supports many Japan destinations. Snow-only atmosphere and all V7 planning features remain.
 
 ## V7 highlights
 
@@ -91,3 +91,7 @@ Run `supabase/schema.sql`. For an existing project, apply migrations in sequence
 
 ## V7.3 — Trip Interests
 เลือกเมืองและกิจกรรมที่สนใจตอนสร้าง Trip จากนั้น Explore จะใช้สองข้อมูลนี้เพื่อคัดพื้นที่และเรียงสถานที่แนะนำให้ตรงกับทริปมากขึ้น ดู `V7_3_TRIP_INTERESTS.md`
+
+
+## V7.3.6 Compact Multi-City Picker
+Create Trip now uses a small multi-city selector with many Japan destinations. Trip-level activity interests were removed from the planning flow. No SQL migration required.
