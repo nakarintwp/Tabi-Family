@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { loadMapLibre, OPENSTREETMAP_RASTER_STYLE } from "@/lib/maplibre-browser";
 
 export type RealMapPoint = {
   id: string;
@@ -31,43 +30,15 @@ function kindColor(kind: RealMapPoint["kind"]) {
   }
 }
 
-function popupNode(point: RealMapPoint, index: number) {
-  const root = document.createElement("div");
-  root.className = "tabi-map-popup openfree";
-
-  const eyebrow = document.createElement("div");
-  eyebrow.className = "tabi-map-popup-number";
-  eyebrow.textContent = `จุดที่ ${index + 1}`;
-  root.appendChild(eyebrow);
-
-  const title = document.createElement("strong");
-  title.textContent = point.title;
-  root.appendChild(title);
-
-  if (point.subtitle) {
-    const subtitle = document.createElement("small");
-    subtitle.textContent = point.subtitle;
-    root.appendChild(subtitle);
-  }
-
-  const link = document.createElement("a");
-  link.href = point.mapsUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${point.latitude},${point.longitude}`)}`;
-  link.target = "_blank";
-  link.rel = "noreferrer";
-  link.textContent = "นำทางด้วย Google Maps ↗";
-  root.appendChild(link);
-
-  return root;
+function popupHtml(point: RealMapPoint, index: number) {
+  const title = point.title.replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char] || char));
+  const subtitle = (point.subtitle || "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char] || char));
+  const mapsUrl = point.mapsUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${point.latitude},${point.longitude}`)}`;
+  return `<div class="tabi-map-popup leaflet-popup-body"><div class="tabi-map-popup-number">จุดที่ ${index + 1}</div><strong>${title}</strong>${subtitle ? `<small>${subtitle}</small>` : ""}<a href="${mapsUrl}" target="_blank" rel="noreferrer">นำทางด้วย Google Maps ↗</a></div>`;
 }
 
-function markerNode(index: number, color: string) {
-  const root = document.createElement("button");
-  root.type = "button";
-  root.className = "tabi-maplibre-marker";
-  root.style.setProperty("--pin-color", color);
-  root.setAttribute("aria-label", `จุดที่ ${index + 1}`);
-  root.dataset.label = String(index + 1);
-  return root;
+function markerHtml(index: number, color: string) {
+  return `<span class="tabi-leaflet-marker" style="--pin-color:${color}"><b>${index + 1}</b></span>`;
 }
 
 export function RealMap({
@@ -85,7 +56,6 @@ export function RealMap({
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const boundsRef = useRef<any>(null);
-  const markersRef = useRef<any[]>([]);
   const [failed, setFailed] = useState(false);
   const [ready, setReady] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
@@ -95,85 +65,104 @@ export function RealMap({
     if (!containerRef.current || !usable.length) return;
     let cancelled = false;
     let resizeObserver: ResizeObserver | null = null;
+    let readyTimer: number | null = null;
+
     setFailed(false);
     setReady(false);
 
-    loadMapLibre()
-      .then((maplibregl) => {
+    async function boot() {
+      try {
+        const L = await import("leaflet");
         if (cancelled || !containerRef.current) return;
 
-        const map = new maplibregl.Map({
-          container: containerRef.current,
-          style: OPENSTREETMAP_RASTER_STYLE,
-          center: [usable[0].longitude, usable[0].latitude],
-          zoom: usable.length === 1 ? 14.5 : 7.5,
+        const map = L.map(containerRef.current, {
+          zoomControl: true,
           attributionControl: true,
-          cooperativeGestures: !fullscreen,
+          scrollWheelZoom: true,
+          preferCanvas: true,
         });
         mapRef.current = map;
-        map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "top-right");
-        map.addControl(new maplibregl.ScaleControl({ unit: "metric" }), "bottom-left");
 
-        const bounds = new maplibregl.LngLatBounds();
+        const tileLayer = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 19,
+          minZoom: 2,
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a> contributors',
+          crossOrigin: true,
+        });
+
+        tileLayer.on("tileerror", () => {
+          // Keep the map interactive even if a single tile temporarily fails.
+          // The loading timeout below handles a fully unavailable tile service.
+        });
+        tileLayer.addTo(map);
+
+        const bounds = L.latLngBounds([]);
         boundsRef.current = bounds;
 
-        markersRef.current = usable.map((point, index) => {
-          const lngLat: [number, number] = [point.longitude, point.latitude];
-          bounds.extend(lngLat);
-          const popup = new maplibregl.Popup({ offset: 20, closeButton: true }).setDOMContent(popupNode(point, index));
-          return new maplibregl.Marker({ element: markerNode(index, kindColor(point.kind)), anchor: "bottom" })
-            .setLngLat(lngLat)
-            .setPopup(popup)
+        usable.forEach((point, index) => {
+          const latLng = L.latLng(point.latitude, point.longitude);
+          bounds.extend(latLng);
+          const icon = L.divIcon({
+            className: "tabi-leaflet-div-icon",
+            html: markerHtml(index, kindColor(point.kind)),
+            iconSize: [34, 42],
+            iconAnchor: [17, 40],
+            popupAnchor: [0, -34],
+          });
+          L.marker(latLng, { icon, title: point.title })
+            .bindPopup(popupHtml(point, index), { maxWidth: 280 })
             .addTo(map);
         });
 
-        map.on("load", () => {
-          if (cancelled) return;
-          if (connectPoints && usable.length > 1) {
-            map.addSource("tabi-route", {
-              type: "geojson",
-              data: {
-                type: "Feature",
-                properties: {},
-                geometry: {
-                  type: "LineString",
-                  coordinates: usable.map((point) => [point.longitude, point.latitude]),
-                },
-              },
-            });
-            map.addLayer({
-              id: "tabi-route-line",
-              type: "line",
-              source: "tabi-route",
-              layout: { "line-join": "round", "line-cap": "round" },
-              paint: { "line-color": "#2f7fa8", "line-width": 4, "line-opacity": 0.72, "line-dasharray": [2, 2] },
-            });
-          }
+        if (connectPoints && usable.length > 1) {
+          L.polyline(usable.map((point) => [point.latitude, point.longitude] as [number, number]), {
+            color: "#2f7fa8",
+            weight: 4,
+            opacity: 0.72,
+            dashArray: "8 8",
+          }).addTo(map);
+        }
 
-          if (usable.length === 1) {
-            map.easeTo({ center: [usable[0].longitude, usable[0].latitude], zoom: 14.5, duration: 0 });
-          } else {
-            map.fitBounds(bounds, { padding: 48, maxZoom: 13, duration: 0 });
-          }
-          map.resize();
-          setReady(true);
-        });
+        if (usable.length === 1) {
+          map.setView([usable[0].latitude, usable[0].longitude], 14);
+        } else {
+          map.fitBounds(bounds, { padding: [42, 42], maxZoom: 13 });
+        }
 
-        const redraw = () => mapRef.current?.resize?.();
-        window.setTimeout(redraw, 100);
-        window.setTimeout(redraw, 350);
+        const redraw = () => mapRef.current?.invalidateSize?.({ pan: false });
+        window.setTimeout(redraw, 80);
+        window.setTimeout(redraw, 280);
+        window.setTimeout(redraw, 700);
+
         if (typeof ResizeObserver !== "undefined" && shellRef.current) {
           resizeObserver = new ResizeObserver(redraw);
           resizeObserver.observe(shellRef.current);
         }
-      })
-      .catch(() => setFailed(true));
+
+        map.whenReady(() => {
+          if (cancelled) return;
+          redraw();
+          setReady(true);
+        });
+
+        readyTimer = window.setTimeout(() => {
+          if (!cancelled && mapRef.current) {
+            redraw();
+            setReady(true);
+          }
+        }, 2500);
+      } catch (error) {
+        console.error("Tabi map failed to load", error);
+        if (!cancelled) setFailed(true);
+      }
+    }
+
+    void boot();
 
     return () => {
       cancelled = true;
+      if (readyTimer) window.clearTimeout(readyTimer);
       resizeObserver?.disconnect();
-      markersRef.current.forEach((marker) => marker?.remove?.());
-      markersRef.current = [];
       mapRef.current?.remove?.();
       mapRef.current = null;
       boundsRef.current = null;
@@ -185,13 +174,13 @@ export function RealMap({
     const timer = window.setTimeout(() => {
       const map = mapRef.current;
       if (!map) return;
-      map.resize();
+      map.invalidateSize({ pan: false });
       if (usable.length === 1) {
-        map.easeTo({ center: [usable[0].longitude, usable[0].latitude], zoom: 14.5, duration: 0 });
-      } else if (boundsRef.current) {
-        map.fitBounds(boundsRef.current, { padding: fullscreen ? 72 : 48, maxZoom: 13, duration: 0 });
+        map.setView([usable[0].latitude, usable[0].longitude], 14, { animate: false });
+      } else if (boundsRef.current?.isValid?.()) {
+        map.fitBounds(boundsRef.current, { padding: fullscreen ? [64, 64] : [42, 42], maxZoom: 13, animate: false });
       }
-    }, 120);
+    }, 160);
     return () => {
       window.clearTimeout(timer);
       document.body.classList.remove("map-fullscreen-open");
@@ -201,11 +190,11 @@ export function RealMap({
   function fitAll() {
     const map = mapRef.current;
     if (!map) return;
-    map.resize();
+    map.invalidateSize({ pan: false });
     if (usable.length === 1) {
-      map.easeTo({ center: [usable[0].longitude, usable[0].latitude], zoom: 14.5, duration: 350 });
-    } else if (boundsRef.current) {
-      map.fitBounds(boundsRef.current, { padding: fullscreen ? 72 : 48, maxZoom: 13, duration: 350 });
+      map.setView([usable[0].latitude, usable[0].longitude], 14);
+    } else if (boundsRef.current?.isValid?.()) {
+      map.fitBounds(boundsRef.current, { padding: fullscreen ? [64, 64] : [42, 42], maxZoom: 13 });
     }
   }
 
@@ -220,10 +209,10 @@ export function RealMap({
   }
 
   return (
-    <div ref={shellRef} className={`real-map-shell openfree-provider ${fullscreen ? "fullscreen" : ""}`}>
+    <div ref={shellRef} className={`real-map-shell leaflet-provider ${fullscreen ? "fullscreen" : ""}`}>
       {!ready && <div className="real-map-loading"><span />กำลังโหลดแผนที่…</div>}
-      <div ref={containerRef} className={`real-map maplibre-real-map ${compact ? "compact" : ""} ${className}`.trim()} aria-label="แผนที่ OpenStreetMap ของสถานที่ในทริป" />
-      <div className="real-map-provider-badge">OpenStreetMap · MapLibre</div>
+      <div ref={containerRef} className={`real-map leaflet-real-map ${compact ? "compact" : ""} ${className}`.trim()} aria-label="แผนที่ OpenStreetMap ของสถานที่ในทริป" />
+      <div className="real-map-provider-badge">OpenStreetMap · Leaflet</div>
       <div className="real-map-toolbar" aria-label="เครื่องมือแผนที่">
         <button type="button" onClick={fitAll}>ดูทุกจุด</button>
         <button type="button" onClick={() => setFullscreen((value) => !value)}>{fullscreen ? "ย่อแผนที่" : "เต็มจอ"}</button>

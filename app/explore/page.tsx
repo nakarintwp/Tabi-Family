@@ -95,7 +95,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
   return <main className="shell"><div className="container"><AppHeader />
     <section className="discovery-hero">
       <div>
-        <span className="eyebrow">V11.9 · GOOGLE MAPS EXPLORE</span>
+        <span className="eyebrow">V12.1 · EXPLORE MAP</span>
         <h1>{selectedTrip ? `Explore · ${selectedTrip.title}` : "Explore Japan"}</h1>
         <p>{selectedTrip ? "ค้นหา ดูพิกัด บันทึก Wishlist หรือเพิ่มลง Day Planner ได้จากหน้าเดียว" : "เลือกทริปก่อน แล้วระบบจะแสดงเฉพาะพื้นที่ที่คุณกำลังจะไป"}</p>
       </div>
@@ -144,7 +144,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
     </section>
 
     {filtered.length > 0 && <section className="section explore-map-section">
-      <div className="section-head"><h2>Explore Map</h2><span className="small muted">OpenStreetMap · ซูม · เลื่อน · หลายหมุด · เปิดเต็มจอ</span></div>
+      <div className="section-head"><h2>Explore Map</h2><span className="small muted">OpenFreeMap · ซูม · เลื่อน · หลายหมุด · เปิดเต็มจอ</span></div>
       <ExploreCoordinateMap places={filtered} />
     </section>}
 

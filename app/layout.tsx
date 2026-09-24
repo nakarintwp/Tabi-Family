@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import "maplibre-gl/dist/maplibre-gl.css";
 import "./globals.css";
+import "leaflet/dist/leaflet.css";
 import { PwaRegister } from "@/components/PwaRegister";
 
 export const metadata: Metadata = {
