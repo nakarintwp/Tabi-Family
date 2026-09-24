@@ -1811,3 +1811,11 @@ body::before {
 
 /* V7.3.8 — text-only city picker: replace decorative emoji with prefecture/region text */
 .compact-city-picker .compact-city-option .destination-option-region { pointer-events: none; }
+
+
+/* V7.4 Thai-friendly Explore */
+.thai-popular-filter { border-color:#a7d8ee; background:#eefaff; color:#176b91; }
+.thai-popular-filter.active { background:#137fb5; border-color:#137fb5; color:#fff; }
+.thai-popular-badge { position:absolute; left:12px; top:12px; border-radius:999px; padding:5px 9px; background:rgba(255,255,255,.95); border:1px solid #b8e1f3; color:#176b91; font-size:10px; font-weight:900; box-shadow:0 5px 14px rgba(31,111,153,.12); }
+.thai-popular-note { margin-top:9px; border-radius:12px; padding:8px 10px; background:#f2fbff; border:1px solid #d1eef9; color:#4a7185; font-size:11px; line-height:1.45; }
+.explore-map-link { margin-top:10px; margin-bottom:8px; }

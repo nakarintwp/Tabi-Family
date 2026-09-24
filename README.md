@@ -1,6 +1,10 @@
-# Tabi Family — V7.3.8 Text-only City Picker
+# Tabi Family — V7.4 Thai Popular Explore
 
-> Current build: **V7.3.8**
+เพิ่มร้านอาหาร/สถานที่ที่ถูกพูดถึงในรีวิวไทย พร้อมตัวกรองคนไทยนิยมใน Explore
+
+# Tabi Family — V7.4 Thai Popular Explore
+
+> Current build: **V7.4**
 
 This release simplifies Create Trip: the Trip-level activity-interest step is removed, while the city picker becomes compact and supports many Japan destinations. Snow-only atmosphere and all V7 planning features remain.
 

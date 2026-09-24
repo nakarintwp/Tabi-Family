@@ -3,7 +3,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { SubmitButton } from "@/components/SubmitButton";
 import { requireVerifiedUser } from "@/lib/supabase/auth";
-import { DISCOVERY_PLACES } from "@/lib/discovery";
+import { DISCOVERY_PLACES, googleMapsSearchUrl } from "@/lib/discovery";
 import { savePlaceToWishlist } from "./actions";
 
 const categoryLabels: Record<string, string> = {
@@ -15,7 +15,7 @@ const categoryLabels: Record<string, string> = {
   shopping: "ช้อปปิ้ง",
 };
 
-type ExploreQuery = { city?: string; category?: string; trip?: string; saved?: string; error?: string };
+type ExploreQuery = { city?: string; category?: string; trip?: string; popular?: string; saved?: string; error?: string };
 
 type ExploreTrip = {
   id: string;
@@ -49,18 +49,21 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
   const availableCities: string[] = tripCities.length ? tripCities : allCities;
   const activeCity = query.city && availableCities.includes(query.city) ? query.city : "all";
   const activeCategory = query.category || "all";
+  const thaiPopularOnly = query.popular === "thai";
 
   const filtered = DISCOVERY_PLACES.filter((place) =>
     (!tripCities.length || tripCities.includes(place.city)) &&
     (activeCity === "all" || place.city === activeCity) &&
-    (activeCategory === "all" || place.category === activeCategory)
+    (activeCategory === "all" || place.category === activeCategory) &&
+    (!thaiPopularOnly || place.thaiPopular === true)
   );
 
-  const buildHref = (city: string, category: string, tripId = selectedTrip?.id) => {
+  const buildHref = (city: string, category: string, tripId = selectedTrip?.id, popular = thaiPopularOnly) => {
     const params = new URLSearchParams();
     if (tripId) params.set("trip", tripId);
     if (city !== "all") params.set("city", city);
     if (category !== "all") params.set("category", category);
+    if (popular) params.set("popular", "thai");
     const qs = params.toString();
     return `/explore${qs ? `?${qs}` : ""}`;
   };
@@ -69,7 +72,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
   return <main className="shell"><div className="container"><AppHeader />
     <section className="discovery-hero">
       <div>
-        <span className="eyebrow">V7.3.6 · TRIP-SCOPED DISCOVERY</span>
+        <span className="eyebrow">V7.4 · THAI-FRIENDLY DISCOVERY</span>
         <h1>{selectedTrip ? `Explore · ${selectedTrip.title}` : "Explore Japan"}</h1>
         <p>{selectedTrip ? "แสดงเฉพาะเมืองและพื้นที่ที่ผูกกับทริปนี้" : "เลือกทริปก่อน แล้วระบบจะแสดงเฉพาะพื้นที่ที่คุณกำลังจะไป"}</p>
       </div>
@@ -99,6 +102,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
         {availableCities.map((city: string) => <Link key={city} className={`filter-chip ${activeCity === city ? "active" : ""}`} href={buildHref(city, activeCategory)}>{city}</Link>)}
       </div>
       <div className="filter-chip-row compact-filter-row">
+        <Link className={`filter-chip thai-popular-filter ${thaiPopularOnly ? "active" : ""}`} href={buildHref(activeCity, activeCategory, selectedTrip?.id, !thaiPopularOnly)}>คนไทยนิยม</Link>
         <Link className={`filter-chip ${activeCategory === "all" ? "active" : ""}`} href={buildHref(activeCity, "all")}>ทุกประเภท</Link>
         {Object.entries(categoryLabels).map(([key, label]) => <Link key={key} className={`filter-chip ${activeCategory === key ? "active" : ""}`} href={buildHref(activeCity, key)}>{label}</Link>)}
       </div>
@@ -110,13 +114,15 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
 
     <section className="explore-grid">
       {filtered.map((place) => <article className="place-card" key={place.slug}>
-        <div className="place-card-cover"><span>{place.emoji}</span><div className="place-city-badge">{place.city}</div></div>
+        <div className="place-card-cover"><span>{place.emoji}</span><div className="place-city-badge">{place.city}</div>{place.thaiPopular && <div className="thai-popular-badge">คนไทยนิยม</div>}</div>
         <div className="place-card-body">
           <div className="place-meta">{place.area} · {categoryLabels[place.category] || place.category}</div>
           <h2>{place.title}</h2>
           <p>{place.summary}</p>
+          {place.thaiPopular && place.thaiNote && <div className="thai-popular-note">{place.thaiNote}</div>}
           <div className="tag-row">{place.tags.slice(0,3).map((tag) => <span className="mini-tag" key={tag}>{tag}</span>)}</div>
           <div className="place-facts"><span>{place.childFriendly ? "👧 Kids" : "—"}</span><span>{place.seniorFriendly ? "👵 Senior" : "⚠️ เดินเยอะ"}</span><span>{place.isOutdoor ? "🌤 Outdoor" : "🏠 Indoor"}</span></div>
+          <a className="btn btn-secondary btn-full explore-map-link" href={googleMapsSearchUrl(place.title, place.city)} target="_blank" rel="noreferrer">เปิด Google Maps</a>
           {selectedTrip ? (
             selectedTripEditable ? <form action={savePlaceToWishlist} className="wishlist-save-form">
               <input type="hidden" name="place_slug" value={place.slug} />
