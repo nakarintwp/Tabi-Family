@@ -1,56 +1,43 @@
-import { googleMapsSearchUrl, type DiscoveryPlace } from "@/lib/discovery";
+"use client";
 
-const categoryClass: Record<string, string> = {
-  food: "food",
-  shopping: "shopping",
-  attraction: "attraction",
-  family: "family",
-  nature: "nature",
-  museum: "museum",
-};
+import { googleMapsSearchUrl, type DiscoveryPlace } from "@/lib/discovery";
+import { RealMap, type RealMapPoint } from "@/components/RealMap";
+
+function mapKind(category: string): RealMapPoint["kind"] {
+  if (["food", "shopping", "family", "nature", "museum", "attraction"].includes(category)) return category as RealMapPoint["kind"];
+  return "other";
+}
 
 export function ExploreCoordinateMap({ places }: { places: DiscoveryPlace[] }) {
-  const points = places.filter((place) => Number.isFinite(place.latitude) && Number.isFinite(place.longitude));
-  if (!points.length) {
-    return <div className="explore-coordinate-empty">ยังไม่มีพิกัดในตัวกรองนี้</div>;
-  }
+  const points: RealMapPoint[] = places
+    .filter((place) => Number.isFinite(place.latitude) && Number.isFinite(place.longitude))
+    .slice(0, 60)
+    .map((place) => ({
+      id: place.slug,
+      title: place.title,
+      subtitle: place.city,
+      latitude: Number(place.latitude),
+      longitude: Number(place.longitude),
+      kind: mapKind(place.category),
+      mapsUrl: googleMapsSearchUrl(place.title, place.city),
+    }));
 
-  const lats = points.map((p) => Number(p.latitude));
-  const lngs = points.map((p) => Number(p.longitude));
-  const minLat = Math.min(...lats);
-  const maxLat = Math.max(...lats);
-  const minLng = Math.min(...lngs);
-  const maxLng = Math.max(...lngs);
-  const latSpan = Math.max(maxLat - minLat, 0.02);
-  const lngSpan = Math.max(maxLng - minLng, 0.02);
+  if (!points.length) return <div className="explore-coordinate-empty">ยังไม่มีพิกัดในตัวกรองนี้</div>;
 
   return (
-    <div className="explore-coordinate-map" aria-label="Explore location overview">
-      <div className="explore-map-caption"><strong>Map overview</strong><span>พิกัดโดยประมาณ · ¥0 Map API</span></div>
-      <div className="explore-map-grid">
-        {points.slice(0, 28).map((place, index) => {
-          const left = 7 + ((Number(place.longitude) - minLng) / lngSpan) * 86;
-          const top = 7 + ((maxLat - Number(place.latitude)) / latSpan) * 78;
-          return (
-            <a
-              key={place.slug}
-              className={`explore-map-pin ${categoryClass[place.category] || "attraction"}`}
-              style={{ left: `${left}%`, top: `${top}%` }}
-              href={googleMapsSearchUrl(place.title, place.city)}
-              target="_blank"
-              rel="noreferrer"
-              title={`${place.title} · ${place.city}`}
-              aria-label={`เปิด ${place.title} ใน Google Maps`}
-            >
-              <span>{index + 1}</span>
-            </a>
-          );
-        })}
-        <div className="explore-map-axis north">N</div>
+    <div className="explore-coordinate-map real-map-card">
+      <div className="explore-map-caption">
+        <div><strong>Map overview</strong><span>แผนที่จริง · เลื่อน/ซูม/แตะหมุดได้</span></div>
+        <small>OpenStreetMap · ไม่ต้องใช้ API key</small>
       </div>
-      <div className="explore-map-legend">
-        {points.slice(0, 8).map((place, index) => <span key={place.slug}><b>{index + 1}</b>{place.title}</span>)}
-        {points.length > 8 && <span className="muted">+ {points.length - 8} จุด</span>}
+      <RealMap points={points} className="explore-real-map" />
+      <div className="explore-map-legend real-map-legend">
+        {points.slice(0, 10).map((place, index) => (
+          <a key={place.id} href={place.mapsUrl || "#"} target="_blank" rel="noreferrer">
+            <b>{index + 1}</b><span>{place.title}</span>
+          </a>
+        ))}
+        {points.length > 10 && <span className="muted">+ {points.length - 10} จุดบนแผนที่</span>}
       </div>
     </div>
   );

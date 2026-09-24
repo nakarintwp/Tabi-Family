@@ -1,5 +1,10 @@
 # Tabi Family — V11.2 Practical Intelligence Suite
 
+## V11.4 — Real Interactive Maps
+
+Explore **Map overview** and Trip Map now render a real interactive OpenStreetMap with zoom, pan, numbered markers, popups, and day-order route lines. No Google Maps API key is required for the in-app map. Google Maps links remain available for navigation. No V11.4 SQL migration is required. See `V11_4_REAL_INTERACTIVE_MAPS.md`.
+
+
 ## V11.3 — Simplified Navigation
 
 Primary navigation has been consolidated to **Today · Plan · Explore · Wallet · More**. Existing features remain available inside their parent hubs; no V11.3 SQL migration is required. See `V11_3_NAVIGATION_UX_CONSOLIDATION.md`.

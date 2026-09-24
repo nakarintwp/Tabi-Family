@@ -1,0 +1,17 @@
+V11.4 Real Interactive Maps
+
+Added:
+- components/RealMap.tsx
+- V11_4_REAL_INTERACTIVE_MAPS.md
+
+Updated:
+- components/ExploreCoordinateMap.tsx
+- components/TripMapBoard.tsx
+- app/globals.css
+- components/AppHeader.tsx
+- app/version/route.ts
+- public/sw.js
+- package.json
+- README.md
+
+No SQL migration required.
