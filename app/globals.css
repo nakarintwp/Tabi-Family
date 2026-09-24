@@ -1819,3 +1819,123 @@ body::before {
 .thai-popular-badge { position:absolute; left:12px; top:12px; border-radius:999px; padding:5px 9px; background:rgba(255,255,255,.95); border:1px solid #b8e1f3; color:#176b91; font-size:10px; font-weight:900; box-shadow:0 5px 14px rgba(31,111,153,.12); }
 .thai-popular-note { margin-top:9px; border-radius:12px; padding:8px 10px; background:#f2fbff; border:1px solid #d1eef9; color:#4a7185; font-size:11px; line-height:1.45; }
 .explore-map-link { margin-top:10px; margin-bottom:8px; }
+
+/* =========================================================
+   V7.5–V7.9 — Explore map, rich place guide, Smart Day,
+   restaurant filters, Trip Route and Rental car
+   ========================================================= */
+.explore-hero-actions { display:flex; gap:8px; flex-wrap:wrap; }
+.explore-map-section { margin-top:10px; }
+.explore-coordinate-map { overflow:hidden; border:1px solid #d8eaf3; border-radius:24px; background:#fff; box-shadow:0 10px 28px rgba(33,112,161,.07); }
+.explore-map-caption { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:11px 14px; border-bottom:1px solid #e6f0f5; }
+.explore-map-caption strong { color:#194e6c; font-size:12px; }
+.explore-map-caption span { color:#78909d; font-size:9px; }
+.explore-map-grid { position:relative; height:230px; overflow:hidden; background:linear-gradient(90deg,rgba(69,168,220,.08) 1px,transparent 1px),linear-gradient(rgba(69,168,220,.08) 1px,transparent 1px),radial-gradient(circle at 65% 20%,rgba(191,235,255,.65),transparent 32%),linear-gradient(145deg,#effaff,#f9fdff); background-size:30px 30px,30px 30px,auto,auto; }
+.explore-map-grid::before { content:"JAPAN · coordinate overview"; position:absolute; left:12px; bottom:10px; color:#7ca0b3; font-size:9px; font-weight:900; letter-spacing:.08em; }
+.explore-map-axis.north { position:absolute; right:11px; top:9px; width:28px; height:28px; display:grid; place-items:center; border-radius:50%; background:rgba(255,255,255,.9); border:1px solid #d8eaf3; color:#327da4; font-size:9px; font-weight:900; }
+.explore-map-pin { position:absolute; transform:translate(-50%,-50%); width:28px; height:28px; display:grid; place-items:center; border-radius:50% 50% 50% 10px; rotate:-45deg; background:#268fc8; border:2px solid #fff; box-shadow:0 5px 12px rgba(24,100,143,.22); text-decoration:none; }
+.explore-map-pin span { rotate:45deg; color:#fff; font-size:9px; font-weight:900; }
+.explore-map-pin.food { background:#d98242; }
+.explore-map-pin.shopping { background:#9b6bc2; }
+.explore-map-pin.nature { background:#4c9a75; }
+.explore-map-pin.family { background:#e0618c; }
+.explore-map-pin.museum { background:#5c7ebf; }
+.explore-map-legend { display:flex; gap:6px; overflow-x:auto; padding:10px 12px; scrollbar-width:none; }
+.explore-map-legend > span { flex:0 0 auto; display:flex; align-items:center; gap:5px; padding:5px 8px; border-radius:999px; background:#f4f9fc; color:#58798d; font-size:9px; }
+.explore-map-legend b { width:17px; height:17px; display:grid; place-items:center; border-radius:50%; background:#dcedf6; color:#276e95; }
+.explore-coordinate-empty { padding:18px; border-radius:18px; background:#f6fafc; color:#708a98; text-align:center; font-size:11px; }
+.food-filter-row { margin-top:3px; padding-top:6px; border-top:1px dashed #dceaf2; }
+.food-filter { background:#fffaf4; border-color:#f1dcc6; color:#8d633f; }
+.food-filter.active { background:#d98242; border-color:#d98242; color:#fff; box-shadow:0 8px 18px rgba(217,130,66,.18); }
+.thai-popular-badge { left:auto; right:12px; }
+.place-guide-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; margin-top:12px; }
+.place-guide-grid > div { min-width:0; padding:9px; border-radius:13px; background:#f7fbfd; border:1px solid #e3eef4; }
+.place-guide-grid span, .place-guide-grid strong, .place-guide-grid small { display:block; }
+.place-guide-grid span { color:#7a929f; font-size:8px; font-weight:900; text-transform:uppercase; letter-spacing:.05em; }
+.place-guide-grid strong { margin-top:3px; color:#315d76; font-size:10px; line-height:1.35; }
+.place-guide-grid small { margin-top:3px; color:#8398a4; font-size:8px; line-height:1.35; }
+.explore-add-day-form { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; margin-top:10px; }
+.single-action-form { display:block; margin-top:8px; }
+.btn-ghost { background:#f6fbfd; color:#37799e; border:1px solid #d8eaf3; box-shadow:none; }
+
+.smart-plan-hero { display:flex; justify-content:space-between; gap:14px; align-items:flex-end; }
+.smart-plan-hero h1 { margin:5px 0; }
+.smart-plan-hero p { margin:0; max-width:430px; color:#6a8290; font-size:12px; line-height:1.5; }
+.smart-plan-form { padding-bottom:90px; }
+.smart-place-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
+.smart-place-option { position:relative; display:grid; grid-template-columns:30px 1fr; gap:9px; padding:12px; border-radius:18px; background:#fff; border:1px solid #dceaf2; cursor:pointer; }
+.smart-place-option input { position:absolute; opacity:0; }
+.smart-place-check { width:28px; height:28px; display:grid; place-items:center; border-radius:10px; background:#eef5f8; color:transparent; font-weight:900; }
+.smart-place-option:has(input:checked) { border-color:#54afd9; background:#f1faff; box-shadow:inset 0 0 0 1px rgba(84,175,217,.1); }
+.smart-place-option:has(input:checked) .smart-place-check { background:#178dd1; color:#fff; }
+.smart-place-option strong, .smart-place-option small { display:block; }
+.smart-place-option strong { color:#1f4e69; font-size:12px; }
+.smart-place-option small { margin-top:2px; color:#748d9b; font-size:9px; }
+.smart-place-option p { margin:6px 0 0; color:#708693; font-size:9px; line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.smart-plan-sticky { position:fixed; z-index:35; left:50%; bottom:calc(72px + env(safe-area-inset-bottom)); transform:translateX(-50%); width:min(calc(100% - 20px),720px); display:flex; align-items:center; justify-content:space-between; gap:12px; padding:11px 12px; border-radius:20px; background:rgba(255,255,255,.96); border:1px solid #d6e8f1; box-shadow:0 18px 50px rgba(34,95,132,.18); backdrop-filter:blur(14px); }
+.smart-plan-sticky strong, .smart-plan-sticky small { display:block; }
+.smart-plan-sticky strong { color:#225b7b; font-size:11px; }
+.smart-plan-sticky small { margin-top:2px; max-width:380px; color:#7c909b; font-size:8px; }
+
+.route-view-hero { display:flex; justify-content:space-between; align-items:flex-end; gap:14px; }
+.route-view-hero h1 { margin:5px 0; }
+.route-view-hero p { margin:0; color:#6b8290; font-size:12px; }
+.route-summary-card { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:16px; }
+.route-summary-card > div { padding:12px; border-radius:18px; background:#fff; border:1px solid #dceaf2; text-align:center; }
+.route-summary-card span, .route-summary-card strong { display:block; }
+.route-summary-card span { color:#78909d; font-size:9px; }
+.route-summary-card strong { margin-top:3px; color:#1c668d; font-size:22px; }
+.city-route-strip { display:flex; align-items:center; gap:6px; overflow-x:auto; padding:4px 0 8px; scrollbar-width:none; }
+.city-route-node { flex:0 0 auto; display:flex; align-items:center; gap:6px; }
+.city-route-node > span { width:26px; height:26px; display:grid; place-items:center; border-radius:50%; background:#178dd1; color:#fff; font-size:9px; font-weight:900; }
+.city-route-node strong { padding:7px 9px; border-radius:12px; background:#f4f9fc; color:#315f78; font-size:10px; }
+.city-route-node b { color:#81a0b1; }
+.route-segment-list { display:grid; gap:11px; }
+.route-segment-card { display:grid; grid-template-columns:44px minmax(0,1fr); gap:11px; padding:14px; border-radius:22px; background:#fff; border:1px solid #dceaf2; }
+.route-segment-card.rental { border-color:#cde5d9; background:linear-gradient(145deg,#ffffff,#f4fbf7); }
+.route-segment-order { display:grid; align-content:start; justify-items:center; gap:5px; }
+.route-segment-order span { width:42px; height:42px; display:grid; place-items:center; border-radius:14px; background:#eaf7ff; font-size:22px; }
+.route-segment-card.rental .route-segment-order span { background:#e9f7ef; }
+.route-segment-order b { color:#7b929e; font-size:9px; }
+.route-segment-meta { color:#5a89a4; font-size:9px; font-weight:900; letter-spacing:.06em; }
+.route-segment-main h3 { margin:5px 0 4px; color:#244f68; font-size:16px; }
+.route-segment-main h3 span { color:#8fa5b0; }
+.route-segment-main p { margin:6px 0 0; color:#6f8794; font-size:10px; line-height:1.45; }
+.route-time-row { display:flex; gap:7px; align-items:center; color:#39799d; font-size:10px; }
+.route-time-row strong { font-size:14px; }
+.rental-car-checklist { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; margin-top:10px; padding:9px; border-radius:14px; background:#eef9f3; border:1px solid #d9eee2; }
+.rental-car-checklist strong { grid-column:1/-1; color:#3c7659; font-size:10px; }
+.rental-car-checklist span { color:#607d6c; font-size:8px; }
+.route-map-button { margin-top:10px; }
+.rental-guide-card { border-radius:24px; padding:16px; background:linear-gradient(145deg,#effaf4,#ffffff); border:1px solid #d7ecdf; }
+.rental-guide-card p { color:#668075; font-size:11px; line-height:1.55; }
+.rental-summary-banner { display:grid; grid-template-columns:42px 1fr auto; align-items:center; gap:10px; margin-bottom:14px; padding:12px; border-radius:19px; background:#effaf4; border:1px solid #d7ecdf; }
+.rental-summary-banner > span { width:42px; height:42px; display:grid; place-items:center; border-radius:13px; background:#fff; font-size:22px; }
+.rental-summary-banner strong, .rental-summary-banner p { display:block; margin:0; }
+.rental-summary-banner strong { color:#376d52; font-size:11px; }
+.rental-summary-banner p { margin-top:2px; color:#789085; font-size:9px; }
+.rental-transport-card { border-color:#d7ecdf; }
+.rental-inline-note { margin-top:9px; padding:7px 9px; border-radius:11px; background:#eef9f3; color:#5d7b6a; font-size:8px; line-height:1.4; }
+.rental-add-panel { border-color:#d2eadc; background:linear-gradient(145deg,#f7fcf9,#fff); }
+.rental-form-tip { display:grid; gap:3px; padding:10px; border-radius:14px; background:#eef9f3; border:1px solid #d8eee1; }
+.rental-form-tip strong { color:#3f765b; font-size:10px; }
+.rental-form-tip span { color:#718a7d; font-size:9px; line-height:1.45; }
+
+@media (max-width: 620px) {
+  .explore-hero-actions { display:grid; grid-template-columns:1fr 1fr; width:100%; }
+  .explore-hero-actions .btn { width:auto; }
+  .place-guide-grid { grid-template-columns:1fr; }
+  .explore-add-day-form { grid-template-columns:1fr; }
+  .smart-plan-hero, .route-view-hero { align-items:stretch; flex-direction:column; }
+  .smart-plan-hero .btn, .route-view-hero .btn { width:100%; }
+  .smart-place-grid { grid-template-columns:1fr; }
+  .smart-plan-sticky { align-items:stretch; flex-direction:column; }
+  .smart-plan-sticky .btn { width:100%; }
+  .route-summary-card { grid-template-columns:repeat(3,1fr); }
+  .rental-car-checklist { grid-template-columns:1fr; }
+  .rental-car-checklist strong { grid-column:auto; }
+  .rental-summary-banner { grid-template-columns:42px 1fr; }
+  .rental-summary-banner .link { grid-column:1/-1; }
+}
+.place-thai-title { margin:-1px 0 7px; color:#5f8194; font-size:10px; font-weight:700; }
+.route-time-row em { margin-left:4px; padding:3px 6px; border-radius:999px; background:#eef7fb; color:#5c8095; font-size:8px; font-style:normal; font-weight:800; }

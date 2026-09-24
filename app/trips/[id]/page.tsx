@@ -80,7 +80,7 @@ export default async function TripDetailPage({ params, searchParams }: { params:
         {query.setup_error && <div className="error-box"><strong>ตั้งค่าทริปไม่สมบูรณ์</strong><br/><span>{query.setup_error}</span></div>}
 
         <section className={`hero compact-hero trip-hero trip-cover cover-${coverStyle}`}>
-          <div className="trip-hero-role-row"><div className="eyebrow">Trip dashboard · V7 Discovery</div><span className={`role-badge ${role}`}>{role === "owner" ? "Owner" : role === "editor" ? "Editor" : "Viewer"}</span></div>
+          <div className="trip-hero-role-row"><div className="eyebrow">Trip dashboard · V7.9 Smart Route</div><span className={`role-badge ${role}`}>{role === "owner" ? "Owner" : role === "editor" ? "Editor" : "Viewer"}</span></div>
           <div className="hero-cover-title"><span className="hero-cover-emoji">{trip.cover_emoji || "🧳"}</span><div><h1>{trip.title}</h1><p>{trip.cover_tagline || trip.cities?.join(" • ")}</p></div></div>
           <div className="hero-row"><div className="hero-stat"><strong>{days.length} วัน</strong><span>{trip.pace} pace</span></div><div className="pill">👨‍👩‍👧‍👵 {members.length} คน</div></div>
         </section>
@@ -99,11 +99,13 @@ export default async function TripDetailPage({ params, searchParams }: { params:
           <Link className="quick-action" href={`/trips/${trip.id}/calendar`}><span>📆</span><strong>Calendar</strong><small>ภาพรวมทั้งทริป</small></Link>
           <Link className="quick-action" href={`/trips/${trip.id}/wishlist`}><span>♡</span><strong>Wishlist</strong><small>{wishlistCount || 0} สถานที่</small></Link>
           <Link className="quick-action" href={`/explore?trip=${trip.id}`}><span>✨</span><strong>Explore</strong><small>{trip.cities?.join(" • ") || "ค้นไอเดีย"}</small></Link>
+          <Link className="quick-action" href={`/trips/${trip.id}/smart-plan`}><span>🪄</span><strong>Smart Day</strong><small>จัดสถานที่ลงวัน</small></Link>
           <Link className="quick-action" href={`/trips/${trip.id}/destinations`}><span>📍</span><strong>Destinations</strong><small>{trip.cities?.length || 0} เมือง</small></Link>
           <Link className="quick-action" href={`/trips/${trip.id}/transport`}><span>🚆</span><strong>Transport</strong><small>{transportCount || 0} ช่วง</small></Link>
+          <Link className="quick-action" href={`/trips/${trip.id}/route`}><span>🛣️</span><strong>Trip Route</strong><small>รวมรถไฟ • Bus • รถเช่า</small></Link>
           <Link className="quick-action" href="/today"><span>☀️</span><strong>Today</strong><small>แผนวันนี้ + GPS</small></Link>
           <Link className="quick-action" href={`/trips/${trip.id}/family`}><span>👨‍👩‍👧‍👵</span><strong>Family</strong><small>โปรไฟล์ครอบครัว</small></Link>
-          <Link className="quick-action" href={`/trips/${trip.id}/map`}><span>🧭</span><strong>Route</strong><small>Current location</small></Link>
+          <Link className="quick-action" href={`/trips/${trip.id}/map`}><span>🧭</span><strong>Map / GPS</strong><small>Current location</small></Link>
           <Link className="quick-action" href={`/trips/${trip.id}/packing`}><span>🧳</span><strong>Packing</strong><small>{packingItems.length ? `${packedItems}/${packingItems.length} พร้อม` : "Checklist"}</small></Link>
           <Link className="quick-action" href={`/trips/${trip.id}/wallet`}><span>👛</span><strong>Wallet</strong><small>{bookings.length} booking</small></Link>
           <Link className="quick-action" href={`/trips/${trip.id}/weather`}><span>🌦️</span><strong>Weather</strong><small>Rain Plan ฟรี</small></Link>

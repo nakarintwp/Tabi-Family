@@ -9,6 +9,7 @@ function refresh(tripId: string) {
   revalidatePath(`/trips/${tripId}`);
   revalidatePath(`/trips/${tripId}/transport`);
   revalidatePath(`/trips/${tripId}/calendar`);
+  revalidatePath(`/trips/${tripId}/route`);
 }
 
 async function validDay(supabase: any, tripId: string, dayId: string | null) {

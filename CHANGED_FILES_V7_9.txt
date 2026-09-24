@@ -1,0 +1,27 @@
+Tabi Family V7.9 changed/added files
+
+Modified:
+- package.json
+- README.md
+- app/globals.css
+- app/version/route.ts
+- app/explore/page.tsx
+- app/explore/actions.ts
+- app/trips/[id]/page.tsx
+- app/trips/[id]/transport/page.tsx
+- app/trips/[id]/transport/actions.ts
+- app/trips/new/page.tsx
+- components/AppHeader.tsx
+- lib/discovery.ts
+- public/sw.js
+
+Added:
+- components/ExploreCoordinateMap.tsx
+- app/trips/[id]/smart-plan/page.tsx
+- app/trips/[id]/smart-plan/actions.ts
+- app/trips/[id]/route/page.tsx
+- V7_5_TO_V7_9_COMPLETE.md
+- CHANGED_FILES_V7_9.txt
+
+Database:
+- No new SQL migration required if V7 discovery migration already exists.

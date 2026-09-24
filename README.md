@@ -1,42 +1,45 @@
-# Tabi Family — V7.4 Thai Popular Explore
+# Tabi Family — V7.9 Smart Explore · Route · Rental Car
 
-เพิ่มร้านอาหาร/สถานที่ที่ถูกพูดถึงในรีวิวไทย พร้อมตัวกรองคนไทยนิยมใน Explore
+> Current build: **V7.9**
 
-# Tabi Family — V7.4 Thai Popular Explore
+Mobile-first Japan family trip planner built with Next.js App Router + Supabase. This release completes the V7.5–V7.9 planning flow: Explore → Add to Day → Smart Day → Restaurant filters → Whole-trip Route, with explicit Rental car support.
 
-> Current build: **V7.4**
+## V7.5–V7.9 highlights
 
-This release simplifies Create Trip: the Trip-level activity-interest step is removed, while the city picker becomes compact and supports many Japan destinations. Snow-only atmosphere and all V7 planning features remain.
+- Explore map overview using existing curated coordinates — no paid map API required.
+- Add a place directly from Explore to any Day in the selected Trip.
+- Practical place guide: nearby station, walking estimate, opening-hours note, closure note, rough budget, reservation note, best time and family note for curated Chubu places.
+- Smart Day Planner: choose 3–8 places and generate an editable day plan with suggested ordering and start times.
+- Restaurant filters for Thai-popular, Hida beef, Nagoya-meshi, ramen, sushi, cafe/dessert, family, station and evening/night.
+- Whole-trip Route View combining train, bus, flight, taxi, walk, ferry and Rental car.
+- Dedicated Rental car entry flow on Transport with booking, pickup/return and winter-driving checklist notes.
+- Google Maps links remain external links; no Google Maps API key is required for these new features.
 
-## V7 highlights
+## Existing V7 capabilities retained
 
-- Trip-scoped Explore: เมืองที่เลือกตอนสร้าง Trip เป็นตัวกรอง Explore อัตโนมัติ
-- Chubu-focused curated data: Nagoya / Takayama / Shirakawa-go
-- Explore Japan with curated family-friendly places
-- Wishlist → save now, schedule later
-- Ready-made Trip Templates
-- Calendar Overview
-- Transport Segments for train/bus/flight/car/etc.
-- Trip Cover presets
-- Trip Readiness score (0–100)
-- Family Profile + Day Planner Pro
-- Today Mode + current-location route
-- PWA + Offline snapshot
-- QR collaboration (Owner / Editor / Viewer)
-- Packing, Booking Wallet and Expense Tracker
-- Export / Backup
-- Weather / Rain Plan with Open-Meteo
-- Live weather atmosphere
+- Trip-scoped Explore by selected cities.
+- Curated Nagoya / Takayama / Shirakawa-go data.
+- Wishlist, Trip Templates and Calendar Overview.
+- Trip Cover and Trip Readiness.
+- Family Profile, Day Planner Pro and Today Mode.
+- PWA + Offline snapshot.
+- QR collaboration (Owner / Editor / Viewer).
+- Packing, Booking Wallet and Expense Tracker.
+- Export / Backup.
+- Weather / Rain Plan with Open-Meteo.
+- Snow-only decorative atmosphere.
 
-## Upgrade from V6.2
+## Database
 
-Run this migration once:
+V7.5–V7.9 adds no new database table or column. It reuses `activities`, `trip_wishlist` and `transport_segments` from the existing V7 migration.
+
+For an existing project that already ran V7 migrations: **no new SQL is required for V7.9**.
+
+For a project upgrading from before V7, run the existing migration:
 
 ```text
 supabase/migrations/20260923_v7_discovery_planning.sql
 ```
-
-Then deploy the source to Vercel. Full instructions are in `V7_DISCOVERY_PLANNING_UPGRADE.md`.
 
 ## Environment variables
 
@@ -45,8 +48,6 @@ NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_KEY
 ```
 
-No Google Maps API key, AI API key, QR API, or paid weather API is required for V7.
-
 ## Local development
 
 ```bash
@@ -54,52 +55,22 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`.
-
 ## Deploy
 
 Push to GitHub. Vercel redeploys automatically.
 
-## Fresh Supabase project
-
-Run `supabase/schema.sql`. For an existing project, apply migrations in sequence through V6 and then V7.
-
 ## Key routes
 
 ```text
-/explore                       Explore ของทริปที่กำลังจะไป
-/explore?city=Nagoya           เปิดดูเมืองเดี่ยว
-/trips/[id]/destinations       แก้เมือง/พื้นที่ของ Trip
-/templates                     Trip Templates
+/explore                       Explore + Map + Add to Day
+/trips/[id]/smart-plan         Smart Day Planner
+/trips/[id]/route              Whole-trip Route View
+/trips/[id]/transport          Transport + Rental car
 /trips/[id]/wishlist           Wishlist
 /trips/[id]/calendar           Calendar Overview
-/trips/[id]/transport          Transport Segments
-/trips/[id]/cover              Trip Cover
+/trips/[id]/destinations       Edit Trip cities
 /trips/[id]/readiness          Trip Readiness
 /today                         Today Mode Pro
 ```
 
-## V7.1 — Snow Only Theme
-
-พื้นหลังของแอปเปลี่ยนเป็นหิมะตกตลอดเวลา โดยไม่เปลี่ยนตามสภาพอากาศจริง ส่วนหน้า Weather / Rain Plan ยังทำงานตามเดิม ดูรายละเอียดใน `V7_1_SNOW_ONLY_THEME.md`.
-
-## V7.2 — Trip-Scoped Explore
-
-ตอนสร้าง Trip ผู้ใช้เลือกเมือง/พื้นที่ด้วย checkbox แล้ว `trips.cities` เดิมจะเป็น source of truth ให้ Explore. จาก Trip Dashboard จะเปิด `/explore?trip=<trip-id>` และแสดงเฉพาะเมืองของทริปนั้น เช่น Nagoya → Takayama → Shirakawa-go. ไม่มี SQL migration ใหม่สำหรับ V7.2.
-
-## V7.2.1 — Delete Trip Fix
-- Fixes trip deletion after the V6/V7 activity-feed triggers.
-- Run `supabase/migrations/20260923_v7_2_1_delete_trip_fix.sql` before testing delete.
-- Delete failures now show a readable database error instead of the generic server-error page.
-
-
-## V7.3 — Trip Interests
-เลือกเมืองและกิจกรรมที่สนใจตอนสร้าง Trip จากนั้น Explore จะใช้สองข้อมูลนี้เพื่อคัดพื้นที่และเรียงสถานที่แนะนำให้ตรงกับทริปมากขึ้น ดู `V7_3_TRIP_INTERESTS.md`
-
-
-## V7.3.7 City Label Rename
-Create Trip now uses a small multi-city selector with many Japan destinations. Trip-level activity interests were removed from the planning flow. No SQL migration required.
-
-
-## V7.3.8 Text-only City Picker
-City selection no longer shows decorative emoji. Each city now uses a small prefecture/region text chip (for example Aichi, Gifu, Hokkaido) beside the city name. No SQL migration required.
+See `V7_5_TO_V7_9_COMPLETE.md` for the release breakdown.

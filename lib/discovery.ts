@@ -17,6 +17,68 @@ export type DiscoveryPlace = {
   thaiNote?: string;
 };
 
+export type DiscoveryGuide = {
+  thaiTitle?: string;
+  nearestStation?: string;
+  accessNote?: string;
+  walkMinutes?: number;
+  hoursNote?: string;
+  closedNote?: string;
+  budgetNote?: string;
+  reservationNote?: string;
+  bestTime?: string;
+  familyNote?: string;
+  foodGroups?: string[];
+};
+
+export const FOOD_FILTERS = [
+  { id: "all", label: "ร้านอาหารทั้งหมด" },
+  { id: "thai", label: "คนไทยนิยม" },
+  { id: "hida-beef", label: "เนื้อ Hida" },
+  { id: "nagoya-meshi", label: "Nagoya-meshi" },
+  { id: "ramen", label: "ราเมน" },
+  { id: "sushi", label: "ซูชิ" },
+  { id: "cafe", label: "คาเฟ่ / ของหวาน" },
+  { id: "family", label: "ครอบครัว" },
+  { id: "station", label: "ใกล้สถานี" },
+  { id: "night", label: "มื้อเย็น / ดึก" },
+] as const;
+
+export const DISCOVERY_GUIDES: Record<string, DiscoveryGuide> = {
+  "ghibli-park": { thaiTitle: "Ghibli Park / สวนจิบลิ", nearestStation: "Ai-Chikyuhaku-Kinen-Koen", accessNote: "เดินจากสถานีเข้าสวน", walkMinutes: 5, hoursNote: "เวลาเข้าชมขึ้นกับพื้นที่และตั๋ว", closedNote: "ตรวจวันปิดและรอบตั๋วก่อนเดินทาง", budgetNote: "ค่าเข้าแตกต่างตามพื้นที่", reservationNote: "ควรจองตั๋วล่วงหน้า", bestTime: "เช้า–บ่าย", familyNote: "เหมาะกับครอบครัว แต่ควรเผื่อเวลาเดิน" },
+  "nagoya-castle": { thaiTitle: "Nagoya Castle / ปราสาทนาโกย่า", nearestStation: "Nagoyajo Seimon-mae / Nagoyajo", accessNote: "เดินจากสถานี/ป้ายรถบัสเข้าสวน", walkMinutes: 5, hoursNote: "เปิดช่วงกลางวัน", closedNote: "ตรวจวันปิดล่าสุด", budgetNote: "ประมาณ ¥500+", reservationNote: "โดยทั่วไปไม่ต้องจอง", bestTime: "เช้า", familyNote: "เหมาะกับเด็กและผู้สูงอายุ ถ้าไม่เร่ง" },
+  "toyota-museum": { thaiTitle: "Toyota Automobile Museum / พิพิธภัณฑ์รถยนต์โตโยต้า", nearestStation: "Geidai-dori", accessNote: "เดินจาก Linimo", walkMinutes: 5, hoursNote: "เปิดช่วงกลางวัน", closedNote: "ตรวจวันปิดล่าสุด", budgetNote: "ประมาณ ¥1,000+", reservationNote: "ปกติซื้อหน้างานได้", bestTime: "สาย–บ่าย", familyNote: "Indoor เหมาะกับวันฝนตก" },
+  "takayama-old-town": { thaiTitle: "Takayama Old Town / ย่านเมืองเก่าทาคายามะ", nearestStation: "Takayama Station", accessNote: "เดินไป Sanmachi", walkMinutes: 12, hoursNote: "พื้นที่สาธารณะเดินได้ทั้งวัน ร้านต่าง ๆ มีเวลาแยกกัน", closedNote: "แต่ละร้านหยุดไม่เหมือนกัน", budgetNote: "เดินเที่ยวฟรี / ค่าอาหารตามร้าน", reservationNote: "ไม่ต้องจองพื้นที่", bestTime: "เช้า ก่อนคนเยอะ", familyNote: "หน้าหนาวระวังพื้นลื่น" },
+  "miyagawa-morning-market": { thaiTitle: "Miyagawa Morning Market / ตลาดเช้ามิยากาวะ", nearestStation: "Takayama Station", accessNote: "เดินไปริมแม่น้ำ Miyagawa", walkMinutes: 10, hoursNote: "ตลาดเช้า ควรไปก่อนเที่ยง", closedNote: "ร้านค้าอาจหยุดต่างกัน", budgetNote: "ของกินเริ่มหลักร้อยเยน", reservationNote: "ไม่ต้องจอง", bestTime: "08:00–10:30", familyNote: "เดินง่าย เหมาะกับครอบครัว" },
+  "shirakawago": { thaiTitle: "Shirakawa-go / หมู่บ้านชิราคาวาโกะ", nearestStation: "Shirakawa-go Bus Terminal", accessNote: "เดินเข้าสู่ Ogimachi", walkMinutes: 3, hoursNote: "หมู่บ้านเที่ยวได้กลางวัน สถานที่ภายในมีเวลาปิดแยกกัน", closedNote: "ตรวจบ้าน/พิพิธภัณฑ์รายจุด", budgetNote: "พื้นที่หลักฟรี / มีค่าเข้าบางจุด", reservationNote: "รถบัสบางเที่ยวควรจอง", bestTime: "เช้า–บ่าย", familyNote: "ฤดูหนาวควรใช้รองเท้ากันลื่น" },
+  "shirakawago-shiroyama-viewpoint": { thaiTitle: "Shiroyama Viewpoint / จุดชมวิวชิโรยามะ", nearestStation: "Shirakawa-go Bus Terminal", accessNote: "ขึ้นทางเดิน/รถรับส่งไปจุดชมวิว", walkMinutes: 20, hoursNote: "เหมาะกับช่วงที่ยังมีแสง", closedNote: "สภาพอากาศอาจมีผล", budgetNote: "จุดชมวิวฟรี", reservationNote: "ไม่ต้องจองพื้นที่", bestTime: "เช้า หรือก่อนเย็น", familyNote: "ผู้สูงอายุควรพิจารณารถรับส่งเมื่อมีบริการ" },
+  "yabaton-esca": { thaiTitle: "Misokatsu Yabaton / ยาบะตง มิโสะคัตสึ", nearestStation: "Nagoya Station", accessNote: "ESCA underground mall", walkMinutes: 3, hoursNote: "มื้อกลางวัน–เย็น; ตรวจเวลาสาขาในวันเดินทาง", closedNote: "วันหยุดอาจเปลี่ยน", budgetNote: "ประมาณ ¥1,500–2,500/คน", reservationNote: "โดยทั่วไปไปหน้าร้านได้", bestTime: "ก่อนเที่ยงหรือก่อนมื้อเย็น", familyNote: "อยู่ใต้สถานี เหมาะกับวันที่มีสัมภาระ", foodGroups: ["nagoya-meshi","station","family"] },
+  "maruya-honten-jr-nagoya": { thaiTitle: "Maruya Honten / มารุยะ ฮอนเท็น", nearestStation: "Nagoya Station", accessNote: "ภายใน/เชื่อมกับสถานี JR Nagoya", walkMinutes: 3, hoursNote: "เปิดช่วงมื้อกลางวัน–เย็น; ตรวจเวลาล่าสุด", closedNote: "วันหยุดอาจเปลี่ยน", budgetNote: "ประมาณ ¥3,000–5,000/คน", reservationNote: "ช่วงพีคอาจต้องรอคิว", bestTime: "11:00 ก่อนคิวกลางวัน", familyNote: "สะดวกสำหรับครอบครัวเพราะอยู่โซนสถานี", foodGroups: ["nagoya-meshi","station","family"] },
+  "atsuta-horaiken-honten": { thaiTitle: "Atsuta Horaiken / อัตสึตะ โฮไรเค็น", nearestStation: "Temma-cho / Jingu-mae area", accessNote: "เหมาะจัดคู่กับ Atsuta Jingu", walkMinutes: 10, hoursNote: "เปิดเป็นช่วงมื้อ; ตรวจรอบรับคิวล่าสุด", closedNote: "มีวันหยุดประจำ ควรตรวจอีกครั้ง", budgetNote: "ประมาณ ¥4,000–6,000/คน", reservationNote: "ควรเผื่อเวลารอคิว", bestTime: "ก่อนช่วงมื้อ", familyNote: "ควรเผื่อเวลานั่งรอสำหรับเด็กและผู้สูงอายุ", foodGroups: ["nagoya-meshi","family"] },
+  "yamamotoya-honten-nagoya": { thaiTitle: "Yamamotoya Honten / ยามาโมโตยะ ฮอนเท็น", nearestStation: "Nagoya Station", accessNote: "ย่าน Meieki ใกล้สถานี", walkMinutes: 5, hoursNote: "มื้อกลางวัน–เย็น; ตรวจเวลาสาขา", closedNote: "ตรวจวันหยุดสาขา", budgetNote: "ประมาณ ¥1,500–2,500/คน", reservationNote: "ส่วนใหญ่ไปหน้าร้านได้", bestTime: "กลางวัน", familyNote: "เมนูหม้อร้อน ระวังเด็กเล็ก", foodGroups: ["nagoya-meshi","station","family"] },
+  "sekai-no-yamachan-sakae": { thaiTitle: "Sekai no Yamachan / เซไกโนะ ยามะจัง", nearestStation: "Sakae", accessNote: "หลายสาขาในย่าน Sakae", walkMinutes: 5, hoursNote: "เหมาะมื้อเย็น; เวลาขึ้นกับสาขา", closedNote: "ตรวจสาขาที่เลือก", budgetNote: "ประมาณ ¥2,000–4,000/คน", reservationNote: "กลุ่มใหญ่ควรจอง", bestTime: "เย็น", familyNote: "เลือกรสไม่เผ็ดสำหรับเด็ก", foodGroups: ["nagoya-meshi","family"] },
+  "ajikura-tengoku": { thaiTitle: "Ajikura Tengoku / อาจิคุระ เท็งโกคุ", nearestStation: "Takayama Station", accessNote: "เดินจากสถานี", walkMinutes: 3, hoursNote: "มื้อกลางวัน–เย็น; ตรวจเวลาล่าสุด", closedNote: "ตรวจวันหยุดก่อนเดินทาง", budgetNote: "ประมาณ ¥3,000–6,000/คน", reservationNote: "มื้อพีคควรเผื่อคิว", bestTime: "ก่อน 12:00 หรือเย็นต้น ๆ", familyNote: "ใกล้สถานีและโต๊ะนั่ง เหมาะกับครอบครัว", foodGroups: ["hida-beef","station","family"] },
+  "hidagyu-maruaki": { thaiTitle: "Hidagyu Maruaki / ฮิดะกิว มารุอากิ", nearestStation: "Takayama Station", accessNote: "เดินจากสถานี/ใจกลางเมือง", walkMinutes: 7, hoursNote: "เปิดเป็นช่วงมื้อ; ตรวจเวลาล่าสุด", closedNote: "ตรวจวันหยุดก่อนเดินทาง", budgetNote: "ประมาณ ¥3,000–7,000/คน", reservationNote: "ช่วงพีคอาจรอคิว", bestTime: "ก่อนมื้อกลางวัน", familyNote: "เหมาะกับมื้อหลักของครอบครัว", foodGroups: ["hida-beef","family"] },
+  "hida-kotte-ushi": { thaiTitle: "Hida Kotte Ushi / ฮิดะ คตเตะ อุชิ", nearestStation: "Takayama Station", accessNote: "อยู่ใน Sanmachi Old Town", walkMinutes: 12, hoursNote: "เหมาะช่วงกลางวัน; อาจปิดเมื่อของหมด", closedNote: "ตรวจวันเปิดล่าสุด", budgetNote: "ประมาณ ¥1,000–2,500/คน", reservationNote: "ไม่ต้องจอง", bestTime: "สาย–บ่าย", familyNote: "เหมาะแวะเป็นของว่างระหว่างเดิน", foodGroups: ["hida-beef","sushi","family"] },
+  "menya-shirakawa": { thaiTitle: "Menya Shirakawa / เมนยะ ชิราคาวะ", nearestStation: "Takayama Station", accessNote: "เดินเข้าสู่ย่านกลางเมือง", walkMinutes: 10, hoursNote: "เน้นมื้อกลางวัน; อาจปิดเมื่อขายหมด", closedNote: "ตรวจวันหยุดล่าสุด", budgetNote: "ประมาณ ¥800–1,500/คน", reservationNote: "ไม่ต้องจอง", bestTime: "ก่อน 12:00", familyNote: "ร้านขนาดไม่ใหญ่มาก ควรเลี่ยงช่วงคิวพีค", foodGroups: ["ramen"] },
+  "center4-hamburgers": { thaiTitle: "Center4 Hamburgers / เซ็นเตอร์โฟร์", nearestStation: "Takayama Station", accessNote: "เดินไปย่านเมืองเก่า", walkMinutes: 15, hoursNote: "ตรวจเวลามื้อกลางวัน/เย็นล่าสุด", closedNote: "ตรวจวันหยุดก่อนเดินทาง", budgetNote: "ประมาณ ¥1,500–3,000/คน", reservationNote: "กลุ่มใหญ่ควรเช็กคิว", bestTime: "กลางวัน", familyNote: "เมนูคุ้นเคยสำหรับเด็ก", foodGroups: ["family"] },
+  "shirakawago-irori": { thaiTitle: "Irori / อิโรริ ชิราคาวาโกะ", nearestStation: "Shirakawa-go Bus Terminal", accessNote: "อยู่ในโซน Ogimachi", walkMinutes: 6, hoursNote: "เหมาะมื้อกลางวัน; ตรวจเวลาล่าสุด", closedNote: "ตรวจวันหยุดก่อนเดินทาง", budgetNote: "ประมาณ ¥1,500–3,000/คน", reservationNote: "ช่วงคนเยอะควรเผื่อคิว", bestTime: "11:00–13:00", familyNote: "จัดมื้อกลางวันโดยไม่ต้องออกนอกหมู่บ้าน", foodGroups: ["family"] },
+  "ochudo-cafe": { thaiTitle: "Ochūdo Cafe / คาเฟ่โอชูโด", nearestStation: "Shirakawa-go Bus Terminal", accessNote: "เดินใน Ogimachi", walkMinutes: 8, hoursNote: "เปิดช่วงกลางวัน; ตรวจเวลาล่าสุด", closedNote: "ตรวจวันเปิดในฤดูกาล", budgetNote: "ประมาณ ¥800–1,800/คน", reservationNote: "ไม่ต้องจอง", bestTime: "บ่าย", familyNote: "เหมาะพักจากอากาศหนาว", foodGroups: ["cafe","family"] },
+};
+
+export function getPlaceGuide(slug: string) {
+  return DISCOVERY_GUIDES[slug] || {};
+}
+
+export function matchesFoodFilter(place: DiscoveryPlace, filter: string) {
+  if (place.category !== "food") return false;
+  if (!filter || filter === "all") return true;
+  if (filter === "thai") return place.thaiPopular === true;
+  if (filter === "family") return place.childFriendly;
+  const guide = getPlaceGuide(place.slug);
+  return place.tags.includes(filter) || (guide.foodGroups || []).includes(filter);
+}
+
 export type TripTemplateActivity = {
   day: number;
   title: string;
