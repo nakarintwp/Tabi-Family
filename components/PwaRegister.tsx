@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const BUILD = "v9.7";
+const BUILD = "v10.5";
 const RESET_KEY = `tabi-pwa-reset-${BUILD}`;
 
 export function PwaRegister() {

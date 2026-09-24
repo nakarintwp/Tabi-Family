@@ -35,7 +35,7 @@ export default async function CommandCenterPage({ params }: { params: Promise<{ 
   const carSegments = transportRows.filter((x)=>x.mode==="car").length;
 
   return <main className="shell"><div className="container"><AppHeader />
-    <div className="planner-topbar"><Link href={`/trips/${id}`} className="back-link">‹ Dashboard</Link><span className="planner-counter">V9.0 Smart Dashboard</span></div>
+    <div className="planner-topbar"><Link href={`/trips/${id}`} className="back-link">‹ Dashboard</Link><span className="planner-counter">V10.5 Smart Dashboard</span></div>
     <section className="planner-hero command-hero"><div><span className="eyebrow">TRIP COMMAND CENTER</span><h1>🧭 {trip.title}</h1><p>{trip.cities?.join(" → ") || "Japan"} · ทุกอย่างสำคัญของทริปในหน้าเดียว</p></div><div className="master-hero-actions"><Link className="btn btn-primary" href="/today">Today</Link><Link className="btn btn-secondary" href={`/trips/${id}/timeline`}>Timeline</Link></div></section>
 
     <section className="command-metrics">
@@ -51,6 +51,10 @@ export default async function CommandCenterPage({ params }: { params: Promise<{ 
     </section>
 
     <section className="section"><div className="section-head"><h2>Control shortcuts</h2></div><div className="quick-actions v9-shortcuts">
+      <Link className="quick-action" href={`/trips/${id}/import-booking`}><span>📥</span><strong>Auto Import</strong><small>V10.0–10.1 Booking + Link</small></Link>
+      <Link className="quick-action" href={`/trips/${id}/optimize`}><span>🧭</span><strong>Route Optimizer</strong><small>V10.2 ลดการย้อน</small></Link>
+      <Link className="quick-action" href={`/trips/${id}/map`}><span>🗺️</span><strong>Map-first</strong><small>V10.3 Day route</small></Link>
+      <Link className="quick-action" href="/today"><span>☀️</span><strong>Today Live</strong><small>V10.4–10.5 Delay replanner</small></Link>
       <Link className="quick-action" href={`/trips/${id}/timeline`}><span>🕒</span><strong>Timeline</strong><small>V9.1 รวมทุกเวลา</small></Link>
       <Link className="quick-action" href={`/trips/${id}/notifications`}><span>🔔</span><strong>Notifications</strong><small>V9.2 สิ่งที่ควรตรวจ</small></Link>
       <Link className="quick-action" href={`/trips/${id}/offline-pack`}><span>📴</span><strong>Offline Pack</strong><small>V9.3 เก็บข้อมูลสำคัญ</small></Link>

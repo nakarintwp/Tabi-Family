@@ -1,10 +1,34 @@
-# Tabi Family — V8.9 Auto-linked Trip Documents
+# Tabi Family — V10.5 Smart Automation Suite
 
-> Current build: **V8.9**
+> Current build: **V10.5**
 
+Mobile-first Japan family trip planner built with Next.js App Router + Supabase. V10.0–V10.5 adds local booking import, automatic document/transport linking, route optimization, a day-focused map, live trip status and a delay replanner while preserving the zero-paid-AI-API approach.
 
-Mobile-first Japan family trip planner built with Next.js App Router + Supabase. V8.8 adds the operational layer for using the plan before and during the trip: Master Plan, Booking Center, Budget, Rental Car Pro, Today Mode 2.0, rule-based conflict checks, Trip Documents and Emergency Japan. **V8.5 is intentionally not included.**
+## V10.0–V10.5 highlights
 
+- **V10.0 Auto Import Booking** — parse booking text / PDF text layer locally, then review before saving.
+- **V10.1 Smart Linking** — link source documents and transport segments to the imported booking automatically when a reliable match is available.
+- **V10.2 Route Optimizer** — nearest-neighbor activity ordering from saved coordinates, with before/after straight-line distance.
+- **V10.3 Map-first Trip View** — day switcher, coordinate board, activities, transport and bookings in one route-oriented screen.
+- **V10.4 Live Trip Status** — Japan-time status in Today Mode with current/next context.
+- **V10.5 Delay Replanner** — preview +15/+30/+60 minutes, flag fixed-time risks, then explicitly apply the delay to remaining activities.
+
+### SQL
+
+**No new SQL is required for V10.0–V10.5.** It reuses the existing tables and the private `trip-documents` Storage bucket from V8.9.
+
+### Key V10 routes
+
+```text
+/trips/[id]/import-booking      V10.0–V10.1 Auto Import + Smart Linking
+/trips/[id]/optimize            V10.2 Route Optimizer
+/trips/[id]/map                 V10.3 Map-first Trip View
+/today                          V10.4–V10.5 Live Status + Delay Replanner
+```
+
+See `V10_0_TO_V10_5_SMART_AUTOMATION.md` for implementation notes and limitations.
+
+---
 
 ## V8.9 — Auto-linked Trip Documents
 

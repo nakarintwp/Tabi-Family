@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { CurrentLocationRoute, type RouteDestination } from "@/components/CurrentLocationRoute";
 import { OfflineSnapshot } from "@/components/OfflineSnapshot";
+import { LiveTripControl } from "@/components/LiveTripControl";
 import { mapsSearchUrl } from "@/lib/trip-metrics";
 import { markActivityStatus, postponeActivity } from "@/app/today/actions";
 
@@ -71,10 +72,12 @@ type Trip = {
 };
 
 function localDateKey(date = new Date()) {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
+  try {
+    return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Tokyo", year: "numeric", month: "2-digit", day: "2-digit" }).format(date);
+  } catch {
+    const y = date.getFullYear(); const m = String(date.getMonth() + 1).padStart(2, "0"); const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  }
 }
 
 function minutesOf(time?: string | null) {
@@ -184,8 +187,10 @@ export function TodayMode({ trips }: { trips: Trip[] }) {
         <small className="muted">เสร็จแล้ว {doneCount} · ข้าม {skippedCount} · เหลือ {Math.max(0, activities.length - doneCount - skippedCount)}</small>
       </section>
 
+      <LiveTripControl tripId={trip.id} dayId={day.id} canEdit={Boolean(trip.canEdit)} activities={activities} transports={todayTransports} bookings={todayBookings} />
+
       <section className="section today-command-center">
-        <div className="section-head"><h2>Today Command Center</h2><span className="badge success">V8.4</span></div>
+        <div className="section-head"><h2>Today Command Center</h2><span className="badge success">V10.4</span></div>
         <div className="today-command-grid">
           <Link className="today-command-card" href={`/trips/${trip.id}/bookings`}><span>🎫</span><div><strong>{todayBookings.length} Booking</strong><small>เปิดเลขจอง / confirmation</small></div></Link>
           <Link className="today-command-card" href={`/trips/${trip.id}/route`}><span>🚆</span><div><strong>{todayTransports.length} Transport</strong><small>{todayTransports[0] ? `${todayTransports[0].origin} → ${todayTransports[0].destination}` : "ยังไม่มีช่วงเดินทาง"}</small></div></Link>

@@ -86,8 +86,8 @@ export default async function DocumentsPage({ params }: { params: Promise<{ id: 
   });
 
   return <main className="shell"><div className="container"><AppHeader />
-    <div className="planner-topbar"><Link href={`/trips/${id}`} className="back-link">‹ Dashboard</Link><span className="planner-counter">V8.9 Auto-linked Documents</span></div>
-    <section className="planner-hero v8-doc-hero"><div><span className="eyebrow">TRIP DOCUMENT VAULT</span><h1>📂 Trip Documents</h1><p>{trip.title} · เพิ่มไฟล์แล้วระบบผูกกับทริปนี้อัตโนมัติ ไม่ต้องเลือก Trip ซ้ำ</p></div><Link className="btn btn-secondary" href={`/trips/${id}/bookings`}>Booking Center</Link></section>
+    <div className="planner-topbar"><Link href={`/trips/${id}`} className="back-link">‹ Dashboard</Link><span className="planner-counter">V10.1 Smart-linked Documents</span></div>
+    <section className="planner-hero v8-doc-hero"><div><span className="eyebrow">TRIP DOCUMENT VAULT</span><h1>📂 Trip Documents</h1><p>{trip.title} · เพิ่มไฟล์แล้วระบบผูกกับทริปนี้อัตโนมัติ และ Booking Import สามารถผูกเอกสารกับรายการจองได้</p></div><div className="master-hero-actions"><Link className="btn btn-primary" href={`/trips/${id}/import-booking`}>📥 Import Booking</Link><Link className="btn btn-secondary" href={`/trips/${id}/bookings`}>Booking Center</Link></div></section>
 
     <section className="trip-document-link-status"><span>✅</span><div><strong>Auto Trip Link เปิดใช้งาน</strong><p>เอกสารใหม่ทุกชิ้นจากหน้านี้จะบันทึกด้วย Trip ID ของ <b>{trip.title}</b> อัตโนมัติ</p></div></section>
 
@@ -99,10 +99,11 @@ export default async function DocumentsPage({ params }: { params: Promise<{ id: 
         const fileName = detail(d.details, "file_name");
         const fileSize = detailNumber(d.details, "file_size");
         const autoLinked = d.details?.auto_trip_link === true;
+        const linkedBookingId = detail(d.details, "linked_booking_id");
         return <article className="document-card" key={d.id}>
           <div className="document-icon">{categoryIcon[category] || "📄"}</div>
           <div className="document-card-body">
-            <div className="document-card-topline"><span className="activity-label">{category.replaceAll("_", " ")}</span>{autoLinked && <span className="trip-linked-chip">🔗 Trip linked</span>}</div>
+            <div className="document-card-topline"><span className="activity-label">{category.replaceAll("_", " ")}</span>{autoLinked && <span className="trip-linked-chip">🔗 Trip linked</span>}{linkedBookingId && <span className="trip-linked-chip">🎫 Booking linked</span>}</div>
             <h3>{d.title || "Document"}</h3>
             {d.provider && <p>{d.provider}</p>}
             {fileName && <p className="document-file-meta"><strong>{fileName}</strong>{fileSize != null && <span>{formatBytes(fileSize)}</span>}</p>}

@@ -1,0 +1,31 @@
+V10.0–V10.5 changed/added files
+
+ADDED
+- lib/v10.ts
+- components/BookingImportWizard.tsx
+- components/TripMapBoard.tsx
+- components/LiveTripControl.tsx
+- app/trips/[id]/import-booking/page.tsx
+- app/trips/[id]/import-booking/actions.ts
+- app/trips/[id]/optimize/page.tsx
+- app/trips/[id]/optimize/actions.ts
+- V10_0_TO_V10_5_SMART_AUTOMATION.md
+
+UPDATED
+- app/trips/[id]/map/page.tsx
+- app/trips/[id]/bookings/page.tsx
+- app/trips/[id]/page.tsx
+- app/trips/[id]/command-center/page.tsx
+- app/today/actions.ts
+- components/TodayMode.tsx
+- components/SubmitButton.tsx
+- components/PwaRegister.tsx
+- components/AppHeader.tsx
+- app/trips/new/page.tsx
+- app/version/route.ts
+- app/globals.css
+- public/sw.js
+- package.json
+- README.md
+
+No new SQL migration is required.
