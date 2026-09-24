@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { loadMapLibre, OPENFREEMAP_STYLE } from "@/lib/maplibre-browser";
+import { loadMapLibre, OSM_RASTER_STYLE } from "@/lib/maplibre-browser";
 
 type Point = { id: string; title: string; latitude: number; longitude: number; label?: string };
 
@@ -16,7 +16,7 @@ function markerNode(index: number) {
 
 function popupNode(point: Point) {
   const root = document.createElement("div");
-  root.className = "tabi-map-popup openfree";
+  root.className = "tabi-map-popup osm";
   const title = document.createElement("strong");
   title.textContent = point.title;
   root.appendChild(title);
@@ -44,7 +44,7 @@ export function TripMap({ points, compact = false }: { apiKey?: string; points: 
         if (cancelled || !mapRef.current) return;
         const map = new maplibregl.Map({
           container: mapRef.current,
-          style: OPENFREEMAP_STYLE,
+          style: OSM_RASTER_STYLE,
           center: [usable[0].longitude, usable[0].latitude],
           zoom: usable.length === 1 ? 14 : 10,
           attributionControl: true,

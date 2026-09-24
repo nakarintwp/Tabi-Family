@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { loadMapLibre, OPENFREEMAP_STYLE } from "@/lib/maplibre-browser";
+import { loadMapLibre, OSM_RASTER_STYLE } from "@/lib/maplibre-browser";
 
 export type RealMapPoint = {
   id: string;
@@ -70,26 +70,6 @@ function markerNode(index: number, color: string) {
   return root;
 }
 
-function osmEmbedUrl(points: RealMapPoint[]) {
-  const lngs = points.map((point) => point.longitude);
-  const lats = points.map((point) => point.latitude);
-  let minLng = Math.min(...lngs);
-  let maxLng = Math.max(...lngs);
-  let minLat = Math.min(...lats);
-  let maxLat = Math.max(...lats);
-
-  // Avoid a zero-area bbox when there is only one point.
-  if (Math.abs(maxLng - minLng) < 0.01) { minLng -= 0.03; maxLng += 0.03; }
-  if (Math.abs(maxLat - minLat) < 0.01) { minLat -= 0.02; maxLat += 0.02; }
-
-  const padLng = Math.max((maxLng - minLng) * 0.12, 0.015);
-  const padLat = Math.max((maxLat - minLat) * 0.12, 0.01);
-  const bbox = [minLng - padLng, minLat - padLat, maxLng + padLng, maxLat + padLat].join(",");
-  const first = points[0];
-  const params = new URLSearchParams({ bbox, layer: "mapnik", marker: `${first.latitude},${first.longitude}` });
-  return `https://www.openstreetmap.org/export/embed.html?${params.toString()}`;
-}
-
 export function RealMap({
   points,
   connectPoints = false,
@@ -115,14 +95,8 @@ export function RealMap({
     if (!containerRef.current || !usable.length) return;
     let cancelled = false;
     let resizeObserver: ResizeObserver | null = null;
-    let loadTimer: number | null = null;
     setFailed(false);
     setReady(false);
-
-    // If a CDN/WebGL/style problem prevents load, never leave the user on an endless spinner.
-    loadTimer = window.setTimeout(() => {
-      if (!cancelled && !mapRef.current?.loaded?.()) setFailed(true);
-    }, 12000);
 
     loadMapLibre()
       .then((maplibregl) => {
@@ -130,7 +104,7 @@ export function RealMap({
 
         const map = new maplibregl.Map({
           container: containerRef.current,
-          style: OPENFREEMAP_STYLE,
+          style: OSM_RASTER_STYLE,
           center: [usable[0].longitude, usable[0].latitude],
           zoom: usable.length === 1 ? 14.5 : 7.5,
           attributionControl: true,
@@ -155,7 +129,6 @@ export function RealMap({
 
         map.on("load", () => {
           if (cancelled) return;
-          if (loadTimer !== null) window.clearTimeout(loadTimer);
           if (connectPoints && usable.length > 1) {
             map.addSource("tabi-route", {
               type: "geojson",
@@ -189,7 +162,6 @@ export function RealMap({
         const redraw = () => mapRef.current?.resize?.();
         window.setTimeout(redraw, 100);
         window.setTimeout(redraw, 350);
-        window.setTimeout(redraw, 800);
         if (typeof ResizeObserver !== "undefined" && shellRef.current) {
           resizeObserver = new ResizeObserver(redraw);
           resizeObserver.observe(shellRef.current);
@@ -199,7 +171,6 @@ export function RealMap({
 
     return () => {
       cancelled = true;
-      if (loadTimer !== null) window.clearTimeout(loadTimer);
       resizeObserver?.disconnect();
       markersRef.current.forEach((marker) => marker?.remove?.());
       markersRef.current = [];
@@ -207,7 +178,7 @@ export function RealMap({
       mapRef.current = null;
       boundsRef.current = null;
     };
-  }, [connectPoints, usable, fullscreen]);
+  }, [connectPoints, usable]);
 
   useEffect(() => {
     document.body.classList.toggle("map-fullscreen-open", fullscreen);
@@ -245,28 +216,14 @@ export function RealMap({
   if (failed) {
     const first = usable[0];
     const mapsUrl = first.mapsUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${first.latitude},${first.longitude}`)}`;
-    return (
-      <div className="map-fallback-map-shell">
-        <iframe
-          className="osm-embed-fallback"
-          src={osmEmbedUrl(usable)}
-          title="แผนที่ OpenStreetMap สำรอง"
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-        />
-        <div className="map-fallback-map-note">
-          <span>โหมดแผนที่สำรอง · OpenStreetMap</span>
-          <a href={mapsUrl} target="_blank" rel="noreferrer">เปิด Google Maps ↗</a>
-        </div>
-      </div>
-    );
+    return <div className={`map-fallback ${compact ? "compact" : ""}`}><div>⚠️</div><strong>แผนที่โหลดไม่สำเร็จ</strong><p>ลองรีเฟรชอีกครั้ง หรือเปิดจุดแรกใน Google Maps</p><a className="btn btn-secondary btn-sm" href={mapsUrl} target="_blank" rel="noreferrer">เปิด Google Maps ↗</a></div>;
   }
 
   return (
-    <div ref={shellRef} className={`real-map-shell openfree-provider ${fullscreen ? "fullscreen" : ""}`}>
+    <div ref={shellRef} className={`real-map-shell osm-provider ${fullscreen ? "fullscreen" : ""}`}>
       {!ready && <div className="real-map-loading"><span />กำลังโหลดแผนที่…</div>}
-      <div ref={containerRef} className={`real-map maplibre-real-map ${compact ? "compact" : ""} ${className}`.trim()} aria-label="แผนที่ OpenFreeMap ของสถานที่ในทริป" />
-      <div className="real-map-provider-badge">OpenFreeMap · OpenStreetMap</div>
+      <div ref={containerRef} className={`real-map maplibre-real-map ${compact ? "compact" : ""} ${className}`.trim()} aria-label="แผนที่ OpenStreetMap ของสถานที่ในทริป" />
+      <div className="real-map-provider-badge">OpenStreetMap · MapLibre</div>
       <div className="real-map-toolbar" aria-label="เครื่องมือแผนที่">
         <button type="button" onClick={fitAll}>ดูทุกจุด</button>
         <button type="button" onClick={() => setFullscreen((value) => !value)}>{fullscreen ? "ย่อแผนที่" : "เต็มจอ"}</button>

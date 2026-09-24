@@ -1,8 +1,13 @@
-V12.1 map visibility fix
-- app/globals.css
-- components/RealMap.tsx
-- app/version/route.ts
-- app/api/geocode/route.ts
-- public/sw.js
+V12.1 version + map reliability fix
 - package.json
-- V12_1_MAP_VISIBILITY_FIX.md
+- app/layout.tsx
+- app/version/route.ts
+- app/explore/page.tsx
+- app/api/geocode/route.ts
+- components/AppHeader.tsx
+- components/RealMap.tsx
+- components/TripMap.tsx
+- components/ExploreCoordinateMap.tsx
+- lib/maplibre-browser.ts
+- public/sw.js
+- V12_1_VERSION_MAP_RELIABILITY_FIX.md
