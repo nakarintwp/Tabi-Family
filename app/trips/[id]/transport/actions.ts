@@ -47,6 +47,12 @@ export async function addTransportSegment(formData: FormData) {
     booking_reference: String(formData.get("booking_reference") || "").trim() || null,
     seat: String(formData.get("seat") || "").trim() || null,
     notes: String(formData.get("notes") || "").trim() || null,
+    distance_km: Number(formData.get("distance_km") || 0) || null,
+    toll_jpy: Number(formData.get("toll_jpy") || 0) || null,
+    fuel_jpy: Number(formData.get("fuel_jpy") || 0) || null,
+    parking_jpy: Number(formData.get("parking_jpy") || 0) || null,
+    rest_stop: String(formData.get("rest_stop") || "").trim() || null,
+    winter_ready: formData.get("winter_ready") === "on",
     sort_order: count || 0,
     created_by: userId,
   });
@@ -78,6 +84,12 @@ export async function updateTransportSegment(formData: FormData) {
     booking_reference: String(formData.get("booking_reference") || "").trim() || null,
     seat: String(formData.get("seat") || "").trim() || null,
     notes: String(formData.get("notes") || "").trim() || null,
+    distance_km: Number(formData.get("distance_km") || 0) || null,
+    toll_jpy: Number(formData.get("toll_jpy") || 0) || null,
+    fuel_jpy: Number(formData.get("fuel_jpy") || 0) || null,
+    parking_jpy: Number(formData.get("parking_jpy") || 0) || null,
+    rest_stop: String(formData.get("rest_stop") || "").trim() || null,
+    winter_ready: formData.get("winter_ready") === "on",
   }).eq("id", segmentId).eq("trip_id", tripId);
   if (error) throw new Error(`แก้ไขการเดินทางไม่สำเร็จ: ${error.message}`);
   refresh(tripId);

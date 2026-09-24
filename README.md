@@ -1,32 +1,39 @@
-# Tabi Family — V10.5 Smart Automation Suite
+# Tabi Family — V11.2 Practical Intelligence Suite
 
-> Current build: **V10.5**
+> Current build: **V11.2**
 
-Mobile-first Japan family trip planner built with Next.js App Router + Supabase. V10.0–V10.5 adds local booking import, automatic document/transport linking, route optimization, a day-focused map, live trip status and a delay replanner while preserving the zero-paid-AI-API approach.
+Mobile-first Japan family trip planner built with Next.js App Router + Supabase. V10.6–V11.2 focuses on real-trip operations: actual expenses, portable backups, browser OCR, an import review inbox, rule-based schedule checks, weather-aware planning, and richer rental-car route intelligence.
 
-## V10.0–V10.5 highlights
+## V10.6–V11.2 highlights
 
-- **V10.0 Auto Import Booking** — parse booking text / PDF text layer locally, then review before saving.
-- **V10.1 Smart Linking** — link source documents and transport segments to the imported booking automatically when a reliable match is available.
-- **V10.2 Route Optimizer** — nearest-neighbor activity ordering from saved coordinates, with before/after straight-line distance.
-- **V10.3 Map-first Trip View** — day switcher, coordinate board, activities, transport and bookings in one route-oriented screen.
-- **V10.4 Live Trip Status** — Japan-time status in Today Mode with current/next context.
-- **V10.5 Delay Replanner** — preview +15/+30/+60 minutes, flag fixed-time risks, then explicitly apply the delay to remaining activities.
+- **V10.6 Actual Expense & Split Cost** — payer, payment method, optional exchange rate, planned amount and THB-equivalent summaries.
+- **V10.7 Backup / Restore** — versioned JSON backup and restore into a new Trip without overwriting the source.
+- **V10.8 Booking OCR** — OCR JPG/PNG/WEBP vouchers in the browser with Tesseract.js (`eng+jpn`), no paid AI API.
+- **V10.9 Import Inbox** — review auto-imported bookings, unlinked documents and transport segments missing booking references.
+- **V11.0 Smart Trip Engine** — rule-based checks for overlaps, short buffers, dense days, incomplete bookings and long driving segments.
+- **V11.1 Weather-aware Planner** — combines Open-Meteo forecast with Indoor/Outdoor activities and rain/snow alternatives.
+- **V11.2 Driving Intelligence** — distance, ETC/toll, fuel, parking, rest stop and winter-readiness tracking for rental-car segments.
 
-### SQL
+### Required SQL for V11.2
 
-**No new SQL is required for V10.0–V10.5.** It reuses the existing tables and the private `trip-documents` Storage bucket from V8.9.
-
-### Key V10 routes
+Run once in Supabase SQL Editor before using the new expense/driving fields:
 
 ```text
-/trips/[id]/import-booking      V10.0–V10.1 Auto Import + Smart Linking
-/trips/[id]/optimize            V10.2 Route Optimizer
-/trips/[id]/map                 V10.3 Map-first Trip View
-/today                          V10.4–V10.5 Live Status + Delay Replanner
+V10_6_TO_V11_2_PRACTICAL_INTELLIGENCE.sql
 ```
 
-See `V10_0_TO_V10_5_SMART_AUTOMATION.md` for implementation notes and limitations.
+### Key new routes
+
+```text
+/trips/[id]/backup          V10.7 Backup / Restore
+/trips/[id]/import-booking  V10.8 Booking OCR + Import
+/trips/[id]/inbox           V10.9 Import Review Center
+/trips/[id]/smart-engine    V11.0 Smart Trip Engine
+/trips/[id]/weather         V11.1 Weather-aware Planner
+/trips/[id]/driving         V11.2 Driving Intelligence
+```
+
+See `V10_6_TO_V11_2_COMPLETE.md` for implementation notes.
 
 ---
 

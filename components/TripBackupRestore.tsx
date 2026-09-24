@@ -1,0 +1,12 @@
+"use client";
+import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { restoreTripBackup } from "@/app/trips/[id]/backup/actions";
+
+export function TripBackupRestore({backup}:{backup:Record<string,unknown>}){
+ const router=useRouter(); const input=useRef<HTMLInputElement>(null); const [candidate,setCandidate]=useState<Record<string,unknown>|null>(null); const [msg,setMsg]=useState(''); const [busy,setBusy]=useState(false);
+ function download(){const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`tabi-family-backup-${String((backup.trip as any)?.title||'trip').replace(/[^a-zA-Z0-9ก-๙_-]+/g,'-')}.json`;a.click();URL.revokeObjectURL(url);}
+ async function choose(file?:File){setMsg('');setCandidate(null);if(!file)return;try{const parsed=JSON.parse(await file.text());if(parsed?.format!=='tabi-family-backup')throw new Error('รูปแบบไฟล์ไม่ถูกต้อง');setCandidate(parsed);setMsg(`พร้อม Restore: ${parsed?.trip?.title||'Trip'} · ${parsed?.days?.length||0} วัน`);}catch(e){setMsg(e instanceof Error?e.message:'อ่าน Backup ไม่สำเร็จ');}}
+ async function restore(){if(!candidate||busy)return;setBusy(true);setMsg('กำลัง Restore...');try{const result=await restoreTripBackup(candidate);setMsg(`Restore สำเร็จ${result.skippedDocuments?` · ข้ามไฟล์เอกสาร ${result.skippedDocuments} รายการ`:''}`);router.push(`/trips/${result.tripId}`);router.refresh();}catch(e){setMsg(e instanceof Error?e.message:'Restore ไม่สำเร็จ');}finally{setBusy(false);}}
+ return <div className="backup-tool-grid"><section className="card backup-card"><span className="eyebrow">BACKUP</span><h2>💾 Download Trip Backup</h2><p>เก็บ Itinerary, Family, Booking, Expense, Packing, Wishlist และ Transport เป็น JSON</p><button className="btn btn-primary" onClick={download}>ดาวน์โหลด Backup JSON</button><small>เอกสารไฟล์จริงใน Supabase Storage ไม่ถูกฝังใน JSON — เก็บเพียง document index/count เพื่อไม่ทำไฟล์ backup ใหญ่และไม่ลดความปลอดภัย</small></section><section className="card backup-card"><span className="eyebrow">RESTORE</span><h2>♻️ Restore เป็น Trip ใหม่</h2><p>Restore จะสร้าง Trip ใหม่ ไม่เขียนทับ Trip ปัจจุบัน</p><input ref={input} type="file" accept="application/json,.json" onChange={e=>void choose(e.target.files?.[0])}/>{candidate&&<button disabled={busy} className="btn btn-primary" onClick={restore}>{busy?'กำลัง Restore...':'Restore Trip ใหม่'}</button>}{msg&&<div className="form-alert">{msg}</div>}</section></div>
+}

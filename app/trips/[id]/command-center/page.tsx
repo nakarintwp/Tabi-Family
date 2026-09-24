@@ -35,7 +35,7 @@ export default async function CommandCenterPage({ params }: { params: Promise<{ 
   const carSegments = transportRows.filter((x)=>x.mode==="car").length;
 
   return <main className="shell"><div className="container"><AppHeader />
-    <div className="planner-topbar"><Link href={`/trips/${id}`} className="back-link">‹ Dashboard</Link><span className="planner-counter">V10.5 Smart Dashboard</span></div>
+    <div className="planner-topbar"><Link href={`/trips/${id}`} className="back-link">‹ Dashboard</Link><span className="planner-counter">V11.2 Smart Dashboard</span></div>
     <section className="planner-hero command-hero"><div><span className="eyebrow">TRIP COMMAND CENTER</span><h1>🧭 {trip.title}</h1><p>{trip.cities?.join(" → ") || "Japan"} · ทุกอย่างสำคัญของทริปในหน้าเดียว</p></div><div className="master-hero-actions"><Link className="btn btn-primary" href="/today">Today</Link><Link className="btn btn-secondary" href={`/trips/${id}/timeline`}>Timeline</Link></div></section>
 
     <section className="command-metrics">
@@ -51,7 +51,11 @@ export default async function CommandCenterPage({ params }: { params: Promise<{ 
     </section>
 
     <section className="section"><div className="section-head"><h2>Control shortcuts</h2></div><div className="quick-actions v9-shortcuts">
-      <Link className="quick-action" href={`/trips/${id}/import-booking`}><span>📥</span><strong>Auto Import</strong><small>V10.0–10.1 Booking + Link</small></Link>
+      <Link className="quick-action" href={`/trips/${id}/inbox`}><span>📥</span><strong>Import Inbox</strong><small>V10.8–10.9 OCR + Review</small></Link>
+      <Link className="quick-action" href={`/trips/${id}/backup`}><span>💾</span><strong>Backup</strong><small>V10.7 Backup / Restore</small></Link>
+      <Link className="quick-action" href={`/trips/${id}/smart-engine`}><span>🧠</span><strong>Smart Engine</strong><small>V11.0 ตรวจ conflict</small></Link>
+      <Link className="quick-action" href={`/trips/${id}/weather`}><span>🌦️</span><strong>Weather Planner</strong><small>V11.1 Outdoor / Indoor</small></Link>
+      <Link className="quick-action" href={`/trips/${id}/import-booking`}><span>📷</span><strong>Booking OCR</strong><small>V10.8 Local OCR + Import</small></Link>
       <Link className="quick-action" href={`/trips/${id}/optimize`}><span>🧭</span><strong>Route Optimizer</strong><small>V10.2 ลดการย้อน</small></Link>
       <Link className="quick-action" href={`/trips/${id}/map`}><span>🗺️</span><strong>Map-first</strong><small>V10.3 Day route</small></Link>
       <Link className="quick-action" href="/today"><span>☀️</span><strong>Today Live</strong><small>V10.4–10.5 Delay replanner</small></Link>
@@ -60,7 +64,7 @@ export default async function CommandCenterPage({ params }: { params: Promise<{ 
       <Link className="quick-action" href={`/trips/${id}/offline-pack`}><span>📴</span><strong>Offline Pack</strong><small>V9.3 เก็บข้อมูลสำคัญ</small></Link>
       <Link className="quick-action" href={`/trips/${id}/family`}><span>👨‍👩‍👧</span><strong>Family Profiles</strong><small>V9.4 Child seat · Passport</small></Link>
       <Link className="quick-action" href={`/trips/${id}/route-cost`}><span>🧮</span><strong>Route Cost</strong><small>V9.5 เปรียบเทียบค่าเดินทาง</small></Link>
-      <Link className="quick-action" href={`/trips/${id}/driving`}><span>🚙</span><strong>Driving</strong><small>V9.6 Japan Driving Assistant</small></Link>
+      <Link className="quick-action" href={`/trips/${id}/driving`}><span>🚙</span><strong>Driving</strong><small>V11.2 Driving Intelligence</small></Link>
       <Link className="quick-action" href={`/explore?trip=${id}`}><span>✨</span><strong>Explore</strong><small>V9.7 Place Intelligence</small></Link>
       <Link className="quick-action" href={`/trips/${id}/documents`}><span>📂</span><strong>Documents</strong><small>Auto-linked</small></Link>
     </div></section>

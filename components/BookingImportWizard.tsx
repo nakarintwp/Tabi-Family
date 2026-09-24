@@ -34,6 +34,7 @@ export function BookingImportWizard({ tripId, tripTitle, tripCities, documents, 
   const [saveDocument, setSaveDocument] = useState(true);
   const [createTransport, setCreateTransport] = useState(true);
   const [analyzing, setAnalyzing] = useState(false);
+  const [ocrProgress, setOcrProgress] = useState(0);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -49,7 +50,16 @@ export function BookingImportWizard({ tripId, tripTitle, tripCities, documents, 
         if (file.size > MAX_FILE_BYTES) throw new Error("ไฟล์ต้องไม่เกิน 15 MB");
         if (!allowedFile(file)) throw new Error("รองรับ PDF, TXT, CSV, JSON, JPG, PNG และ WEBP");
         const bytes = await file.arrayBuffer();
-        const localText = extractLocalFileText(file.name, file.type, bytes);
+        let localText = extractLocalFileText(file.name, file.type, bytes);
+        if (file.type.startsWith("image/") || /\.(jpg|jpeg|png|webp)$/i.test(file.name)) {
+          setOcrProgress(1);
+          const Tesseract = await import("tesseract.js");
+          const imageUrl = URL.createObjectURL(file);
+          try {
+            const result = await Tesseract.recognize(imageUrl, "eng+jpn", { logger: (m) => { if (m.status === "recognizing text" && typeof m.progress === "number") setOcrProgress(Math.max(1, Math.round(m.progress * 100))); } });
+            localText = result.data.text || "";
+          } finally { URL.revokeObjectURL(imageUrl); }
+        }
         extracted = [localText, sourceText].filter(Boolean).join("\n");
       }
       if (!file && !extracted) throw new Error("เลือกไฟล์หรือวางข้อความ Booking ก่อน");
@@ -62,14 +72,14 @@ export function BookingImportWizard({ tripId, tripTitle, tripCities, documents, 
       const segmentSuggestion = transports.find((segment) => segment.mode === mode && (!parsed.origin || segment.origin.toLowerCase().includes(parsed.origin.toLowerCase()) || parsed.origin.toLowerCase().includes(segment.origin.toLowerCase())));
       setTransportId(segmentSuggestion?.id || "");
       if ((file?.type.startsWith("image/") || /\.(jpg|jpeg|png|webp)$/i.test(file?.name || "")) && !sourceText.trim()) {
-        setMessage("รูปภาพถูกจัดประเภทจากชื่อไฟล์แบบ Local heuristic — ถ้าต้องการความแม่นยำ ให้คัดลอกข้อความจาก voucher มาวางแล้วกดวิเคราะห์อีกครั้ง");
+        setMessage(`OCR ใน Browser เสร็จแล้ว · ความมั่นใจการแยกข้อมูล ${parsed.confidence}% · กรุณาตรวจทุกช่องก่อนบันทึก`);
       } else if (file?.type === "application/pdf" && !extracted.trim()) {
         setMessage("PDF นี้ไม่มี text layer ที่อ่านได้แบบ local — วางข้อความจาก PDF เพิ่มแล้ววิเคราะห์อีกครั้ง");
       } else {
         setMessage(`วิเคราะห์เสร็จแล้ว · ความมั่นใจ ${parsed.confidence}% · กรุณาตรวจข้อมูลก่อนบันทึก`);
       }
     } catch (caught) { setError(caught instanceof Error ? caught.message : "วิเคราะห์ไฟล์ไม่สำเร็จ"); }
-    finally { setAnalyzing(false); }
+    finally { setAnalyzing(false); setOcrProgress(0); }
   }
 
   async function uploadAsDocument() {
@@ -134,10 +144,10 @@ export function BookingImportWizard({ tripId, tripTitle, tripCities, documents, 
   return <div className="booking-import-wizard">
     <section className="section import-source-card">
       <div className="section-head"><h2>1 · นำเข้า Booking</h2><span className="badge success">Local · ¥0 AI API</span></div>
-      <label className="document-upload-zone import-zone"><span className="document-upload-icon">📥</span><span><strong>เลือก Voucher / Booking file</strong><small>PDF text layer, TXT, CSV, JSON และรูปภาพจากชื่อไฟล์ · สูงสุด 15 MB</small></span><input ref={fileRef} type="file" accept=".pdf,.txt,.csv,.json,.jpg,.jpeg,.png,.webp" onChange={(e) => setFile(e.target.files?.[0] || null)} /></label>
+      <label className="document-upload-zone import-zone"><span className="document-upload-icon">📥</span><span><strong>เลือก Voucher / Booking file</strong><small>PDF text layer, TXT, CSV, JSON และ OCR รูป JPG/PNG/WEBP ใน Browser · สูงสุด 15 MB</small></span><input ref={fileRef} type="file" accept=".pdf,.txt,.csv,.json,.jpg,.jpeg,.png,.webp" onChange={(e) => setFile(e.target.files?.[0] || null)} /></label>
       {file && <div className="import-file-pill"><span>📎</span><strong>{file.name}</strong><small>{Math.round(file.size / 1024)} KB</small><button type="button" className="text-button" onClick={() => { setFile(null); if (fileRef.current) fileRef.current.value = ""; }}>เอาออก</button></div>}
       <div className="field"><label>ข้อความจาก Email / Voucher (ช่วยเพิ่มความแม่นยำ)</label><textarea className="textarea" rows={7} value={sourceText} onChange={(e) => setSourceText(e.target.value)} placeholder="วางข้อความยืนยันการจอง เช่น Hotel name, Booking No., Check-in, ราคา..." /></div>
-      <button type="button" className="btn btn-primary btn-full" disabled={analyzing} onClick={analyze}>{analyzing ? "กำลังวิเคราะห์..." : "✨ วิเคราะห์ Booking"}</button>
+      <button type="button" className="btn btn-primary btn-full" disabled={analyzing} onClick={analyze}>{analyzing ? (ocrProgress ? `OCR ${ocrProgress}%...` : "กำลังวิเคราะห์...") : "✨ วิเคราะห์ Booking / OCR"}</button>
       {message && <div className="form-alert form-alert-success">{message}</div>}{error && <div className="form-alert form-alert-error">{error}</div>}
     </section>
 

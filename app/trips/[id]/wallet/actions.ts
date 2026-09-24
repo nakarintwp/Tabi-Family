@@ -71,6 +71,10 @@ export async function addExpense(formData: FormData) {
     currency: String(formData.get("currency") || "JPY"),
     category: String(formData.get("category") || "other"),
     note: String(formData.get("note") || "").trim() || null,
+    paid_by: String(formData.get("paid_by") || "").trim() || null,
+    payment_method: String(formData.get("payment_method") || "").trim() || null,
+    exchange_rate_thb: Number(formData.get("exchange_rate_thb") || 0) > 0 ? Number(formData.get("exchange_rate_thb")) : null,
+    planned_amount: Number(formData.get("planned_amount") || 0) > 0 ? Number(formData.get("planned_amount")) : null,
     paid_at: paidDate ? `${paidDate}T12:00:00+09:00` : new Date().toISOString(),
     created_by: userId,
   });

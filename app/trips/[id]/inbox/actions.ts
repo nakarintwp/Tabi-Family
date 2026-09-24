@@ -1,0 +1,4 @@
+"use server";
+import { revalidatePath } from "next/cache";
+import { requireVerifiedUser } from "@/lib/supabase/auth";
+export async function markBookingReviewed(formData:FormData){const tripId=String(formData.get('trip_id')||'');const bookingId=String(formData.get('booking_id')||'');if(!tripId||!bookingId)return;const{supabase}=await requireVerifiedUser(`/trips/${tripId}/inbox`);const{data}=await supabase.from('bookings').select('details').eq('id',bookingId).eq('trip_id',tripId).maybeSingle();if(!data)return;const details=data.details&&typeof data.details==='object'?{...data.details}:{};const{error}=await supabase.from('bookings').update({details:{...details,reviewed_at:new Date().toISOString()}}).eq('id',bookingId).eq('trip_id',tripId);if(error)throw new Error(`Review ไม่สำเร็จ: ${error.message}`);revalidatePath(`/trips/${tripId}/inbox`);revalidatePath(`/trips/${tripId}/command-center`);}
