@@ -31,6 +31,33 @@ type Day = {
   activities?: Activity[] | null;
 };
 
+type TransportSegment = {
+  id: string;
+  day_id?: string | null;
+  mode: string;
+  operator?: string | null;
+  service_name?: string | null;
+  origin: string;
+  destination: string;
+  departure_time?: string | null;
+  arrival_time?: string | null;
+  booking_reference?: string | null;
+  seat?: string | null;
+  notes?: string | null;
+};
+
+type Booking = {
+  id: string;
+  booking_type: string;
+  title?: string | null;
+  provider?: string | null;
+  reference_code?: string | null;
+  start_at?: string | null;
+  confirmation_url?: string | null;
+  notes?: string | null;
+  details?: Record<string, unknown> | null;
+};
+
 type Trip = {
   id: string;
   title: string;
@@ -39,6 +66,8 @@ type Trip = {
   end_date?: string | null;
   canEdit?: boolean;
   trip_days?: Day[] | null;
+  transport_segments?: TransportSegment[] | null;
+  bookings?: Booking[] | null;
 };
 
 function localDateKey(date = new Date()) {
@@ -66,6 +95,19 @@ function statusLabel(status?: string | null) {
   if (status === "done") return "เสร็จแล้ว";
   if (status === "skipped") return "ข้าม";
   return "รอทำ";
+}
+
+function japanDate(value?: string | null) {
+  if (!value) return null;
+  try {
+    return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Tokyo", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(value));
+  } catch {
+    return value.slice(0, 10);
+  }
+}
+
+function translateUrl(text: string) {
+  return `https://translate.google.com/?sl=auto&tl=ja&text=${encodeURIComponent(text)}`;
 }
 
 export function TodayMode({ trips }: { trips: Trip[] }) {
@@ -123,6 +165,9 @@ export function TodayMode({ trips }: { trips: Trip[] }) {
   }
 
   const { trip, day, dayIndex, activities, nextActivity, doneCount, skippedCount } = model;
+  const todayTransports = (trip.transport_segments || []).filter((segment) => segment.day_id === day.id).sort((a, b) => String(a.departure_time || "99:99").localeCompare(String(b.departure_time || "99:99")));
+  const todayBookings = (trip.bookings || []).filter((booking) => booking.booking_type !== "document" && japanDate(booking.start_at) === day.trip_date);
+  const rentalToday = todayTransports.find((segment) => segment.mode === "car");
   const dateText = new Intl.DateTimeFormat("th-TH", { weekday: "long", day: "numeric", month: "long" }).format(now);
   const nextDestination: RouteDestination[] = nextActivity ? [{ id: nextActivity.id, title: nextActivity.title, locationName: nextActivity.location_name, latitude: nextActivity.latitude, longitude: nextActivity.longitude }] : [];
   const progress = activities.length ? Math.round(((doneCount + skippedCount) / activities.length) * 100) : 0;
@@ -139,6 +184,17 @@ export function TodayMode({ trips }: { trips: Trip[] }) {
         <small className="muted">เสร็จแล้ว {doneCount} · ข้าม {skippedCount} · เหลือ {Math.max(0, activities.length - doneCount - skippedCount)}</small>
       </section>
 
+      <section className="section today-command-center">
+        <div className="section-head"><h2>Today Command Center</h2><span className="badge success">V8.4</span></div>
+        <div className="today-command-grid">
+          <Link className="today-command-card" href={`/trips/${trip.id}/bookings`}><span>🎫</span><div><strong>{todayBookings.length} Booking</strong><small>เปิดเลขจอง / confirmation</small></div></Link>
+          <Link className="today-command-card" href={`/trips/${trip.id}/route`}><span>🚆</span><div><strong>{todayTransports.length} Transport</strong><small>{todayTransports[0] ? `${todayTransports[0].origin} → ${todayTransports[0].destination}` : "ยังไม่มีช่วงเดินทาง"}</small></div></Link>
+          <Link className="today-command-card" href={`/trips/${trip.id}/documents`}><span>📂</span><div><strong>Documents</strong><small>Voucher · Insurance · Ticket</small></div></Link>
+          <Link className="today-command-card emergency" href={`/trips/${trip.id}/emergency`}><span>🆘</span><div><strong>Emergency</strong><small>110 · 119 · JNTO</small></div></Link>
+          {rentalToday && <Link className="today-command-card rental" href={`/trips/${trip.id}/rental-car`}><span>🚙</span><div><strong>Rental car วันนี้</strong><small>{rentalToday.origin} → {rentalToday.destination}</small></div></Link>}
+        </div>
+      </section>
+
       {nextActivity ? (
         <section className="section today-next-section">
           <div className="section-head"><h2>ต่อไป</h2><span className="badge success">NEXT</span></div>
@@ -147,11 +203,13 @@ export function TodayMode({ trips }: { trips: Trip[] }) {
             <div className="today-next-copy"><span>{activityIcon(nextActivity.activity_type)}</span><div><h3>{nextActivity.title}</h3>{nextActivity.location_name && <p>📍 {nextActivity.location_name}</p>}{nextActivity.is_outdoor && <span className="weather-sensitive-badge">☁️ Outdoor</span>}{nextActivity.notes && <small>{nextActivity.notes}</small>}</div></div>
           </div>
           <CurrentLocationRoute destinations={nextDestination} compact title="นำทางไปจุดถัดไป" />
-          {trip.canEdit && <div className="today-action-row">
-            <form action={markActivityStatus}><input type="hidden" name="trip_id" value={trip.id}/><input type="hidden" name="activity_id" value={nextActivity.id}/><input type="hidden" name="status" value="done"/><button className="btn btn-primary btn-small">✓ เสร็จแล้ว</button></form>
+          <div className="today-action-row today-primary-actions">
+            {todayBookings[0]?.confirmation_url && <a className="btn btn-secondary btn-small" href={todayBookings[0].confirmation_url} target="_blank" rel="noreferrer">🎫 Booking</a>}
+            <a className="btn btn-secondary btn-small" href={translateUrl(`${nextActivity.title}${nextActivity.location_name ? ` at ${nextActivity.location_name}` : ""}`)} target="_blank" rel="noreferrer">文 Translate</a>
+            {trip.canEdit && <><form action={markActivityStatus}><input type="hidden" name="trip_id" value={trip.id}/><input type="hidden" name="activity_id" value={nextActivity.id}/><input type="hidden" name="status" value="done"/><button className="btn btn-primary btn-small">✓ เสร็จแล้ว</button></form>
             <form action={postponeActivity}><input type="hidden" name="trip_id" value={trip.id}/><input type="hidden" name="day_id" value={day.id}/><input type="hidden" name="activity_id" value={nextActivity.id}/><button className="btn btn-secondary btn-small">↷ ไว้ทีหลัง</button></form>
-            <form action={markActivityStatus}><input type="hidden" name="trip_id" value={trip.id}/><input type="hidden" name="activity_id" value={nextActivity.id}/><input type="hidden" name="status" value="skipped"/><button className="btn btn-secondary btn-small">ข้าม</button></form>
-          </div>}
+            <form action={markActivityStatus}><input type="hidden" name="trip_id" value={trip.id}/><input type="hidden" name="activity_id" value={nextActivity.id}/><input type="hidden" name="status" value="skipped"/><button className="btn btn-secondary btn-small">ข้าม</button></form></>}
+          </div>
         </section>
       ) : (
         <section className="section"><div className="today-complete-card"><span>🎉</span><div><strong>กิจกรรมวันนี้ครบแล้ว</strong><p>ตรวจแผนวันพรุ่งนี้ หรือกลับรายการที่ข้ามเป็น “รอทำ” ได้ด้านล่าง</p></div></div></section>

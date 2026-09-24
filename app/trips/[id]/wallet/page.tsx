@@ -10,8 +10,11 @@ const bookingMeta: Record<string, { icon: string; label: string }> = {
   flight: { icon: "✈️", label: "Flight" },
   hotel: { icon: "🏨", label: "Hotel" },
   train: { icon: "🚄", label: "Train" },
+  bus: { icon: "🚌", label: "Bus" },
+  rental_car: { icon: "🚙", label: "Rental car" },
   ticket: { icon: "🎟️", label: "Ticket" },
   restaurant: { icon: "🍽️", label: "Restaurant" },
+  document: { icon: "📄", label: "Document" },
   other: { icon: "📌", label: "Other" },
 };
 const expenseIcon: Record<string, string> = { food: "🍜", transport: "🚆", hotel: "🏨", ticket: "🎟️", shopping: "🛍️", other: "💴" };

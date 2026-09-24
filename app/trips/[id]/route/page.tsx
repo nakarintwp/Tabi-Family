@@ -54,7 +54,7 @@ export default async function TripRoutePage({ params }: { params: Promise<{ id: 
   const routeCities: string[] = rows.length ? [rows[0].origin, ...rows.map((segment: RouteSegment) => segment.destination)] : ((trip.cities || []) as string[]);
 
   return <main className="shell"><div className="container"><AppHeader />
-    <div className="planner-topbar"><Link href={`/trips/${id}`} className="back-link">‹ Dashboard</Link><span className="planner-counter">V7.9 Trip Route</span></div>
+    <div className="planner-topbar"><Link href={`/trips/${id}`} className="back-link">‹ Dashboard</Link><span className="planner-counter">V8.8 Trip Route</span></div>
     <section className="planner-hero route-view-hero"><div><span className="eyebrow">TRIP ROUTE VIEW</span><h1>เส้นทางทั้งทริป</h1><p>{trip.title} · รถไฟ รถบัส เดิน Taxi และ Rental car ใน Timeline เดียว</p></div><Link className="btn btn-primary" href={`/trips/${id}/transport#add-transport`}>+ เพิ่มการเดินทาง</Link></section>
 
     <section className="route-summary-card">

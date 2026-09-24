@@ -1,0 +1,33 @@
+V8.0–V8.8 (V8.5 intentionally skipped)
+
+New:
+- lib/v8.ts
+- components/DocumentOfflinePack.tsx
+- app/trips/[id]/master-plan/page.tsx
+- app/trips/[id]/bookings/page.tsx
+- app/trips/[id]/budget/page.tsx
+- app/trips/[id]/budget/actions.ts
+- app/trips/[id]/rental-car/page.tsx
+- app/trips/[id]/conflicts/page.tsx
+- app/trips/[id]/documents/page.tsx
+- app/trips/[id]/emergency/page.tsx
+- V8_0_TO_V8_8_TRIP_CONTROL_UPGRADE.md
+
+Updated:
+- app/trips/[id]/page.tsx
+- app/trips/[id]/wallet/actions.ts
+- app/trips/[id]/wallet/page.tsx
+- app/trips/[id]/transport/actions.ts
+- app/today/page.tsx
+- components/TodayMode.tsx
+- components/AppHeader.tsx
+- components/PwaRegister.tsx
+- app/trips/new/page.tsx
+- app/explore/page.tsx
+- app/trips/[id]/transport/page.tsx
+- app/trips/[id]/route/page.tsx
+- app/globals.css
+- app/version/route.ts
+- public/sw.js
+- package.json
+- README.md

@@ -45,7 +45,7 @@ export default async function TransportPage({ params }: { params: Promise<{ id: 
   const carSegments = typedSegments.filter((segment: TransportSegment) => segment.mode === "car");
 
   return <main className="shell"><div className="container"><AppHeader />
-    <div className="planner-topbar"><Link href={`/trips/${id}`} className="back-link">‹ Dashboard</Link><span className="planner-counter">Transport · V7.9</span></div>
+    <div className="planner-topbar"><Link href={`/trips/${id}`} className="back-link">‹ Dashboard</Link><span className="planner-counter">Transport · V8.8</span></div>
     <section className="planner-hero transport-hero"><div><span className="eyebrow">JAPAN TRANSPORT</span><h1>🚆 Transport Segments</h1><p>รถไฟ รถบัส เที่ยวบิน Taxi เดิน และ Rental car อยู่ในแผนเดียวกัน</p></div><Link className="btn btn-secondary" href={`/trips/${id}/route`}>Trip Route</Link></section>
 
     {carSegments.length > 0 && <section className="rental-summary-banner"><span>🚙</span><div><strong>Rental car {carSegments.length} ช่วง</strong><p>ข้อมูลรถเช่าจะถูกรวมใน Trip Route อัตโนมัติ</p></div><Link href={`/trips/${id}/route`} className="link">ดู Route ›</Link></section>}

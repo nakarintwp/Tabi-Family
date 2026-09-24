@@ -1,8 +1,23 @@
-# Tabi Family — V7.9 Smart Explore · Route · Rental Car
+# Tabi Family — V8.8 Trip Control Suite
 
-> Current build: **V7.9**
+> Current build: **V8.8**
 
-Mobile-first Japan family trip planner built with Next.js App Router + Supabase. This release completes the V7.5–V7.9 planning flow: Explore → Add to Day → Smart Day → Restaurant filters → Whole-trip Route, with explicit Rental car support.
+
+Mobile-first Japan family trip planner built with Next.js App Router + Supabase. V8.8 adds the operational layer for using the plan before and during the trip: Master Plan, Booking Center, Budget, Rental Car Pro, Today Mode 2.0, rule-based conflict checks, Trip Documents and Emergency Japan. **V8.5 is intentionally not included.**
+
+## V8.0–V8.8 highlights
+
+- V8.0 Trip Master Plan — itinerary + transport + bookings in one day-by-day view.
+- V8.1 Booking & Reservation Center — confirmation, payment status, amount, party size and contact.
+- V8.2 Expense & Budget — JPY/THB totals and rental-car related expense categories.
+- V8.3 Rental Car Pro — route, booking, ETC/winter/fuel/parking checklist and Google Maps shortcuts.
+- V8.4 Today Mode 2.0 — command center for bookings, transport, documents, emergency and next-action controls.
+- V8.5 intentionally skipped.
+- V8.6 Smart Conflict Detector — zero-API rules for overlap, short buffer, overloaded days and rental-car warnings.
+- V8.7 Trip Documents — reference/link vault plus local offline metadata pack.
+- V8.8 Emergency Japan — 110, 119, JNTO Visitor Hotline, Royal Thai Embassy Tokyo and Japanese phrase cards.
+
+No new database table or column is required for this release. Booking metadata is stored in the existing `bookings.details` JSON column.
 
 ## V7.5–V7.9 highlights
 
@@ -70,7 +85,17 @@ Push to GitHub. Vercel redeploys automatically.
 /trips/[id]/calendar           Calendar Overview
 /trips/[id]/destinations       Edit Trip cities
 /trips/[id]/readiness          Trip Readiness
-/today                         Today Mode Pro
+/today                         Today Mode 2.0
+/trips/[id]/master-plan         Trip Master Plan
+/trips/[id]/bookings            Booking & Reservation Center
+/trips/[id]/budget              Expense & Budget
+/trips/[id]/rental-car          Rental Car Pro
+/trips/[id]/conflicts           Smart Conflict Detector
+/trips/[id]/documents           Trip Documents
+/trips/[id]/emergency           Emergency Japan
 ```
 
 See `V7_5_TO_V7_9_COMPLETE.md` for the release breakdown.
+
+
+See `V8_0_TO_V8_8_TRIP_CONTROL_UPGRADE.md` for the V8 release breakdown.
