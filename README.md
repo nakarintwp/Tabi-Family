@@ -1,7 +1,3 @@
-# Tabi Family V12.1
-
-Map reliability release: OpenStreetMap + Leaflet, no API key/billing/card.
-
 # Tabi Family — V12.0 Zero-Billing Maps
 
 ## V12.0 — No card, no map API key

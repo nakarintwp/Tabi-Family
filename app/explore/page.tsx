@@ -95,7 +95,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
   return <main className="shell"><div className="container"><AppHeader />
     <section className="discovery-hero">
       <div>
-        <span className="eyebrow">V12.1 · EXPLORE MAP</span>
+        <span className="eyebrow">V11.9 · GOOGLE MAPS EXPLORE</span>
         <h1>{selectedTrip ? `Explore · ${selectedTrip.title}` : "Explore Japan"}</h1>
         <p>{selectedTrip ? "ค้นหา ดูพิกัด บันทึก Wishlist หรือเพิ่มลง Day Planner ได้จากหน้าเดียว" : "เลือกทริปก่อน แล้วระบบจะแสดงเฉพาะพื้นที่ที่คุณกำลังจะไป"}</p>
       </div>

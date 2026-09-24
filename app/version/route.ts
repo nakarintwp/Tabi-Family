@@ -4,7 +4,7 @@ export const dynamic = "force-dynamic";
 
 export function GET() {
   return NextResponse.json(
-    { app: "Tabi Family", version: "12.1", feature: "map-reliability-leaflet-openstreetmap" },
+    { app: "Tabi Family", version: "12.2", feature: "bundled-maplibre-openfreemap-build-fix" },
     { headers: { "Cache-Control": "no-store, max-age=0" } },
   );
 }

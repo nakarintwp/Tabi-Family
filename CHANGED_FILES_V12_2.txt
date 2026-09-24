@@ -1,0 +1,9 @@
+V12.2 changed files
+- package.json
+- app/layout.tsx
+- app/version/route.ts
+- app/globals.css
+- lib/maplibre-browser.ts
+- components/RealMap.tsx
+- components/TripMap.tsx
+- V12_2_BUNDLED_MAPLIBRE_BUILD_FIX.md
