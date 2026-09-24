@@ -1,13 +1,15 @@
-V12.1 version + map reliability fix
+V12.1 changed files
 - package.json
 - app/layout.tsx
-- app/version/route.ts
 - app/explore/page.tsx
+- app/version/route.ts
 - app/api/geocode/route.ts
-- components/AppHeader.tsx
+- app/globals.css
 - components/RealMap.tsx
 - components/TripMap.tsx
 - components/ExploreCoordinateMap.tsx
 - lib/maplibre-browser.ts
+- lib/discovery.ts
 - public/sw.js
-- V12_1_VERSION_MAP_RELIABILITY_FIX.md
+- README.md
+- V12_1_TAKAYAMA_SNOW_PLAY_MAP_FIX.md

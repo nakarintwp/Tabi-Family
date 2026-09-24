@@ -1,12 +1,12 @@
-# Tabi Family — V12.0 Zero-Billing Maps
+# Tabi Family — V12.1 Takayama Snow Play + Reliable Zero-Billing Maps
 
-## V12.0 — No card, no map API key
+## V12.1 — Takayama snow play + no card, no map API key
 
 The in-app Explore and Trip maps now use **MapLibre GL JS + OpenFreeMap** with OpenStreetMap data. No Google Cloud project, billing account, payment card, or map API key is required. Google Maps remains only as an external navigation link.
 
 Place search no longer uses Google Places. It uses a manual Search button through the app's `/api/geocode` route; there is no client-side autocomplete. No SQL migration is required. See `V12_0_ZERO_BILLING_MAPS.md`.
 
-> Current build: **V12.0**
+> Current build: **V12.1**
 
 ## V11.5–V11.8 — Explore Visual & Map Polish
 
@@ -166,3 +166,10 @@ See `V7_5_TO_V7_9_COMPLETE.md` for the release breakdown.
 
 
 See `V8_0_TO_V8_8_TRIP_CONTROL_UPGRADE.md` for the V8 release breakdown.
+
+
+## V12.1 additions
+- Explore: 6 winter/snow-play destinations around Takayama.
+- Map: MapLibre is bundled with the app instead of loaded from a CDN.
+- Map base: direct OpenStreetMap raster tiles, no API key/billing.
+- No SQL migration required.

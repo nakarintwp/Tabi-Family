@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
   try {
     const response = await fetch(url, {
       headers: {
-        "User-Agent": "TabiFamily/12.0 (+https://tabi-family.vercel.app)",
+        "User-Agent": "TabiFamily/12.1 (+https://tabi-family.vercel.app)",
         "Referer": "https://tabi-family.vercel.app/",
         "Accept-Language": "th,en,ja",
       },

@@ -144,7 +144,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
     </section>
 
     {filtered.length > 0 && <section className="section explore-map-section">
-      <div className="section-head"><h2>Explore Map</h2><span className="small muted">OpenFreeMap · ซูม · เลื่อน · หลายหมุด · เปิดเต็มจอ</span></div>
+      <div className="section-head"><h2>Explore Map</h2><span className="small muted">OpenStreetMap · ซูม · เลื่อน · หลายหมุด · เปิดเต็มจอ</span></div>
       <ExploreCoordinateMap places={filtered} />
     </section>}
 

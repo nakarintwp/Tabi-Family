@@ -4,7 +4,7 @@ export const dynamic = "force-dynamic";
 
 export function GET() {
   return NextResponse.json(
-    { app: "Tabi Family", version: "12.1", feature: "openfreemap-map-display-height-fix" },
+    { app: "Tabi Family", version: "12.1", feature: "takayama-snow-play-bundled-osm-map-fix" },
     { headers: { "Cache-Control": "no-store, max-age=0" } },
   );
 }

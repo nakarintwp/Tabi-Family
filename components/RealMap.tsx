@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { loadMapLibre, OPENFREEMAP_STYLE } from "@/lib/maplibre-browser";
+import { loadMapLibre, OPENSTREETMAP_RASTER_STYLE } from "@/lib/maplibre-browser";
 
 export type RealMapPoint = {
   id: string;
@@ -104,7 +104,7 @@ export function RealMap({
 
         const map = new maplibregl.Map({
           container: containerRef.current,
-          style: OPENFREEMAP_STYLE,
+          style: OPENSTREETMAP_RASTER_STYLE,
           center: [usable[0].longitude, usable[0].latitude],
           zoom: usable.length === 1 ? 14.5 : 7.5,
           attributionControl: true,
@@ -222,8 +222,8 @@ export function RealMap({
   return (
     <div ref={shellRef} className={`real-map-shell openfree-provider ${fullscreen ? "fullscreen" : ""}`}>
       {!ready && <div className="real-map-loading"><span />กำลังโหลดแผนที่…</div>}
-      <div ref={containerRef} className={`real-map maplibre-real-map ${compact ? "compact" : ""} ${className}`.trim()} aria-label="แผนที่ OpenFreeMap ของสถานที่ในทริป" />
-      <div className="real-map-provider-badge">OpenFreeMap · OpenStreetMap</div>
+      <div ref={containerRef} className={`real-map maplibre-real-map ${compact ? "compact" : ""} ${className}`.trim()} aria-label="แผนที่ OpenStreetMap ของสถานที่ในทริป" />
+      <div className="real-map-provider-badge">OpenStreetMap · MapLibre</div>
       <div className="real-map-toolbar" aria-label="เครื่องมือแผนที่">
         <button type="button" onClick={fitAll}>ดูทุกจุด</button>
         <button type="button" onClick={() => setFullscreen((value) => !value)}>{fullscreen ? "ย่อแผนที่" : "เต็มจอ"}</button>

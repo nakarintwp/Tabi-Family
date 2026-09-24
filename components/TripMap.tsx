@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { loadMapLibre, OPENFREEMAP_STYLE } from "@/lib/maplibre-browser";
+import { loadMapLibre, OPENSTREETMAP_RASTER_STYLE } from "@/lib/maplibre-browser";
 
 type Point = { id: string; title: string; latitude: number; longitude: number; label?: string };
 
@@ -44,7 +44,7 @@ export function TripMap({ points, compact = false }: { apiKey?: string; points: 
         if (cancelled || !mapRef.current) return;
         const map = new maplibregl.Map({
           container: mapRef.current,
-          style: OPENFREEMAP_STYLE,
+          style: OPENSTREETMAP_RASTER_STYLE,
           center: [usable[0].longitude, usable[0].latitude],
           zoom: usable.length === 1 ? 14 : 10,
           attributionControl: true,
