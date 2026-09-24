@@ -30,7 +30,7 @@ export default async function TripDestinationsPage({ params, searchParams }: { p
         <div className="destination-picker compact-city-picker">
           {DISCOVERY_DESTINATIONS.map((destination) => <label className={`destination-option compact-city-option ${!isOwner ? "disabled" : ""}`} key={destination.id} title={`${destination.label} · ${destination.subtitle}`}>
             <input type="checkbox" name="cities" value={destination.id} defaultChecked={selected.has(destination.id)} disabled={!isOwner} />
-            <span className="destination-option-emoji">{destination.emoji}</span>
+            <span className="destination-option-region">{destination.subtitle}</span>
             <strong>{destination.label}</strong>
           </label>)}
         </div>

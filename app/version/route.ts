@@ -4,7 +4,7 @@ export const dynamic = "force-dynamic";
 
 export function GET() {
   return NextResponse.json(
-    { app: "Tabi Family", version: "7.3.7", feature: "city-label-rename" },
+    { app: "Tabi Family", version: "7.3.8", feature: "text-only-city-picker" },
     { headers: { "Cache-Control": "no-store, max-age=0" } },
   );
 }

@@ -1,6 +1,6 @@
-# Tabi Family — V7.3.7 City Label Rename
+# Tabi Family — V7.3.8 Text-only City Picker
 
-> Current build: **V7.3.7**
+> Current build: **V7.3.8**
 
 This release simplifies Create Trip: the Trip-level activity-interest step is removed, while the city picker becomes compact and supports many Japan destinations. Snow-only atmosphere and all V7 planning features remain.
 
@@ -95,3 +95,7 @@ Run `supabase/schema.sql`. For an existing project, apply migrations in sequence
 
 ## V7.3.7 City Label Rename
 Create Trip now uses a small multi-city selector with many Japan destinations. Trip-level activity interests were removed from the planning flow. No SQL migration required.
+
+
+## V7.3.8 Text-only City Picker
+City selection no longer shows decorative emoji. Each city now uses a small prefecture/region text chip (for example Aichi, Gifu, Hokkaido) beside the city name. No SQL migration required.

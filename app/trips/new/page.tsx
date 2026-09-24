@@ -25,7 +25,7 @@ export default async function NewTripPage({ searchParams }: { searchParams: Prom
             <h1 className="page-title">สร้างทริปใหม่</h1>
             <p className="page-subtitle">{template ? `ใช้ ${template.title} เป็นจุดเริ่มต้น แล้วแก้ต่อได้ทุกจุด` : "สร้าง Trip, สมาชิก และวันเดินทางในครั้งเดียว"}</p>
           </div>
-          <div className="create-version-stack"><div className="speed-chip">⚡ Fast create</div><div className="build-chip">V7.3.7</div></div>
+          <div className="create-version-stack"><div className="speed-chip">⚡ Fast create</div><div className="build-chip">V7.3.8</div></div>
         </div>
 
         {template && <div className={`template-selected trip-cover cover-${template.coverStyle}`}><span>{template.coverEmoji}</span><div><strong>{template.title}</strong><small>{template.days} วัน · {template.cities.join(" • ")}</small></div><Link className="link" href="/templates">เปลี่ยน</Link></div>}
@@ -52,7 +52,7 @@ export default async function NewTripPage({ searchParams }: { searchParams: Prom
               {DISCOVERY_DESTINATIONS.map((destination) => (
                 <label className="destination-option compact-city-option" key={destination.id} title={`${destination.label} · ${destination.subtitle}`}>
                   <input type="checkbox" name="cities" value={destination.id} defaultChecked={selectedCities.has(destination.id)} />
-                  <span className="destination-option-emoji">{destination.emoji}</span>
+                  <span className="destination-option-region">{destination.subtitle}</span>
                   <strong>{destination.label}</strong>
                 </label>
               ))}

@@ -1763,7 +1763,7 @@ body::before {
 }
 .compact-city-picker .compact-city-option {
   display: grid;
-  grid-template-columns: auto auto minmax(0,1fr);
+  grid-template-columns: auto minmax(42px, auto) minmax(0,1fr);
   gap: 6px;
   min-height: 40px;
   padding: 6px 8px;
@@ -1771,11 +1771,23 @@ body::before {
   box-shadow: none;
 }
 .compact-city-picker .compact-city-option input { width: 15px; height: 15px; margin: 0; }
-.compact-city-picker .compact-city-option .destination-option-emoji {
-  width: 25px;
-  height: 25px;
-  border-radius: 9px;
-  font-size: 14px;
+.compact-city-picker .compact-city-option .destination-option-region {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 42px;
+  max-width: 68px;
+  min-height: 22px;
+  padding: 3px 6px;
+  border-radius: 999px;
+  background: rgba(75, 158, 204, .10);
+  color: #4d7f9b;
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .compact-city-picker .compact-city-option strong {
   min-width: 0;
@@ -1796,3 +1808,6 @@ body::before {
 @media (min-width: 920px) {
   .compact-city-picker { grid-template-columns: repeat(6, minmax(0, 1fr)); }
 }
+
+/* V7.3.8 — text-only city picker: replace decorative emoji with prefecture/region text */
+.compact-city-picker .compact-city-option .destination-option-region { pointer-events: none; }
