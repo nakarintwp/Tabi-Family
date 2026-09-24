@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { loadMapLibre, OPENFREEMAP_STYLE } from "@/lib/maplibre-browser";
+import { loadMapLibre, OPENFREEMAP_STYLE, OSM_RASTER_STYLE } from "@/lib/maplibre-browser";
 
 export type RealMapPoint = {
   id: string;
@@ -15,24 +15,6 @@ export type RealMapPoint = {
 
 function validPoint(point: RealMapPoint) {
   return Number.isFinite(point.latitude) && Number.isFinite(point.longitude);
-}
-
-function osmEmbedUrl(points: RealMapPoint[]) {
-  const lats = points.map((point) => point.latitude);
-  const lngs = points.map((point) => point.longitude);
-  let minLat = Math.min(...lats);
-  let maxLat = Math.max(...lats);
-  let minLng = Math.min(...lngs);
-  let maxLng = Math.max(...lngs);
-  const latPad = Math.max((maxLat - minLat) * 0.18, 0.012);
-  const lngPad = Math.max((maxLng - minLng) * 0.18, 0.012);
-  minLat -= latPad;
-  maxLat += latPad;
-  minLng -= lngPad;
-  maxLng += lngPad;
-  const bbox = `${minLng},${minLat},${maxLng},${maxLat}`;
-  const marker = points.length === 1 ? `&marker=${points[0].latitude},${points[0].longitude}` : "";
-  return `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(bbox)}&layer=mapnik${marker}`;
 }
 
 function kindColor(kind: RealMapPoint["kind"]) {
@@ -104,8 +86,10 @@ export function RealMap({
   const mapRef = useRef<any>(null);
   const boundsRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
+  const fallbackAppliedRef = useRef(false);
   const [failed, setFailed] = useState(false);
   const [ready, setReady] = useState(false);
+  const [provider, setProvider] = useState<"openfree" | "osm">("openfree");
   const [fullscreen, setFullscreen] = useState(false);
   const usable = useMemo(() => points.filter(validPoint), [points]);
 
@@ -113,26 +97,33 @@ export function RealMap({
     if (!containerRef.current || !usable.length) return;
     let cancelled = false;
     let resizeObserver: ResizeObserver | null = null;
-    let loadTimer: ReturnType<typeof window.setTimeout> | null = null;
+    let fallbackTimer = 0;
     setFailed(false);
     setReady(false);
+    setProvider("openfree");
+    fallbackAppliedRef.current = false;
 
     loadMapLibre()
       .then((maplibregl) => {
         if (cancelled || !containerRef.current) return;
 
-        const map = new maplibregl.Map({
-          container: containerRef.current,
-          style: OPENFREEMAP_STYLE,
-          center: [usable[0].longitude, usable[0].latitude],
-          zoom: usable.length === 1 ? 14.5 : 7.5,
-          attributionControl: true,
-          cooperativeGestures: !fullscreen,
-        });
+        let map: any;
+        try {
+          map = new maplibregl.Map({
+            container: containerRef.current,
+            style: OPENFREEMAP_STYLE,
+            center: [usable[0].longitude, usable[0].latitude],
+            zoom: usable.length === 1 ? 14.5 : 7.5,
+            attributionControl: true,
+            cooperativeGestures: !fullscreen,
+          });
+        } catch (error) {
+          console.error("Tabi map init failed", error);
+          setFailed(true);
+          return;
+        }
+
         mapRef.current = map;
-        loadTimer = window.setTimeout(() => {
-          if (!cancelled) setFailed(true);
-        }, 12000);
         map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "top-right");
         map.addControl(new maplibregl.ScaleControl({ unit: "metric" }), "bottom-left");
 
@@ -149,30 +140,39 @@ export function RealMap({
             .addTo(map);
         });
 
-        map.on("load", () => {
-          if (cancelled) return;
-          if (loadTimer) { window.clearTimeout(loadTimer); loadTimer = null; }
-          if (connectPoints && usable.length > 1) {
-            map.addSource("tabi-route", {
-              type: "geojson",
-              data: {
-                type: "Feature",
-                properties: {},
-                geometry: {
-                  type: "LineString",
-                  coordinates: usable.map((point) => [point.longitude, point.latitude]),
+        const applyRoute = () => {
+          if (!connectPoints || usable.length < 2) return;
+          try {
+            if (!map.getSource("tabi-route")) {
+              map.addSource("tabi-route", {
+                type: "geojson",
+                data: {
+                  type: "Feature",
+                  properties: {},
+                  geometry: {
+                    type: "LineString",
+                    coordinates: usable.map((point) => [point.longitude, point.latitude]),
+                  },
                 },
-              },
-            });
-            map.addLayer({
-              id: "tabi-route-line",
-              type: "line",
-              source: "tabi-route",
-              layout: { "line-join": "round", "line-cap": "round" },
-              paint: { "line-color": "#2f7fa8", "line-width": 4, "line-opacity": 0.72, "line-dasharray": [2, 2] },
-            });
+              });
+            }
+            if (!map.getLayer("tabi-route-line")) {
+              map.addLayer({
+                id: "tabi-route-line",
+                type: "line",
+                source: "tabi-route",
+                layout: { "line-join": "round", "line-cap": "round" },
+                paint: { "line-color": "#2f7fa8", "line-width": 4, "line-opacity": 0.72, "line-dasharray": [2, 2] },
+              });
+            }
+          } catch (error) {
+            console.warn("Tabi route overlay skipped", error);
           }
+        };
 
+        const finishMap = () => {
+          if (cancelled) return;
+          applyRoute();
           if (usable.length === 1) {
             map.easeTo({ center: [usable[0].longitude, usable[0].latitude], zoom: 14.5, duration: 0 });
           } else {
@@ -180,21 +180,56 @@ export function RealMap({
           }
           map.resize();
           setReady(true);
+        };
+
+        const applyRasterFallback = (reason: string) => {
+          if (cancelled || fallbackAppliedRef.current) return;
+          fallbackAppliedRef.current = true;
+          console.warn(`Tabi map switching to OSM raster fallback: ${reason}`);
+          setProvider("osm");
+          try {
+            map.setStyle(OSM_RASTER_STYLE as any);
+          } catch (error) {
+            console.error("Tabi OSM raster fallback failed", error);
+            setFailed(true);
+          }
+        };
+
+        map.on("load", finishMap);
+        map.on("style.load", () => {
+          if (fallbackAppliedRef.current) finishMap();
+        });
+        map.on("error", (event: any) => {
+          if (!ready && !fallbackAppliedRef.current) {
+            const message = String(event?.error?.message || event?.message || "map style error");
+            if (/style|source|tile|sprite|glyph|fetch|network|cors/i.test(message)) {
+              applyRasterFallback(message);
+            }
+          }
         });
 
+        fallbackTimer = window.setTimeout(() => {
+          if (!cancelled && !ready && !fallbackAppliedRef.current) {
+            applyRasterFallback("initial style timeout");
+          }
+        }, 4500);
+
         const redraw = () => mapRef.current?.resize?.();
-        window.setTimeout(redraw, 100);
-        window.setTimeout(redraw, 350);
+        window.setTimeout(redraw, 120);
+        window.setTimeout(redraw, 420);
         if (typeof ResizeObserver !== "undefined" && shellRef.current) {
           resizeObserver = new ResizeObserver(redraw);
           resizeObserver.observe(shellRef.current);
         }
       })
-      .catch(() => setFailed(true));
+      .catch((error) => {
+        console.error("Tabi MapLibre loader failed", error);
+        setFailed(true);
+      });
 
     return () => {
       cancelled = true;
-      if (loadTimer) window.clearTimeout(loadTimer);
+      if (fallbackTimer) window.clearTimeout(fallbackTimer);
       resizeObserver?.disconnect();
       markersRef.current.forEach((marker) => marker?.remove?.());
       markersRef.current = [];
@@ -240,21 +275,14 @@ export function RealMap({
   if (failed) {
     const first = usable[0];
     const mapsUrl = first.mapsUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${first.latitude},${first.longitude}`)}`;
-    return (
-      <div className={`map-fallback ${compact ? "compact" : ""}`}>
-        <iframe className="map-fallback-map" src={osmEmbedUrl(usable)} title="OpenStreetMap fallback" loading="lazy" />
-        <strong>แสดงแผนที่สำรอง OpenStreetMap</strong>
-        <p>MapLibre/OpenFreeMap โหลดไม่สำเร็จ จึงสลับมาใช้แผนที่สำรองอัตโนมัติ</p>
-        <a className="btn btn-secondary btn-sm" href={mapsUrl} target="_blank" rel="noreferrer">เปิด Google Maps ↗</a>
-      </div>
-    );
+    return <div className={`map-fallback ${compact ? "compact" : ""}`}><div>⚠️</div><strong>แผนที่โหลดไม่สำเร็จ</strong><p>เครือข่ายอาจบล็อกผู้ให้บริการแผนที่ ลองรีเฟรชอีกครั้ง หรือเปิดจุดแรกใน Google Maps</p><a className="btn btn-secondary btn-sm" href={mapsUrl} target="_blank" rel="noreferrer">เปิด Google Maps ↗</a></div>;
   }
 
   return (
     <div ref={shellRef} className={`real-map-shell openfree-provider ${fullscreen ? "fullscreen" : ""}`}>
       {!ready && <div className="real-map-loading"><span />กำลังโหลดแผนที่…</div>}
-      <div ref={containerRef} className={`real-map maplibre-real-map ${compact ? "compact" : ""} ${className}`.trim()} aria-label="แผนที่ OpenFreeMap ของสถานที่ในทริป" />
-      <div className="real-map-provider-badge">OpenFreeMap · OpenStreetMap</div>
+      <div ref={containerRef} className={`real-map maplibre-real-map ${compact ? "compact" : ""} ${className}`.trim()} aria-label="แผนที่สถานที่ในทริป" />
+      <div className="real-map-provider-badge">{provider === "openfree" ? "OpenFreeMap · OpenStreetMap" : "OpenStreetMap · fallback mode"}</div>
       <div className="real-map-toolbar" aria-label="เครื่องมือแผนที่">
         <button type="button" onClick={fitAll}>ดูทุกจุด</button>
         <button type="button" onClick={() => setFullscreen((value) => !value)}>{fullscreen ? "ย่อแผนที่" : "เต็มจอ"}</button>
