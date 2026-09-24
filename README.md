@@ -1,5 +1,12 @@
-# Tabi Family — V11.8 Explore Visual & Map Polish
+# Tabi Family — V12.0 Zero-Billing Maps
 
+## V12.0 — No card, no map API key
+
+The in-app Explore and Trip maps now use **MapLibre GL JS + OpenFreeMap** with OpenStreetMap data. No Google Cloud project, billing account, payment card, or map API key is required. Google Maps remains only as an external navigation link.
+
+Place search no longer uses Google Places. It uses a manual Search button through the app's `/api/geocode` route; there is no client-side autocomplete. No SQL migration is required. See `V12_0_ZERO_BILLING_MAPS.md`.
+
+> Current build: **V12.0**
 
 ## V11.5–V11.8 — Explore Visual & Map Polish
 
@@ -20,7 +27,6 @@ Explore **Map overview** and Trip Map now render a real interactive OpenStreetMa
 Primary navigation has been consolidated to **Today · Plan · Explore · Wallet · More**. Existing features remain available inside their parent hubs; no V11.3 SQL migration is required. See `V11_3_NAVIGATION_UX_CONSOLIDATION.md`.
 
 
-> Current build: **V11.8**
 
 Mobile-first Japan family trip planner built with Next.js App Router + Supabase. V10.6–V11.2 focuses on real-trip operations: actual expenses, portable backups, browser OCR, an import review inbox, rule-based schedule checks, weather-aware planning, and richer rental-car route intelligence.
 

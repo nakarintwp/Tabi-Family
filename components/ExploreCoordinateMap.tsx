@@ -38,8 +38,8 @@ export function ExploreCoordinateMap({ places }: { places: DiscoveryPlace[] }) {
   return (
     <div className="explore-coordinate-map real-map-card">
       <div className="explore-map-caption">
-        <div><strong>Map overview</strong><span>{points.length} จุด · แผนที่จริง · เลื่อน/ซูม/เปลี่ยนชั้นแผนที่/เปิดเต็มจอได้</span></div>
-        <small>OpenStreetMap + OpenTopoMap · ไม่ต้องใช้ API key</small>
+        <div><strong>Map overview</strong><span>{points.length} จุด · แผนที่จริง · เลื่อน/ซูม · หลายหมุด · เปิดเต็มจอ</span></div>
+        <small>OpenFreeMap + MapLibre · ไม่ใช้ API key</small>
       </div>
       <RealMap points={points} className="explore-real-map" />
       <div className="map-kind-legend">

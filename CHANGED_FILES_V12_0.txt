@@ -1,0 +1,20 @@
+V12.0 Zero-Billing Maps
+
+Changed:
+- components/RealMap.tsx
+- components/TripMap.tsx
+- components/PlacePicker.tsx
+- components/ExploreCoordinateMap.tsx
+- app/explore/page.tsx
+- app/api/geocode/route.ts
+- lib/maplibre-browser.ts
+- app/globals.css
+- app/version/route.ts
+- public/sw.js
+- package.json
+- .env.example
+- README.md
+- V12_0_ZERO_BILLING_MAPS.md
+
+No SQL migration required.
+No map API key or payment card required.

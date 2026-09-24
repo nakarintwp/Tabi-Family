@@ -1,81 +1,99 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-
-declare global {
-  interface Window {
-    google?: any;
-    __tabiGoogleMapsMapPromise?: Promise<void>;
-  }
-}
+import { loadMapLibre, OPENFREEMAP_STYLE } from "@/lib/maplibre-browser";
 
 type Point = { id: string; title: string; latitude: number; longitude: number; label?: string };
 
-function loadMaps(apiKey: string) {
-  if (window.google?.maps) return Promise.resolve();
-  if (window.__tabiGoogleMapsMapPromise) return window.__tabiGoogleMapsMapPromise;
-  window.__tabiGoogleMapsMapPromise = new Promise<void>((resolve, reject) => {
-    const existing = document.querySelector<HTMLScriptElement>('script[data-tabi-google-maps="1"]');
-    if (existing) {
-      if (window.google?.maps) return resolve();
-      existing.addEventListener("load", () => resolve(), { once: true });
-      existing.addEventListener("error", () => reject(new Error("Google Maps script failed")), { once: true });
-      return;
-    }
-    const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&libraries=places&v=weekly&loading=async`;
-    script.async = true;
-    script.defer = true;
-    script.dataset.tabiGoogleMaps = "1";
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Google Maps script failed"));
-    document.head.appendChild(script);
-  });
-  return window.__tabiGoogleMapsMapPromise;
+function markerNode(index: number) {
+  const root = document.createElement("button");
+  root.type = "button";
+  root.className = "tabi-maplibre-marker";
+  root.style.setProperty("--pin-color", "#2f7fa8");
+  root.dataset.label = String(index + 1);
+  return root;
 }
 
-export function TripMap({ apiKey, points, compact = false }: { apiKey?: string; points: Point[]; compact?: boolean }) {
+function popupNode(point: Point) {
+  const root = document.createElement("div");
+  root.className = "tabi-map-popup openfree";
+  const title = document.createElement("strong");
+  title.textContent = point.title;
+  root.appendChild(title);
+  if (point.label) {
+    const label = document.createElement("small");
+    label.textContent = point.label;
+    root.appendChild(label);
+  }
+  return root;
+}
+
+export function TripMap({ points, compact = false }: { apiKey?: string; points: Point[]; compact?: boolean }) {
   const mapRef = useRef<HTMLDivElement>(null);
+  const instanceRef = useRef<any>(null);
   const [failed, setFailed] = useState(false);
   const usable = useMemo(() => points.filter((p) => Number.isFinite(p.latitude) && Number.isFinite(p.longitude)), [points]);
 
   useEffect(() => {
-    if (!apiKey || !mapRef.current || !usable.length) return;
+    if (!mapRef.current || !usable.length) return;
     let cancelled = false;
-    loadMaps(apiKey)
-      .then(() => {
-        if (cancelled || !mapRef.current || !window.google?.maps) return;
-        const center = usable[0];
-        const map = new window.google.maps.Map(mapRef.current, {
-          center: { lat: center.latitude, lng: center.longitude },
-          zoom: usable.length === 1 ? 14 : 11,
-          streetViewControl: false,
-          mapTypeControl: false,
-          fullscreenControl: false,
-          gestureHandling: "greedy",
+    const markers: any[] = [];
+
+    loadMapLibre()
+      .then((maplibregl) => {
+        if (cancelled || !mapRef.current) return;
+        const map = new maplibregl.Map({
+          container: mapRef.current,
+          style: OPENFREEMAP_STYLE,
+          center: [usable[0].longitude, usable[0].latitude],
+          zoom: usable.length === 1 ? 14 : 10,
+          attributionControl: true,
         });
-        const bounds = new window.google.maps.LatLngBounds();
+        instanceRef.current = map;
+        map.addControl(new maplibregl.NavigationControl(), "top-right");
+        const bounds = new maplibregl.LngLatBounds();
+
         usable.forEach((point, index) => {
-          const position = { lat: point.latitude, lng: point.longitude };
-          bounds.extend(position);
-          const marker = new window.google.maps.Marker({ map, position, label: String(index + 1), title: point.title });
-          const info = new window.google.maps.InfoWindow({ content: `<strong>${point.title.replace(/[<>]/g, "")}</strong>${point.label ? `<br><small>${point.label.replace(/[<>]/g, "")}</small>` : ""}` });
-          marker.addListener("click", () => info.open({ map, anchor: marker }));
+          const lngLat: [number, number] = [point.longitude, point.latitude];
+          bounds.extend(lngLat);
+          const popup = new maplibregl.Popup({ offset: 20 }).setDOMContent(popupNode(point));
+          markers.push(new maplibregl.Marker({ element: markerNode(index), anchor: "bottom" }).setLngLat(lngLat).setPopup(popup).addTo(map));
         });
-        if (usable.length > 1) {
-          new window.google.maps.Polyline({ map, path: usable.map((p) => ({ lat: p.latitude, lng: p.longitude })), geodesic: true, strokeOpacity: 0.65, strokeWeight: 4 });
-          map.fitBounds(bounds, 44);
-        }
+
+        map.on("load", () => {
+          if (cancelled) return;
+          if (usable.length > 1) {
+            map.addSource("trip-route", {
+              type: "geojson",
+              data: { type: "Feature", properties: {}, geometry: { type: "LineString", coordinates: usable.map((p) => [p.longitude, p.latitude]) } },
+            });
+            map.addLayer({
+              id: "trip-route-line",
+              type: "line",
+              source: "trip-route",
+              layout: { "line-join": "round", "line-cap": "round" },
+              paint: { "line-color": "#2f7fa8", "line-width": 4, "line-opacity": 0.65, "line-dasharray": [2, 2] },
+            });
+            map.fitBounds(bounds, { padding: 44, maxZoom: 13, duration: 0 });
+          }
+          map.resize();
+        });
       })
       .catch(() => setFailed(true));
-    return () => { cancelled = true; };
-  }, [apiKey, usable]);
+
+    return () => {
+      cancelled = true;
+      markers.forEach((marker) => marker?.remove?.());
+      instanceRef.current?.remove?.();
+      instanceRef.current = null;
+    };
+  }, [usable]);
 
   if (!usable.length) {
-    return <div className={`map-fallback ${compact ? "compact" : ""}`}><div>🗺️</div><strong>ยังไม่มีพิกัด</strong><p>ค้นหาสถานที่ด้วย Google Places ใน Day Planner แล้วแผนที่จะปรากฏที่นี่</p></div>;
+    return <div className={`map-fallback ${compact ? "compact" : ""}`}><div>🗺️</div><strong>ยังไม่มีพิกัด</strong><p>เพิ่มพิกัดสถานที่ใน Day Planner แล้วแผนที่จะปรากฏที่นี่</p></div>;
   }
-  if (!apiKey || failed) {
-    return <div className={`map-fallback ${compact ? "compact" : ""}`}><div>📍</div><strong>{usable.length} จุดมีพิกัดแล้ว</strong><p>เพิ่ม <code>NEXT_PUBLIC_GOOGLE_MAPS_API_KEY</code> ใน Vercel เพื่อแสดง Google Map</p></div>;
+  if (failed) {
+    return <div className={`map-fallback ${compact ? "compact" : ""}`}><div>⚠️</div><strong>แผนที่โหลดไม่สำเร็จ</strong><p>ลองรีเฟรชอีกครั้ง</p></div>;
   }
-  return <div ref={mapRef} className={compact ? "google-map compact" : "google-map"} aria-label="Trip map" />;
+  return <div ref={mapRef} className={compact ? "google-map compact maplibre-map" : "google-map maplibre-map"} aria-label="Trip map" />;
 }
