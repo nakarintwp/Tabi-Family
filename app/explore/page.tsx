@@ -37,8 +37,8 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
   const selectedTripEditable = selectedTrip ? editableTrips.some((trip) => trip.id === selectedTrip.id) : false;
 
   const allCities = Array.from(new Set(DISCOVERY_PLACES.map((p) => p.city)));
-  const tripCities = selectedTrip?.cities?.filter((city: string) => allCities.includes(city)) || [];
-  const availableCities = tripCities.length ? tripCities : allCities;
+  const tripCities: string[] = selectedTrip?.cities?.filter((city: string) => allCities.includes(city)) || [];
+  const availableCities: string[] = tripCities.length ? tripCities : allCities;
   const activeCity = query.city && availableCities.includes(query.city) ? query.city : "all";
   const activeCategory = query.category || "all";
   const tripInterests = (selectedTrip?.interests || []).filter((value: string) => TRIP_INTERESTS.some((item) => item.id === value));
@@ -96,7 +96,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
       <div className="section-head"><h2>{selectedTrip ? "เมืองในทริป" : "เลือกเมือง"}</h2><span className="small muted">{filtered.length} สถานที่ · Curated · ไม่ใช้ Places API</span></div>
       <div className="filter-chip-row">
         <Link className={`filter-chip ${activeCity === "all" ? "active" : ""}`} href={buildHref("all", activeCategory)}>ทั้งหมด</Link>
-        {availableCities.map((city) => <Link key={city} className={`filter-chip ${activeCity === city ? "active" : ""}`} href={buildHref(city, activeCategory)}>{city}</Link>)}
+        {availableCities.map((city: string) => <Link key={city} className={`filter-chip ${activeCity === city ? "active" : ""}`} href={buildHref(city, activeCategory)}>{city}</Link>)}
       </div>
       <div className="filter-chip-row compact-filter-row">
         <Link className={`filter-chip ${activeCategory === "all" ? "active" : ""}`} href={buildHref(activeCity, "all")}>ทุกประเภท</Link>

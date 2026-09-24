@@ -1,6 +1,6 @@
-# Tabi Family — V7.3.4 CSS Parser Build Fix
+# Tabi Family — V7.3.5 CSS Parser Build Fix
 
-> Current build: **V7.3.4**
+> Current build: **V7.3.5**
 
 This release fixes the Vercel/Turbopack CSS parser failure while preserving the V7.3 Trip city/interest picker and snow-only atmosphere.
 
