@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppHeader } from "@/components/AppHeader";
 import { BottomNav } from "@/components/BottomNav";
+import { PlanHubTabs } from "@/components/HubTabs";
 import { requireVerifiedUser } from "@/lib/supabase/auth";
 
 const modeMeta: Record<string, { icon: string; label: string; travelMode: string }> = {
@@ -54,8 +55,9 @@ export default async function TripRoutePage({ params }: { params: Promise<{ id: 
   const routeCities: string[] = rows.length ? [rows[0].origin, ...rows.map((segment: RouteSegment) => segment.destination)] : ((trip.cities || []) as string[]);
 
   return <main className="shell"><div className="container"><AppHeader />
-    <div className="planner-topbar"><Link href={`/trips/${id}`} className="back-link">‹ Dashboard</Link><span className="planner-counter">V8.8 Trip Route</span></div>
+    <div className="planner-topbar"><Link href={`/trips/${id}/master-plan`} className="back-link">‹ Plan</Link><span className="planner-counter">V8.8 Trip Route</span></div>
     <section className="planner-hero route-view-hero"><div><span className="eyebrow">TRIP ROUTE VIEW</span><h1>เส้นทางทั้งทริป</h1><p>{trip.title} · รถไฟ รถบัส เดิน Taxi และ Rental car ใน Timeline เดียว</p></div><Link className="btn btn-primary" href={`/trips/${id}/transport#add-transport`}>+ เพิ่มการเดินทาง</Link></section>
+    <PlanHubTabs tripId={id} active="route" />
 
     <section className="route-summary-card">
       <div><span>เมือง/จุดหลัก</span><strong>{routeCities.length}</strong></div>
@@ -86,5 +88,5 @@ export default async function TripRoutePage({ params }: { params: Promise<{ id: 
     </section>
 
     <section className="section rental-guide-card"><div className="section-head"><h2>🚙 เช่ารถในทริป</h2><span className="small muted">ใช้โหมด Rental car</span></div><p>บันทึกบริษัทเช่ารถเป็น Operator, รุ่น/คลาสรถเป็น Service, จุดรับรถเป็นต้นทาง และจุดคืนรถเป็นปลายทาง พร้อม Booking ref และหมายเหตุเรื่อง ETC / Snow tire / ที่จอดรถ</p><Link className="btn btn-primary btn-full" href={`/trips/${id}/transport#rental-car`}>เพิ่ม Rental car</Link></section>
-  </div><BottomNav active="/plan" /></main>;
+  </div><BottomNav active="/plan" tripId={id} /></main>;
 }

@@ -1,5 +1,10 @@
 # Tabi Family — V11.2 Practical Intelligence Suite
 
+## V11.3 — Simplified Navigation
+
+Primary navigation has been consolidated to **Today · Plan · Explore · Wallet · More**. Existing features remain available inside their parent hubs; no V11.3 SQL migration is required. See `V11_3_NAVIGATION_UX_CONSOLIDATION.md`.
+
+
 > Current build: **V11.2**
 
 Mobile-first Japan family trip planner built with Next.js App Router + Supabase. V10.6–V11.2 focuses on real-trip operations: actual expenses, portable backups, browser OCR, an import review inbox, rule-based schedule checks, weather-aware planning, and richer rental-car route intelligence.

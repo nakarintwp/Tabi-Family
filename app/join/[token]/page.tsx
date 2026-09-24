@@ -14,7 +14,7 @@ export default async function JoinTripPage({ params, searchParams }: { params: P
   const loggedIn = Boolean(user);
 
   if (!preview) {
-    return <main className="shell"><div className="container"><AppHeader /><div className="empty-state"><div className="empty-icon">🔗</div><h1>ไม่พบคำเชิญ</h1><p>QR หรือลิงก์นี้ไม่ถูกต้อง หรือถูกยกเลิกแล้ว</p><Link className="btn btn-primary" href="/trips">ไปที่ทริปของฉัน</Link></div></div><BottomNav active="/trips" /></main>;
+    return <main className="shell"><div className="container"><AppHeader /><div className="empty-state"><div className="empty-icon">🔗</div><h1>ไม่พบคำเชิญ</h1><p>QR หรือลิงก์นี้ไม่ถูกต้อง หรือถูกยกเลิกแล้ว</p><Link className="btn btn-primary" href="/trips">ไปที่ทริปของฉัน</Link></div></div><BottomNav active="/more" /></main>;
   }
 
   const roleLabel = preview.invite_role === "editor" ? "Editor · แก้ไขแผนได้" : "Viewer · ดูอย่างเดียว";
@@ -44,7 +44,7 @@ export default async function JoinTripPage({ params, searchParams }: { params: P
 
         <div className="notice"><span>🔐</span><div>QR เก็บเฉพาะ invite token แบบสุ่ม ไม่ได้เก็บรหัสผ่านหรือข้อมูลส่วนตัวของสมาชิก</div></div>
       </div>
-      <BottomNav active="/trips" />
+      <BottomNav active="/more" />
     </main>
   );
 }

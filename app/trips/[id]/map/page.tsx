@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppHeader } from "@/components/AppHeader";
 import { BottomNav } from "@/components/BottomNav";
+import { PlanHubTabs } from "@/components/HubTabs";
 import { TripMapBoard, type TripMapPoint } from "@/components/TripMapBoard";
 import { requireVerifiedUser } from "@/lib/supabase/auth";
 import { japanDateKey } from "@/lib/v8";
@@ -33,8 +34,9 @@ export default async function TripMapPage({ params, searchParams }: { params: Pr
   ];
 
   return <main className="shell"><div className="container"><AppHeader/>
-    <div className="planner-topbar"><Link href={`/trips/${id}`} className="back-link">‹ Dashboard</Link><span className="planner-counter">V10.3 Map-first Trip View</span></div>
+    <div className="planner-topbar"><Link href={`/trips/${id}/master-plan`} className="back-link">‹ Plan</Link><span className="planner-counter">V10.3 Map-first Trip View</span></div>
     <section className="planner-hero map-first-hero"><div><span className="eyebrow">DAY ROUTE AT A GLANCE</span><h1>🗺️ Map-first Trip</h1><p>{trip.title} · เลือกวันแล้วดูสถานที่ + Transport + Booking รอบเดียว</p></div><Link className="btn btn-secondary" href={`/trips/${id}/optimize`}>Route Optimizer</Link></section>
+    <PlanHubTabs tripId={id} active="map" />
     <div className="map-day-chips">{days.map((day:any,index:number) => <Link key={day.id} href={`/trips/${id}/map?day=${day.id}`} className={`filter-chip ${selectedDay?.id===day.id?"active":""}`}>Day {index+1}<small>{day.trip_date.slice(5)}</small></Link>)}</div>
     {selectedDay ? <>
       <section className="section map-first-main"><div className="section-head"><div><span className="eyebrow">{selectedDay.trip_date}</span><h2>{selectedDay.title || "Day route"}</h2></div><span className="small muted">{points.length} จุดมีพิกัด</span></div><TripMapBoard points={points}/></section>
@@ -43,5 +45,5 @@ export default async function TripMapPage({ params, searchParams }: { params: Pr
       <section className="section"><div className="section-head"><h2>สถานที่ตามลำดับ</h2><Link className="link" href={`/trips/${id}/days/${selectedDay.id}`}>Day Planner ›</Link></div><div className="map-first-route-strip">{activities.map((activity:any,index:number) => <div key={activity.id}><span>{index+1}</span><strong>{activity.start_time?.slice(0,5)||"—"} {activity.title}</strong><small>{activity.location_name || "ยังไม่มีชื่อสถานที่"}</small></div>)}</div></section>
       <section className="section"><div className="section-head"><h2>Map tools รอบจุดเริ่มวันนี้</h2><span className="small muted">Google Maps search · ไม่ใช้ API key</span></div><div className="map-utility-links">{utilityLinks.map(([label,search]) => <a key={label} href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(search)}`} target="_blank" rel="noreferrer">{label} ↗</a>)}</div></section>
     </> : <div className="empty-state"><div className="empty-icon">🗺️</div><h2>ทริปยังไม่มีวันเดินทาง</h2></div>}
-  </div><BottomNav active="/map"/></main>;
+  </div><BottomNav active="/plan" tripId={id} /></main>;
 }

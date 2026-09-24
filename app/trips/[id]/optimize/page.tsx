@@ -21,7 +21,7 @@ export default async function RouteOptimizerPage({ params }: { params: Promise<{
   const days = [...(trip.trip_days || [])].sort((a: any, b: any) => a.trip_date.localeCompare(b.trip_date));
 
   return <main className="shell"><div className="container"><AppHeader/>
-    <div className="planner-topbar"><Link href={`/trips/${id}`} className="back-link">‹ Dashboard</Link><span className="planner-counter">V10.2 Smart Route Optimizer</span></div>
+    <div className="planner-topbar"><Link href={`/trips/${id}/master-plan`} className="back-link">‹ Plan</Link><span className="planner-counter">V10.2 Smart Route Optimizer</span></div>
     <section className="planner-hero optimizer-hero"><div><span className="eyebrow">ZERO-COST ROUTE LOGIC</span><h1>🧭 Route Optimizer</h1><p>{trip.title} · เรียงสถานที่ที่มีพิกัดด้วย nearest-neighbor เพื่อช่วยลดการย้อนเส้นทาง</p></div><Link className="btn btn-secondary" href={`/trips/${id}/map`}>Map-first View</Link></section>
     <section className="section zero-cost-banner"><div className="zero-cost-icon">¥0</div><div><strong>เป็นระยะเส้นตรง ไม่ใช่เวลาขับรถจริง</strong><p>ใช้พิกัดที่บันทึกไว้เพื่อแนะนำลำดับเบื้องต้น กิจกรรมที่มีเวลาเริ่มต้นจะถูกใช้เป็น schedule anchor และรักษาลำดับเวลาไว้ จากนั้นควรเปิด Google Maps ตรวจเส้นทางจริง โดยเฉพาะภูเขา ทางด่วน และพื้นที่หิมะ</p></div></section>
 
@@ -39,5 +39,5 @@ export default async function RouteOptimizerPage({ params }: { params: Promise<{
         {canEdit && current.length > 1 && <form action={applyOptimizedRoute} className="optimizer-apply"><input type="hidden" name="trip_id" value={id}/><input type="hidden" name="day_id" value={day.id}/><input type="hidden" name="ordered_ids" value={optimized.map((item) => item.id).join(",")}/><SubmitButton className="btn btn-primary" pendingText="กำลังเรียง..." disabled={!changed}>ใช้ลำดับแนะนำ</SubmitButton>{!changed && <small>ลำดับปัจจุบันใกล้เคียงคำแนะนำอยู่แล้ว</small>}</form>}
       </section>;
     })}</div>
-  </div><BottomNav active="/map"/></main>;
+  </div><BottomNav active="/plan" tripId={id} /></main>;
 }

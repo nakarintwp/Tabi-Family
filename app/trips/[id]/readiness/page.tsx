@@ -41,9 +41,9 @@ export default async function ReadinessPage({ params }: { params: Promise<{ id: 
   };
 
   return <main className="shell"><div className="container"><AppHeader />
-    <div className="planner-topbar"><Link href={`/trips/${id}`} className="back-link">‹ Dashboard</Link><span className="planner-counter">Readiness</span></div>
+    <div className="planner-topbar"><Link href={`/trips/${id}/more`} className="back-link">‹ More</Link><span className="planner-counter">Readiness</span></div>
     <section className="planner-hero readiness-hero"><div><span className="eyebrow">BEFORE YOU GO</span><h1>✅ Trip Readiness</h1><p>{trip.title}</p></div></section>
     <ReadinessCard tripId={id} score={readiness.score} label={readiness.label} items={readiness.items} />
     <section className="section"><div className="section-head"><h2>Checklist</h2><span className="small muted">รวม 100 คะแนน</span></div><div className="readiness-checklist">{readiness.items.map((item) => <Link href={links[item.key] || `/trips/${id}`} className={`readiness-check ${item.done ? "done" : ""}`} key={item.key}><span className="readiness-check-icon">{item.done ? "✓" : "○"}</span><div><strong>{item.label}</strong><small>{item.detail}</small></div><b>{item.earned}/{item.points}</b><span className="chevron">›</span></Link>)}</div></section>
-  </div><BottomNav active="/trips" /></main>;
+  </div><BottomNav active="/more" tripId={id} /></main>;
 }

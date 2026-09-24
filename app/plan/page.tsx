@@ -1,40 +1,24 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { AppHeader } from "@/components/AppHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
-import { getOptionalVerifiedUser } from "@/lib/supabase/auth";
+import { requireVerifiedUser } from "@/lib/supabase/auth";
 
-export default async function PlanPage() {
-  let trip: null | { id: string; title: string } = null;
-  let days: Array<{ id: string; trip_date: string; title: string | null }> = [];
-  let activities: Array<{ id: string; day_id: string; title: string; start_time: string | null; location_name: string | null; activity_type: string }> = [];
+type PlanQuery = { trip?: string };
 
-  if (hasSupabaseEnv()) {
-    const { supabase, user } = await getOptionalVerifiedUser();
-    const userId = user?.id;
-    if (userId) {
-      const { data } = await supabase.from("trips").select("id,title").order("start_date", { ascending: true, nullsFirst: false }).limit(1).maybeSingle();
-      trip = data;
-      if (trip) {
-        const { data: dayRows } = await supabase.from("trip_days").select("id,trip_date,title").eq("trip_id", trip.id).order("trip_date");
-        days = dayRows || [];
-        const ids = days.map((d) => d.id);
-        if (ids.length) {
-          const { data: activityRows } = await supabase.from("activities").select("id,day_id,title,start_time,location_name,activity_type").in("day_id", ids).order("sort_order");
-          activities = activityRows || [];
-        }
-      }
-    }
+export default async function PlanPage({ searchParams }: { searchParams: Promise<PlanQuery> }) {
+  const query = await searchParams;
+  if (!hasSupabaseEnv()) {
+    return <main className="shell"><div className="container"><AppHeader /><h1 className="page-title">Plan</h1><div className="empty-state"><div className="empty-icon">📅</div><h2>ยังไม่ได้เชื่อม Supabase</h2><p>ตั้งค่า Supabase ก่อนเพื่อเปิดแผนทริป</p></div></div><BottomNav active="/plan" tripId={query.trip} /></main>;
   }
 
-  return (
-    <main className="shell"><div className="container"><AppHeader />
-      <h1 className="page-title">แผนการเดินทาง</h1><p className="page-subtitle">{trip ? trip.title : "เข้าสู่ระบบและสร้างทริปเพื่อเริ่มวางแผนจริง"}</p>
-      {!trip ? <div className="empty-state"><div className="empty-icon">📅</div><h2>ยังไม่มีแผน</h2><p>เมื่อสร้างทริป ระบบจะสร้างวันทั้งหมดให้ และคุณเพิ่มกิจกรรมได้ทันที</p><Link className="btn btn-primary" href="/trips/new">สร้างทริป</Link></div> :
-      <div className="stack">{days.map((day, index) => {
-        const rows = activities.filter((a) => a.day_id === day.id);
-        return <section className="card" key={day.id}><div className="section-head"><h2>Day {index + 1}</h2><span className="small muted">{day.trip_date}</span></div>{rows.length ? <div className="timeline compact-timeline">{rows.map((activity) => <div className="timeline-item" key={activity.id}><span className="dot"/><div><div className="small muted">{activity.start_time?.slice(0,5) || "เวลาอิสระ"}</div><div className="activity-title">{activity.title}</div><div className="activity-meta">{activity.location_name || activity.activity_type}</div></div></div>)}</div> : <p className="small muted">ยังไม่มีกิจกรรม</p>}</section>;
-      })}<Link className="btn btn-secondary btn-full" href={`/trips/${trip.id}`}>แก้ไขแผนและเพิ่มกิจกรรม</Link></div>}
-    </div><BottomNav active="/plan" /></main>
-  );
+  const { supabase } = await requireVerifiedUser(query.trip ? `/plan?trip=${encodeURIComponent(query.trip)}` : "/plan");
+  let tripQuery = supabase.from("trips").select("id,title").order("start_date", { ascending: true, nullsFirst: false }).limit(1);
+  if (query.trip) tripQuery = supabase.from("trips").select("id,title").eq("id", query.trip).limit(1);
+  const { data: trips } = await tripQuery;
+  const trip = trips?.[0];
+  if (trip) redirect(`/trips/${trip.id}/master-plan`);
+
+  return <main className="shell"><div className="container"><AppHeader /><h1 className="page-title">Plan</h1><div className="empty-state"><div className="empty-icon">📅</div><h2>ยังไม่มีทริป</h2><p>สร้างทริปก่อน แล้ว Plan จะรวม Itinerary, Map, Route และ Check ไว้ในที่เดียว</p><Link className="btn btn-primary" href="/trips/new">สร้างทริป</Link></div></div><BottomNav active="/plan" /></main>;
 }

@@ -19,7 +19,7 @@ export default async function CoverPage({ params }: { params: Promise<{ id: stri
   const style = trip.cover_style || "sky";
 
   return <main className="shell"><div className="container"><AppHeader />
-    <div className="planner-topbar"><Link href={`/trips/${id}`} className="back-link">‹ Dashboard</Link><span className="planner-counter">Trip Cover</span></div>
+    <div className="planner-topbar"><Link href={`/trips/${id}/more`} className="back-link">‹ More</Link><span className="planner-counter">Trip Cover</span></div>
     <section className={`cover-preview trip-cover cover-${style}`}><span className="cover-preview-emoji">{trip.cover_emoji || "🧳"}</span><div><span className="eyebrow">TRIP COVER</span><h1>{trip.title}</h1><p>{trip.cover_tagline || trip.cities?.join(" • ") || "Family journey"}</p></div></section>
 
     {!isOwner && <div className="notice"><span>👀</span><div><strong>Owner เท่านั้นที่เปลี่ยน Cover ได้</strong><br/><span className="muted">สมาชิกยังเห็น Cover เดียวกันทั้งทริป</span></div></div>}
@@ -30,5 +30,5 @@ export default async function CoverPage({ params }: { params: Promise<{ id: stri
       <div className="grid2"><div className="field"><label>Emoji</label><input className="input" name="cover_emoji" defaultValue={trip.cover_emoji || "🧳"} maxLength={12} /></div><div className="field"><label>Tagline</label><input className="input" name="cover_tagline" defaultValue={trip.cover_tagline || ""} placeholder="เช่น Winter family adventure" maxLength={120} /></div></div>
       <SubmitButton className="btn btn-primary btn-full" pendingText="กำลังบันทึก...">บันทึก Trip Cover</SubmitButton>
     </form>}
-  </div><BottomNav active="/trips" /></main>;
+  </div><BottomNav active="/more" tripId={id} /></main>;
 }

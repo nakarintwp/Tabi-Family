@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppHeader } from "@/components/AppHeader";
 import { BottomNav } from "@/components/BottomNav";
+import { PlanHubTabs } from "@/components/HubTabs";
 import { requireVerifiedUser } from "@/lib/supabase/auth";
 import { japanDateKey, type V8Day, type V8Transport } from "@/lib/v8";
 
@@ -34,8 +35,22 @@ export default async function MasterPlanPage({ params }: { params: Promise<{ id:
   const bookingRows = (bookings || []) as Booking[];
 
   return <main className="shell"><div className="container"><AppHeader />
-    <div className="planner-topbar"><Link href={`/trips/${id}`} className="back-link">‹ Dashboard</Link><span className="planner-counter">V8.0 Master Plan</span></div>
-    <section className="planner-hero v8-master-hero"><div><span className="eyebrow">ONE VIEW · WHOLE TRIP</span><h1>🧭 Trip Master Plan</h1><p>{trip.title} · ที่เที่ยว การเดินทาง และ Booking ใน Timeline เดียว</p></div><div className="master-hero-actions"><Link className="btn btn-secondary" href={`/trips/${id}/conflicts`}>ตรวจแผน ⚠️</Link><Link className="btn btn-primary" href="/today">Today Mode</Link></div></section>
+    <div className="planner-topbar"><Link href={`/trips/${id}`} className="back-link">‹ Trip</Link><span className="planner-counter">Plan Hub · V11.3</span></div>
+    <section className="planner-hero v8-master-hero"><div><span className="eyebrow">PLAN HUB · ONE VIEW</span><h1>📅 Plan</h1><p>{trip.title} · Itinerary, Map, Route และ Check รวมอยู่ในเมนูเดียว</p></div><div className="master-hero-actions"><Link className="btn btn-primary" href={`/today?trip=${id}`}>Today</Link></div></section>
+
+    <PlanHubTabs tripId={id} active="itinerary" />
+
+    <details className="hub-tools-details">
+      <summary>เครื่องมือวางแผน</summary>
+      <div className="hub-tools-grid">
+        <Link href={`/trips/${id}/calendar`}>📆 Calendar</Link>
+        <Link href={`/trips/${id}/smart-plan`}>🪄 Smart Day</Link>
+        <Link href={`/trips/${id}/optimize`}>🧭 Optimize</Link>
+        <Link href={`/trips/${id}/transport`}>🚆 Transport</Link>
+        <Link href={`/trips/${id}/destinations`}>📍 Destinations</Link>
+        <Link href={`/trips/${id}/weather`}>🌦️ Weather</Link>
+      </div>
+    </details>
 
     <section className="master-summary-grid">
       <div className="card dashboard-metric"><span>วันเดินทาง</span><strong>{days.length}</strong><small>{trip.start_date || "—"} → {trip.end_date || "—"}</small></div>
@@ -60,5 +75,5 @@ export default async function MasterPlanPage({ params }: { params: Promise<{ id:
         </article>;
       }) : <div className="empty-state"><div className="empty-icon">🗓️</div><h2>ยังไม่มีวันเดินทาง</h2><p>สร้าง Trip Days ก่อน แล้ว Master Plan จะรวมข้อมูลให้โดยอัตโนมัติ</p></div>}
     </section>
-  </div><BottomNav active="/plan" /></main>;
+  </div><BottomNav active="/plan" tripId={id} /></main>;
 }

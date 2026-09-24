@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { AppHeader } from "@/components/AppHeader";
 import { BottomNav } from "@/components/BottomNav";
+import { WalletHubTabs } from "@/components/HubTabs";
 import { SubmitButton } from "@/components/SubmitButton";
 import { addBooking, addExpense, deleteBooking, deleteExpense } from "./actions";
 import { requireVerifiedUser } from "@/lib/supabase/auth";
@@ -47,8 +48,10 @@ export default async function TripWalletPage({ params }: { params: Promise<{ id:
 
   return (
     <main className="shell"><div className="container"><AppHeader />
-      <div className="planner-topbar"><Link href={`/trips/${trip.id}`} className="back-link">‹ Dashboard</Link><div className="planner-role-row"><span className="planner-counter">Wallet</span><span className={`role-badge ${role}`}>{role === "owner" ? "Owner" : role === "editor" ? "Editor" : "Viewer"}</span></div></div>
-      <section className="planner-hero wallet-hero"><div><div className="eyebrow">Booking + Expense</div><h1>👛 Trip Wallet</h1><p>{trip.title}</p></div><span className="planner-count-badge">{bookings.length} booking</span></section>
+      <div className="planner-topbar"><Link href={`/trips/${trip.id}`} className="back-link">‹ Trip</Link><div className="planner-role-row"><span className="planner-counter">Wallet Hub · V11.3</span><span className={`role-badge ${role}`}>{role === "owner" ? "Owner" : role === "editor" ? "Editor" : "Viewer"}</span></div></div>
+      <section className="planner-hero wallet-hero"><div><div className="eyebrow">BOOKING · DOCUMENTS · EXPENSE</div><h1>🎫 Trip Wallet</h1><p>{trip.title}</p></div><div className="master-hero-actions">{canEdit && <Link className="btn btn-primary btn-small" href={`/trips/${trip.id}/import-booking`}>+ Import</Link>}<span className="planner-count-badge">{bookings.length} booking</span></div></section>
+
+      <WalletHubTabs tripId={trip.id} active="overview" />
 
       <section className="dashboard-grid wallet-metrics">
         <div className="card dashboard-metric"><span>ใช้ที่ญี่ปุ่น</span><strong>¥{jpy.toLocaleString("th-TH")}</strong><small>{expenses.filter((e) => e.currency === "JPY").length} รายการ</small></div>
@@ -113,6 +116,6 @@ export default async function TripWalletPage({ params }: { params: Promise<{ id:
           </form>
         </details>}
       </section>
-    </div><BottomNav active="/wallet" /></main>
+    </div><BottomNav active="/wallet" tripId={trip.id} /></main>
   );
 }

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppHeader } from "@/components/AppHeader";
 import { BottomNav } from "@/components/BottomNav";
+import { WalletHubTabs } from "@/components/HubTabs";
 import { DocumentOfflinePack } from "@/components/DocumentOfflinePack";
 import { TripDocumentUploader } from "@/components/TripDocumentUploader";
 import { requireVerifiedUser } from "@/lib/supabase/auth";
@@ -86,13 +87,14 @@ export default async function DocumentsPage({ params }: { params: Promise<{ id: 
   });
 
   return <main className="shell"><div className="container"><AppHeader />
-    <div className="planner-topbar"><Link href={`/trips/${id}`} className="back-link">‹ Dashboard</Link><span className="planner-counter">V10.1 Smart-linked Documents</span></div>
+    <div className="planner-topbar"><Link href={`/trips/${id}/wallet`} className="back-link">‹ Wallet</Link><span className="planner-counter">V10.1 Smart-linked Documents</span></div>
     <section className="planner-hero v8-doc-hero"><div><span className="eyebrow">TRIP DOCUMENT VAULT</span><h1>📂 Trip Documents</h1><p>{trip.title} · เพิ่มไฟล์แล้วระบบผูกกับทริปนี้อัตโนมัติ และ Booking Import สามารถผูกเอกสารกับรายการจองได้</p></div><div className="master-hero-actions"><Link className="btn btn-primary" href={`/trips/${id}/import-booking`}>📥 Import Booking</Link><Link className="btn btn-secondary" href={`/trips/${id}/bookings`}>Booking Center</Link></div></section>
 
     <section className="trip-document-link-status"><span>✅</span><div><strong>Auto Trip Link เปิดใช้งาน</strong><p>เอกสารใหม่ทุกชิ้นจากหน้านี้จะบันทึกด้วย Trip ID ของ <b>{trip.title}</b> อัตโนมัติ</p></div></section>
 
     <DocumentOfflinePack tripId={id} items={packItems}/>
 
+    <WalletHubTabs tripId={id} active="documents" />
     <section className="section"><div className="section-head"><h2>เอกสารของทริปนี้</h2><span className="small muted">{viewRows.length} รายการ</span></div>
       {viewRows.length ? <div className="document-grid">{viewRows.map((d) => {
         const category = detail(d.details, "doc_category") || "other";
@@ -122,5 +124,5 @@ export default async function DocumentsPage({ params }: { params: Promise<{ id: 
     {canEdit && <TripDocumentUploader tripId={id} tripTitle={trip.title || "Trip"} />}
 
     <section className="notice"><span>🔐</span><div><strong>เอกสารเก็บแบบ Private</strong><p>ไฟล์อัปโหลดอยู่ใน Supabase Storage แบบไม่ Public และเปิดผ่านลิงก์ชั่วคราวสำหรับสมาชิกที่มีสิทธิ์ใน Trip เท่านั้น ไม่แนะนำให้ใส่รหัสผ่านหรือเลขบัตรเครดิตใน Notes</p></div></section>
-  </div><BottomNav active="/wallet" /></main>;
+  </div><BottomNav active="/wallet" tripId={id} /></main>;
 }

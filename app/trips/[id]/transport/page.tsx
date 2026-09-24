@@ -46,7 +46,7 @@ export default async function TransportPage({ params }: { params: Promise<{ id: 
   const carSegments = typedSegments.filter((segment: TransportSegment) => segment.mode === "car");
 
   return <main className="shell"><div className="container"><AppHeader />
-    <div className="planner-topbar"><Link href={`/trips/${id}`} className="back-link">‹ Dashboard</Link><span className="planner-counter">Transport · V11.2</span></div>
+    <div className="planner-topbar"><Link href={`/trips/${id}/master-plan`} className="back-link">‹ Plan</Link><span className="planner-counter">Transport · V11.2</span></div>
     <section className="planner-hero transport-hero"><div><span className="eyebrow">JAPAN TRANSPORT</span><h1>🚆 Transport Segments</h1><p>รถไฟ รถบัส เที่ยวบิน Taxi เดิน และ Rental car อยู่ในแผนเดียวกัน</p></div><Link className="btn btn-secondary" href={`/trips/${id}/route`}>Trip Route</Link></section>
 
     {carSegments.length > 0 && <section className="rental-summary-banner"><span>🚙</span><div><strong>Rental car {carSegments.length} ช่วง</strong><p>ข้อมูลรถเช่าจะถูกรวมใน Trip Route อัตโนมัติ</p></div><Link href={`/trips/${id}/route`} className="link">ดู Route ›</Link></section>}
@@ -62,5 +62,5 @@ export default async function TransportPage({ params }: { params: Promise<{ id: 
     {canEdit && <details id="rental-car" className="add-activity-panel rental-add-panel"><summary><span className="plus-circle">🚙</span><span><strong>เพิ่ม Rental car / รถเช่า</strong><small>จุดรับรถ • จุดคืนรถ • บริษัท • Booking • ETC • Snow tire</small></span></summary><form className="inline-form" action={addTransportSegment}><input type="hidden" name="trip_id" value={id} /><SegmentFields days={days} defaultMode="car" /><div className="rental-form-tip"><strong>แนะนำให้บันทึกใน Notes</strong><span>ชื่อผู้ขับ · จุดรับ/คืนรถ · ETC · Snow tire/chain · ที่จอดรถ · แผนเติมน้ำมัน</span></div><SubmitButton className="btn btn-primary btn-full" pendingText="กำลังเพิ่ม...">+ เพิ่มรถเช่า</SubmitButton></form></details>}
 
     {canEdit && <details id="add-transport" className="add-activity-panel" open={!typedSegments.length}><summary><span className="plus-circle">＋</span><span><strong>เพิ่ม Transport Segment</strong><small>Train • Bus • Flight • Taxi • Walk • Ferry</small></span></summary><form className="inline-form" action={addTransportSegment}><input type="hidden" name="trip_id" value={id} /><SegmentFields days={days} /><SubmitButton className="btn btn-primary btn-full" pendingText="กำลังเพิ่ม...">+ เพิ่มการเดินทาง</SubmitButton></form></details>}
-  </div><BottomNav active="/plan" /></main>;
+  </div><BottomNav active="/plan" tripId={id} /></main>;
 }

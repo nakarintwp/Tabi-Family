@@ -24,7 +24,7 @@ export default async function ExportPage({ params }: { params: Promise<{ id:stri
   const days = [...(trip.trip_days || [])].sort((a:any,b:any)=>a.trip_date.localeCompare(b.trip_date)).map((day:any)=>({...day,activities:[...(day.activities||[])].sort((a:any,b:any)=>(a.sort_order||0)-(b.sort_order||0))}));
   const transports = [...(trip.transport_segments || [])].sort((a:any,b:any)=>(a.sort_order||0)-(b.sort_order||0));
   const serializable = { ...trip, trip_days: days, transport_segments: transports };
-  return <main className="shell print-shell"><div className="container"><div className="no-print"><AppHeader /><Link className="back-link" href={`/trips/${id}`}>‹ กลับ Dashboard</Link></div>
+  return <main className="shell print-shell"><div className="container"><div className="no-print"><AppHeader /><Link className="back-link" href={`/trips/${id}/more`}>‹ More</Link></div>
     <section className={`export-cover trip-cover cover-${trip.cover_style || "sky"}`}><span className="cover-preview-emoji">{trip.cover_emoji || "🧳"}</span><div><span className="eyebrow">TABI FAMILY · V7 EXPORT</span><h1>{trip.title}</h1><p>{trip.start_date ? d(trip.start_date) : ""} {trip.end_date ? `– ${d(trip.end_date)}` : ""}</p><p>{trip.cover_tagline || trip.cities?.join(" • ")}</p></div></section>
     <ExportTools trip={serializable} />
     <section className="section print-section"><h2>Itinerary</h2>{days.map((day:any,index:number)=><article className="print-day" key={day.id}><div className="print-day-head"><strong>Day {index+1} · {day.title || "แผนเดินทาง"}</strong><span>{d(day.trip_date)}</span></div>{day.activities?.length ? <table className="print-table"><tbody>{day.activities.map((a:any)=><tr key={a.id}><td>{a.start_time?.slice(0,5)||"—"}</td><td><strong>{a.title}</strong>{a.location_name && <small>{a.location_name}</small>}</td><td>{a.status === "done" ? "✓" : a.status === "skipped" ? "ข้าม" : ""}</td></tr>)}</tbody></table> : <p className="muted">ยังไม่มีกิจกรรม</p>}</article>)}</section>
@@ -33,5 +33,5 @@ export default async function ExportPage({ params }: { params: Promise<{ id:stri
     <section className="section print-section"><h2>Wishlist</h2>{(trip.trip_wishlist||[]).length ? <div className="print-grid">{(trip.trip_wishlist||[]).map((w:any)=><div key={w.id}><strong>{w.emoji || "📍"} {w.title}</strong><span>{w.city || "Japan"}</span></div>)}</div> : <p className="muted">ไม่มี Wishlist</p>}</section>
     <section className="section print-section"><h2>Family</h2><div className="print-grid">{(trip.trip_members||[]).map((m:any)=><div key={m.id}><strong>{m.name}</strong><span>{m.member_type} · เดิน {m.walking_level}/5</span></div>)}</div></section>
     <section className="section print-section"><h2>Budget</h2><p>งบประมาณ: {trip.budget ? `฿${Number(trip.budget).toLocaleString("th-TH")}` : "—"}</p></section>
-  </div><div className="no-print"><BottomNav active="/trips" /></div></main>;
+  </div><div className="no-print"><BottomNav active="/more" tripId={id} /></div></main>;
 }

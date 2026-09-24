@@ -4,7 +4,7 @@ export const dynamic = "force-dynamic";
 
 export function GET() {
   return NextResponse.json(
-    { app: "Tabi Family", version: "11.2", feature: "expense-backup-ocr-inbox-smart-engine-weather-driving-intelligence" },
+    { app: "Tabi Family", version: "11.3", feature: "navigation-ux-consolidation-five-hubs" },
     { headers: { "Cache-Control": "no-store, max-age=0" } },
   );
 }

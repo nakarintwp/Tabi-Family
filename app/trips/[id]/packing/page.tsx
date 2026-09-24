@@ -41,7 +41,7 @@ export default async function PackingPage({ params }: { params: Promise<{ id: st
     <main className="shell">
       <div className="container">
         <AppHeader />
-        <div className="planner-topbar"><Link href={`/trips/${trip.id}`} className="back-link">‹ Dashboard</Link><div className="planner-role-row"><span className="planner-counter">Packing</span><span className={`role-badge ${role}`}>{role === "owner" ? "Owner" : role === "editor" ? "Editor" : "Viewer"}</span></div></div>
+        <div className="planner-topbar"><Link href={`/trips/${trip.id}/more`} className="back-link">‹ More</Link><div className="planner-role-row"><span className="planner-counter">Packing</span><span className={`role-badge ${role}`}>{role === "owner" ? "Owner" : role === "editor" ? "Editor" : "Viewer"}</span></div></div>
         <section className="planner-hero packing-hero"><div><div className="eyebrow">Travel readiness</div><h1>🧳 Packing List</h1><p>{trip.title}</p></div><span className="planner-count-badge">{packed}/{items.length}</span></section>
 
         <section className="card packing-progress-card">
@@ -82,7 +82,7 @@ export default async function PackingPage({ params }: { params: Promise<{ id: st
           </details>
         </section>}
       </div>
-      <BottomNav active="/trips" />
+      <BottomNav active="/more" tripId={id} />
     </main>
   );
 }

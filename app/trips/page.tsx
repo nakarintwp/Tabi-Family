@@ -124,7 +124,7 @@ export default async function TripsPage({ searchParams }: { searchParams: Promis
           </div>
         )}
       </div>
-      <BottomNav active="/trips" />
+      <BottomNav active="/more" />
     </main>
   );
 }

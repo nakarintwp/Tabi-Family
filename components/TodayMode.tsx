@@ -191,12 +191,11 @@ export function TodayMode({ trips }: { trips: Trip[] }) {
 
       <section className="section today-command-center">
         <div className="section-head"><h2>Today Command Center</h2><span className="badge success">V10.4</span></div>
-        <div className="today-command-grid">
-          <Link className="today-command-card" href={`/trips/${trip.id}/bookings`}><span>🎫</span><div><strong>{todayBookings.length} Booking</strong><small>เปิดเลขจอง / confirmation</small></div></Link>
-          <Link className="today-command-card" href={`/trips/${trip.id}/route`}><span>🚆</span><div><strong>{todayTransports.length} Transport</strong><small>{todayTransports[0] ? `${todayTransports[0].origin} → ${todayTransports[0].destination}` : "ยังไม่มีช่วงเดินทาง"}</small></div></Link>
-          <Link className="today-command-card" href={`/trips/${trip.id}/documents`}><span>📂</span><div><strong>Documents</strong><small>Voucher · Insurance · Ticket</small></div></Link>
+        <div className="today-command-grid consolidated">
+          <Link className="today-command-card" href={`/trips/${trip.id}/master-plan`}><span>📅</span><div><strong>Plan</strong><small>{todayTransports.length} transport · แผนและเส้นทาง</small></div></Link>
+          <Link className="today-command-card" href={`/trips/${trip.id}/wallet`}><span>🎫</span><div><strong>Trip Wallet</strong><small>{todayBookings.length} booking · Docs · Expense</small></div></Link>
+          {rentalToday && <Link className="today-command-card rental" href={`/trips/${trip.id}/driving`}><span>🚙</span><div><strong>Drive</strong><small>{rentalToday.origin} → {rentalToday.destination}</small></div></Link>}
           <Link className="today-command-card emergency" href={`/trips/${trip.id}/emergency`}><span>🆘</span><div><strong>Emergency</strong><small>110 · 119 · JNTO</small></div></Link>
-          {rentalToday && <Link className="today-command-card rental" href={`/trips/${trip.id}/rental-car`}><span>🚙</span><div><strong>Rental car วันนี้</strong><small>{rentalToday.origin} → {rentalToday.destination}</small></div></Link>}
         </div>
       </section>
 

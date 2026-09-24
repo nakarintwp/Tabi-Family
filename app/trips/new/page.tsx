@@ -85,7 +85,7 @@ export default async function NewTripPage({ searchParams }: { searchParams: Prom
 
         <p className="small center-copy"><Link href="/templates" className="link">ดู Templates</Link> · <Link href="/trips" className="link">ดูทริปทั้งหมด</Link></p>
       </div>
-      <BottomNav active="/trips" />
+      <BottomNav active="/more" />
     </main>
   );
 }

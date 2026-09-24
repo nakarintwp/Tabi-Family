@@ -58,5 +58,5 @@ export default async function SmartPlanPage({ params, searchParams }: { params: 
       </section>
       <div className="smart-plan-sticky"><div><strong>Smart order</strong><small>เรียงสถานที่เที่ยวก่อน มื้ออาหาร/ช้อปปิ้งตามจังหวะวัน และใส่เวลาเริ่มต้นอัตโนมัติ</small></div><SubmitButton className="btn btn-primary" pendingText="กำลังสร้างแผน...">สร้าง Smart Day</SubmitButton></div>
     </form>}
-  </div><BottomNav active="/plan" /></main>;
+  </div><BottomNav active="/plan" tripId={id} /></main>;
 }

@@ -43,5 +43,5 @@ export default async function WishlistPage({ params }: { params: Promise<{ id: s
         </article>)}
       </div>}
     </section>
-  </div><BottomNav active="/explore" /></main>;
+  </div><BottomNav active="/explore" tripId={id} /></main>;
 }

@@ -74,7 +74,7 @@ export default async function FamilyPage({ params }: { params: Promise<{ id: str
     <main className="shell">
       <div className="container day-planner-container">
         <AppHeader />
-        <div className="planner-topbar"><Link href={`/trips/${trip.id}`} className="back-link">‹ Dashboard</Link><span className={`role-badge ${role}`}>{role === "owner" ? "Owner" : role === "editor" ? "Editor" : "Viewer"}</span></div>
+        <div className="planner-topbar"><Link href={`/trips/${trip.id}/more`} className="back-link">‹ More</Link><span className={`role-badge ${role}`}>{role === "owner" ? "Owner" : role === "editor" ? "Editor" : "Viewer"}</span></div>
         <section className="planner-hero family-hero">
           <div><div className="eyebrow">Family profile</div><h1>ครอบครัวของทริปนี้</h1><p>{trip.title} · {members.length} คน</p></div>
           <span className="planner-count-badge">V9.4 · {members.length} คน</span>
@@ -129,7 +129,7 @@ export default async function FamilyPage({ params }: { params: Promise<{ id: str
           </details>
         </section>}
       </div>
-      <BottomNav active="/trips" />
+      <BottomNav active="/more" tripId={id} />
     </main>
   );
 }

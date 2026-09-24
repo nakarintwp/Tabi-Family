@@ -1,0 +1,32 @@
+V11.3 Navigation & UX Consolidation
+
+Core navigation
+- components/BottomNav.tsx
+- components/HubTabs.tsx (new)
+- components/AppHeader.tsx
+- components/TodayMode.tsx
+
+Primary hubs
+- app/today/page.tsx
+- app/plan/page.tsx
+- app/explore/page.tsx
+- app/wallet/page.tsx
+- app/more/page.tsx (new)
+- app/trips/[id]/more/page.tsx (new)
+- app/trips/[id]/page.tsx
+- app/trips/[id]/master-plan/page.tsx
+- app/trips/[id]/wallet/page.tsx
+
+Parent navigation updates
+- Plan family: map, route, smart-engine, calendar, conflicts, optimize, smart-plan, timeline, transport, weather
+- Wallet family: bookings, documents, budget, inbox, import-booking
+- More family: backup, cover, destinations, driving, emergency, export, family, offline-pack, packing, readiness, rental-car, route-cost, share
+- Explore family: wishlist
+
+Version/PWA
+- package.json -> 0.11.3
+- app/version/route.ts -> 11.3
+- public/sw.js -> V11.3 cache
+- app/globals.css -> V11.3 hub styles
+
+No SQL migration required.

@@ -20,7 +20,7 @@ export default async function RentalCarPage({ params }: { params: Promise<{ id: 
   const rows = (segments || []) as V8Transport[];
 
   return <main className="shell"><div className="container"><AppHeader />
-    <div className="planner-topbar"><Link href={`/trips/${id}`} className="back-link">‹ Dashboard</Link><span className="planner-counter">V8.3 Rental Car Pro</span></div>
+    <div className="planner-topbar"><Link href={`/trips/${id}/more`} className="back-link">‹ More</Link><span className="planner-counter">V8.3 Rental Car Pro</span></div>
     <section className="planner-hero v8-rental-hero"><div><span className="eyebrow">ROAD TRIP CONTROL</span><h1>🚙 Rental Car Pro</h1><p>{trip.title} · จุดรับ/คืนรถ ETC ยางหิมะ น้ำมัน ที่จอดรถ และเส้นทาง</p></div><Link className="btn btn-primary" href={`/trips/${id}/transport#rental-car`}>+ เพิ่มรถเช่า</Link></section>
 
     <section className="rental-pro-checks">
@@ -41,5 +41,5 @@ export default async function RentalCarPage({ params }: { params: Promise<{ id: 
       </article>; })}</div> : <div className="empty-state"><div className="empty-icon">🚙</div><h2>ยังไม่มีรถเช่า</h2><p>เพิ่ม Rental car ใน Transport แล้วหน้านี้จะรวมข้อมูลและเครื่องมือสำหรับขับรถให้</p><Link className="btn btn-primary" href={`/trips/${id}/transport#rental-car`}>เพิ่มรถเช่า</Link></div>}
     </section>
     <section className="notice rental-safety-note"><span>⚠️</span><div><strong>ก่อนออกเดินทาง</strong><p>ตรวจสภาพอากาศ/ถนนจริงและเงื่อนไขรถเช่าก่อนขับ โดยเฉพาะพื้นที่ภูเขาและหิมะ ข้อมูลในแอปเป็น checklist ไม่ใช่ข้อมูลถนนแบบ real-time</p></div></section>
-  </div><BottomNav active="/plan" /></main>;
+  </div><BottomNav active="/more" tripId={id} /></main>;
 }

@@ -44,7 +44,7 @@ export default async function ShareTripPage({ params }: { params: Promise<{ id: 
     return (
       <main className="shell">
         <div className="container"><AppHeader /><Link className="back-link" href={`/trips/${id}`}>‹ กลับทริป</Link><div className="empty-state"><div className="empty-icon">🔒</div><h1>เฉพาะเจ้าของทริป</h1><p>Editor และ Viewer ใช้งานทริปได้ตามสิทธิ์ แต่ไม่สามารถสร้าง QR หรือจัดการสมาชิกได้</p><Link className="btn btn-primary" href={`/trips/${id}`}>กลับ Dashboard</Link></div></div>
-        <BottomNav active="/trips" />
+        <BottomNav active="/more" tripId={id} />
       </main>
     );
   }
@@ -118,7 +118,7 @@ export default async function ShareTripPage({ params }: { params: Promise<{ id: 
 
         <section className="section"><div className="notice"><span>🛡️</span><div><strong>สิทธิ์การใช้งาน</strong><br/><span className="muted">Owner จัดการทุกอย่างและสมาชิก · Editor แก้แผน Packing Wallet และ Family ได้ · Viewer เปิดดู Today, Route และข้อมูลทริปได้อย่างเดียว</span></div></div></section>
       </div>
-      <BottomNav active="/trips" />
+      <BottomNav active="/more" tripId={id} />
     </main>
   );
 }

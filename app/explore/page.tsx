@@ -198,5 +198,5 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
         </article>;
       })}
     </section>
-  </div><BottomNav active="/explore" /></main>;
+  </div><BottomNav active="/explore" tripId={selectedTrip?.id} /></main>;
 }

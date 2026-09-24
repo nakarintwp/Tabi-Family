@@ -17,7 +17,7 @@ export default async function TripDestinationsPage({ params, searchParams }: { p
   const selected = new Set<string>(trip.cities || []);
 
   return <main className="shell"><div className="container"><AppHeader />
-    <div className="planner-topbar"><Link href={`/trips/${id}`} className="back-link">‹ Dashboard</Link><span className="planner-counter">Destinations</span></div>
+    <div className="planner-topbar"><Link href={`/trips/${id}/more`} className="back-link">‹ More</Link><span className="planner-counter">Destinations</span></div>
     <section className="planner-hero destination-hero"><div><span className="eyebrow">TRIP SCOPE</span><h1>ชื่อเมือง / พื้นที่ที่จะไป</h1><p>{trip.title}</p></div><Link className="btn btn-secondary" href={`/explore?trip=${id}`}>✨ เปิด Explore</Link></section>
     {query.saved === "1" && <div className="success-box">อัปเดตพื้นที่ของ Trip แล้ว ✓</div>}
     {query.error && <div className="error-box">{query.error}</div>}
@@ -42,5 +42,5 @@ export default async function TripDestinationsPage({ params, searchParams }: { p
     <section className="section">
       <div className="trip-destination-summary"><div><strong>Explore scope ปัจจุบัน</strong><p>{(trip.cities || []).join(" → ") || "ยังไม่ได้เลือก"}</p></div><Link className="link" href={`/explore?trip=${id}`}>ดูสถานที่ ›</Link></div>
     </section>
-  </div><BottomNav active="/trips" /></main>;
+  </div><BottomNav active="/more" tripId={id} /></main>;
 }

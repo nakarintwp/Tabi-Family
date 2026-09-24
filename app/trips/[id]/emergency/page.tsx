@@ -19,7 +19,7 @@ export default async function EmergencyPage({ params }: { params: Promise<{ id: 
   if (!trip) notFound();
 
   return <main className="shell"><div className="container"><AppHeader />
-    <div className="planner-topbar"><Link href={`/trips/${id}`} className="back-link">‹ Dashboard</Link><span className="planner-counter">V8.8 Emergency Japan</span></div>
+    <div className="planner-topbar"><Link href={`/trips/${id}/more`} className="back-link">‹ More</Link><span className="planner-counter">V8.8 Emergency Japan</span></div>
     <section className="planner-hero v8-emergency-hero"><div><span className="eyebrow">USE WHEN YOU NEED HELP</span><h1>🆘 Emergency Japan</h1><p>{trip.title} · เบอร์ฉุกเฉิน คำพูดภาษาญี่ปุ่น และลิงก์ช่วยเหลือ</p></div></section>
 
     <section className="emergency-number-grid">
@@ -34,5 +34,5 @@ export default async function EmergencyPage({ params }: { params: Promise<{ id: 
     <section className="section"><div className="section-head"><h2>ลิงก์ช่วยเหลือ</h2></div><div className="emergency-link-list"><a className="card emergency-link" href="https://www.japan.travel/en/plan/hotline/" target="_blank" rel="noreferrer"><strong>JNTO Japan Visitor Hotline ↗</strong><span>ข้อมูลช่วยเหลือนักท่องเที่ยวและเหตุฉุกเฉิน</span></a><a className="card emergency-link" href="https://www.japan.travel/en/plan/emergencies/" target="_blank" rel="noreferrer"><strong>JNTO Staying Safe in Japan ↗</strong><span>ภัยพิบัติ การแพทย์ และข้อมูลฉุกเฉิน</span></a><a className="card emergency-link" href="https://site.thaiembassy.jp/" target="_blank" rel="noreferrer"><strong>Royal Thai Embassy, Tokyo ↗</strong><span>เว็บไซต์สถานทูตไทยในญี่ปุ่น</span></a></div></section>
 
     <section className="card emergency-prep"><strong>เตรียมก่อนออกจากโรงแรม</strong><div className="tag-row"><span className="mini-tag">ชื่อโรงแรม + ที่อยู่</span><span className="mini-tag">เลขประกัน</span><span className="mini-tag">เบอร์ติดต่อรถเช่า</span><span className="mini-tag">Passport copy</span><span className="mini-tag">Power bank</span></div><p>เพิ่มข้อมูลเฉพาะทริปไว้ใน Trip Documents และ Booking Center เพื่อเปิดหาได้เร็วเมื่อจำเป็น</p><div className="today-action-row"><Link className="btn btn-primary btn-small" href={`/trips/${id}/documents`}>Trip Documents</Link><Link className="btn btn-secondary btn-small" href={`/trips/${id}/bookings`}>Booking Center</Link></div></section>
-  </div><BottomNav active="/today" /></main>;
+  </div><BottomNav active="/more" tripId={id} /></main>;
 }

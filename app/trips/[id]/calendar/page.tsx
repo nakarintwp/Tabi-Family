@@ -28,7 +28,7 @@ export default async function CalendarPage({ params }: { params: Promise<{ id: s
   }
 
   return <main className="shell"><div className="container"><AppHeader />
-    <div className="planner-topbar"><Link href={`/trips/${id}`} className="back-link">‹ Dashboard</Link><span className="planner-counter">Calendar</span></div>
+    <div className="planner-topbar"><Link href={`/trips/${id}/master-plan`} className="back-link">‹ Plan</Link><span className="planner-counter">Calendar</span></div>
     <section className="planner-hero calendar-hero"><div><span className="eyebrow">TRIP OVERVIEW</span><h1>🗓 Calendar Overview</h1><p>{trip.title}</p></div><Link className="btn btn-secondary" href={`/trips/${id}/transport`}>Transport</Link></section>
 
     <section className="calendar-overview">
@@ -47,5 +47,5 @@ export default async function CalendarPage({ params }: { params: Promise<{ id: s
         </article>;
       })}
     </section>
-  </div><BottomNav active="/plan" /></main>;
+  </div><BottomNav active="/plan" tripId={id} /></main>;
 }

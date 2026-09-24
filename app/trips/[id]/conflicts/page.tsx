@@ -20,7 +20,7 @@ export default async function ConflictsPage({ params }: { params: Promise<{ id: 
   const medium = issues.filter((x) => x.level === "medium").length;
 
   return <main className="shell"><div className="container"><AppHeader />
-    <div className="planner-topbar"><Link href={`/trips/${id}`} className="back-link">‹ Dashboard</Link><span className="planner-counter">V8.6 Conflict Detector</span></div>
+    <div className="planner-topbar"><Link href={`/trips/${id}/master-plan`} className="back-link">‹ Plan</Link><span className="planner-counter">V8.6 Conflict Detector</span></div>
     <section className="planner-hero v8-conflict-hero"><div><span className="eyebrow">RULE-BASED · ZERO API COST</span><h1>⚠️ Smart Conflict Detector</h1><p>{trip.title} · ตรวจเวลาชน buffer น้อย ตารางแน่น และ checklist รถเช่า</p></div><Link className="btn btn-secondary" href={`/trips/${id}/master-plan`}>Master Plan</Link></section>
 
     <section className="master-summary-grid"><div className="card dashboard-metric"><span>High</span><strong>{high}</strong><small>ควรแก้ก่อนเดินทาง</small></div><div className="card dashboard-metric"><span>Medium</span><strong>{medium}</strong><small>ควรตรวจสอบ</small></div><div className="card dashboard-metric"><span>Total</span><strong>{issues.length}</strong><small>ข้อสังเกตทั้งหมด</small></div></section>
@@ -29,5 +29,5 @@ export default async function ConflictsPage({ params }: { params: Promise<{ id: 
       {issues.length ? <div className="conflict-list">{issues.map((issue, index) => <article className={`conflict-card conflict-${issue.level}`} key={`${issue.title}-${index}`}><div className="conflict-severity">{issue.level === "high" ? "!" : issue.level === "medium" ? "⚠" : "i"}</div><div><span className="activity-label">{issue.level.toUpperCase()}{issue.dayDate ? ` · ${issue.dayDate}` : ""}</span><h3>{issue.title}</h3><p>{issue.detail}</p>{issue.dayId && <Link className="micro-link" href={`/trips/${id}/days/${issue.dayId}`}>เปิด Day Planner ›</Link>}</div></article>)}</div> : <div className="today-complete-card"><span>✅</span><div><strong>ไม่พบ conflict จากกฎพื้นฐาน</strong><p>แผนไม่มีเวลาทับซ้อนหรือ warning ที่ระบบตรวจพบในตอนนี้</p></div></div>}
     </section>
     <section className="card detector-rules"><strong>กฎที่ตรวจตอนนี้</strong><div className="tag-row"><span className="mini-tag">กิจกรรมเวลาทับ</span><span className="mini-tag">Buffer &lt; 20 นาที</span><span className="mini-tag">กิจกรรม 8+ จุด/วัน</span><span className="mini-tag">Transport ชนกิจกรรม</span><span className="mini-tag">Rental booking ref</span><span className="mini-tag">Winter tire note</span></div><p>ระบบนี้ไม่ดึงเวลาเปิดร้าน รถติด ตารางรถไฟ หรือสภาพถนนแบบ real-time จึงควรตรวจข้อมูลจริงก่อนเดินทาง</p></section>
-  </div><BottomNav active="/plan" /></main>;
+  </div><BottomNav active="/plan" tripId={id} /></main>;
 }

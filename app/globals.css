@@ -2052,3 +2052,93 @@ body::before {
    V10.6–V11.2 practical intelligence
    ========================================================= */
 .backup-tool-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:16px 0}.backup-card{display:flex;flex-direction:column;gap:10px}.backup-card input[type=file]{width:100%;padding:12px;border:1px dashed rgba(44,112,151,.28);border-radius:14px;background:rgba(255,255,255,.72)}.backup-card small{color:var(--muted);line-height:1.55}.inbox-list,.smart-engine-list{display:grid;gap:10px}.inbox-row{display:flex;align-items:center;justify-content:space-between;gap:14px}.inbox-row h3{margin:3px 0}.inbox-row p,.smart-engine-row p{margin:4px 0 0;color:var(--muted);font-size:13px}.smart-engine-row{display:grid;grid-template-columns:36px 1fr auto;gap:12px;align-items:center;text-decoration:none;color:inherit}.smart-engine-row.high{border-color:rgba(205,65,65,.28);background:rgba(255,245,245,.9)}.smart-engine-row.medium{border-color:rgba(218,147,38,.3);background:rgba(255,251,240,.92)}.smart-engine-row.info{border-color:rgba(54,131,176,.24)}.smart-engine-icon{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:rgba(62,139,180,.1);font-weight:900}.weather-smart-tips{display:grid;gap:6px;margin-top:10px}.weather-smart-tip{font-size:12px;line-height:1.5;padding:8px 10px;border-radius:12px;background:rgba(236,247,252,.86);color:#315f7e}.driving-metric-form{display:grid;gap:8px;padding:10px;border-radius:14px;background:rgba(240,248,252,.76);border:1px solid rgba(42,148,209,.14)}.driving-alerts{display:grid;gap:8px;margin:12px 0}.driving-intel-metrics{margin:14px 0}@media(max-width:700px){.backup-tool-grid{grid-template-columns:1fr}.inbox-row{align-items:flex-start;flex-direction:column}.smart-engine-row{grid-template-columns:32px 1fr auto}}
+
+/* =========================================================
+   V11.3 — Navigation & UX Consolidation
+   Five primary hubs: Today · Plan · Explore · Wallet · More
+   ========================================================= */
+.trip-hub-section { margin: 18px 0 24px; }
+.trip-hub-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.trip-hub-card {
+  min-height: 88px;
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) 18px;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid #dceaf2;
+  border-radius: 20px;
+  background: rgba(255,255,255,.94);
+  box-shadow: 0 8px 24px rgba(35,101,139,.06);
+}
+.trip-hub-card.today { grid-column: 1 / -1; background: linear-gradient(135deg,#f7fcff,#e9f6fd); border-color: #cfe7f5; }
+.trip-hub-card > span { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; background: #edf7fc; font-size: 21px; }
+.trip-hub-card > div { min-width: 0; }
+.trip-hub-card strong, .trip-hub-card small { display: block; }
+.trip-hub-card strong { color: #1c5678; font-size: 13px; }
+.trip-hub-card small { margin-top: 4px; color: #718794; font-size: 9px; line-height: 1.4; }
+.trip-hub-card > b { color: #9db1bd; font-size: 20px; font-weight: 500; }
+.trip-hub-card.more > span { font-size: 16px; font-weight: 900; letter-spacing: .05em; }
+
+.hub-tabs {
+  display: flex;
+  gap: 7px;
+  overflow-x: auto;
+  padding: 3px 0 11px;
+  margin: 1px 0 8px;
+  scrollbar-width: none;
+}
+.hub-tabs::-webkit-scrollbar { display: none; }
+.hub-tab {
+  flex: 0 0 auto;
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  border: 1px solid #dce8ee;
+  border-radius: 999px;
+  background: rgba(255,255,255,.86);
+  color: #617b8a;
+  font-size: 11px;
+  font-weight: 850;
+}
+.hub-tab.active { background: #1f7fb4; color: #fff; border-color: #1f7fb4; box-shadow: 0 7px 18px rgba(31,127,180,.16); }
+.wallet-hub-tabs .hub-tab { padding-inline: 12px; }
+
+.hub-tools-details { margin: 0 0 16px; border: 1px solid #dfeaf0; border-radius: 18px; background: rgba(255,255,255,.76); overflow: hidden; }
+.hub-tools-details > summary { list-style: none; cursor: pointer; padding: 12px 14px; color: #3c708d; font-size: 11px; font-weight: 900; }
+.hub-tools-details > summary::-webkit-details-marker { display: none; }
+.hub-tools-details > summary::after { content: "＋"; float: right; color: #7a9aaa; }
+.hub-tools-details[open] > summary::after { content: "−"; }
+.hub-tools-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; padding: 0 12px 12px; }
+.hub-tools-grid a { min-height: 42px; display: flex; align-items: center; padding: 0 11px; border-radius: 13px; background: #f2f8fb; color: #376f8d; font-size: 10px; font-weight: 800; }
+
+.more-hero { padding-bottom: 8px; }
+.more-group { margin: 12px 0; padding: 0; overflow: hidden; }
+.more-group-head { display: flex; gap: 11px; align-items: center; padding: 15px 15px 11px; background: linear-gradient(180deg,#fbfdfe,#f7fbfd); border-bottom: 1px solid #edf3f6; }
+.more-group-head > span { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 12px; background: #eaf5fb; font-size: 18px; }
+.more-group-head h2, .more-group-head p { margin: 0; }
+.more-group-head h2 { color: #234e69; font-size: 14px; }
+.more-group-head p { margin-top: 3px; color: #7a8f9b; font-size: 9px; }
+.more-tool-list { display: grid; }
+.more-tool-row { display: grid; grid-template-columns: 38px minmax(0,1fr) 18px; gap: 10px; align-items: center; min-height: 64px; padding: 11px 14px; border-top: 1px solid #eef3f6; }
+.more-tool-row:first-child { border-top: 0; }
+.more-tool-icon { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 12px; background: #f1f7fa; font-size: 17px; }
+.more-tool-copy { min-width: 0; }
+.more-tool-copy strong, .more-tool-copy small { display: block; }
+.more-tool-copy strong { color: #294e65; font-size: 12px; }
+.more-tool-copy small { margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #7b8d98; font-size: 9px; }
+.more-tool-chevron { color: #a2b2bb; font-size: 20px; }
+.more-advanced-details > summary { cursor: pointer; list-style: none; padding: 13px 14px; color: #4b748b; font-size: 10px; font-weight: 850; }
+.more-advanced-details > summary::-webkit-details-marker { display: none; }
+.more-advanced-details > summary::after { content: "＋"; float: right; }
+.more-advanced-details[open] > summary::after { content: "−"; }
+
+.today-command-grid.consolidated { grid-template-columns: repeat(2,minmax(0,1fr)); }
+
+@media (max-width: 380px) {
+  .trip-hub-actions { grid-template-columns: 1fr; }
+  .trip-hub-card.today { grid-column: auto; }
+  .hub-tools-grid { grid-template-columns: 1fr; }
+}
