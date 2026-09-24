@@ -4,7 +4,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { SubmitButton } from "@/components/SubmitButton";
 import { ExploreCoordinateMap } from "@/components/ExploreCoordinateMap";
 import { requireVerifiedUser } from "@/lib/supabase/auth";
-import { DISCOVERY_PLACES, FOOD_FILTERS, getPlaceGuide, googleMapsSearchUrl, matchesFoodFilter } from "@/lib/discovery";
+import { DISCOVERY_PLACES, FOOD_FILTERS, getPlaceGuide, getPlaceIntelligence, googleMapsSearchUrl, matchesFoodFilter } from "@/lib/discovery";
 import { addPlaceToDay, savePlaceToWishlist } from "./actions";
 
 const categoryLabels: Record<string, string> = {
@@ -82,7 +82,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
   return <main className="shell"><div className="container"><AppHeader />
     <section className="discovery-hero">
       <div>
-        <span className="eyebrow">V8.8 · EXPLORE → DAY PLAN → MASTER PLAN</span>
+        <span className="eyebrow">V9.7 · PLACE INTELLIGENCE</span>
         <h1>{selectedTrip ? `Explore · ${selectedTrip.title}` : "Explore Japan"}</h1>
         <p>{selectedTrip ? "ค้นหา ดูพิกัด บันทึก Wishlist หรือเพิ่มลง Day Planner ได้จากหน้าเดียว" : "เลือกทริปก่อน แล้วระบบจะแสดงเฉพาะพื้นที่ที่คุณกำลังจะไป"}</p>
       </div>
@@ -137,6 +137,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
     <section className="explore-grid">
       {filtered.map((place) => {
         const guide = getPlaceGuide(place.slug);
+        const intelligence = getPlaceIntelligence(place);
         return <article className="place-card" key={place.slug}>
           <div className="place-card-cover"><span>{place.emoji}</span><div className="place-city-badge">{place.city}</div>{place.thaiPopular && <div className="thai-popular-badge">คนไทยนิยม</div>}</div>
           <div className="place-card-body">
@@ -147,6 +148,17 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
             {place.thaiPopular && place.thaiNote && <div className="thai-popular-note">{place.thaiNote}</div>}
             <div className="tag-row">{place.tags.slice(0,4).map((tag) => <span className="mini-tag" key={tag}>{tag}</span>)}</div>
             <div className="place-facts"><span>{place.childFriendly ? "👧 Kids" : "—"}</span><span>{place.seniorFriendly ? "👵 Senior" : "⚠️ เดินเยอะ"}</span><span>{place.isOutdoor ? "🌤 Outdoor" : "🏠 Indoor"}</span><span>⏱ {place.durationMinutes} นาที</span></div>
+
+            <details className="place-intelligence-card" open={place.thaiPopular === true}>
+              <summary><span>🧠 Place Intelligence</span><small>ข้อมูลช่วยวางแผน</small></summary>
+              <div className="place-intelligence-grid">
+                <div><span>เวลาที่ควรเผื่อ</span><strong>{intelligence.duration}</strong></div>
+                <div><span>คนเยอะ / จังหวะเที่ยว</span><strong>{intelligence.crowd}</strong></div>
+                <div><span>รถเช่า / ที่จอด</span><strong>{intelligence.parking}</strong></div>
+                <div><span>อากาศ</span><strong>{intelligence.weather}</strong></div>
+              </div>
+              <p className="place-intelligence-warning">{intelligence.verification}</p>
+            </details>
 
             {Object.keys(guide).length > 0 && <div className="place-guide-grid">
               {guide.nearestStation && <div><span>สถานีใกล้</span><strong>{guide.nearestStation}</strong>{guide.walkMinutes != null && <small>เดินประมาณ {guide.walkMinutes} นาที</small>}{guide.accessNote && <small>{guide.accessNote}</small>}</div>}

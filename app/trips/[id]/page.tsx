@@ -80,7 +80,7 @@ export default async function TripDetailPage({ params, searchParams }: { params:
         {query.setup_error && <div className="error-box"><strong>ตั้งค่าทริปไม่สมบูรณ์</strong><br/><span>{query.setup_error}</span></div>}
 
         <section className={`hero compact-hero trip-hero trip-cover cover-${coverStyle}`}>
-          <div className="trip-hero-role-row"><div className="eyebrow">Trip dashboard · V8.9 Travel Control</div><span className={`role-badge ${role}`}>{role === "owner" ? "Owner" : role === "editor" ? "Editor" : "Viewer"}</span></div>
+          <div className="trip-hero-role-row"><div className="eyebrow">Trip dashboard · V9.7 Smart Travel Control</div><span className={`role-badge ${role}`}>{role === "owner" ? "Owner" : role === "editor" ? "Editor" : "Viewer"}</span></div>
           <div className="hero-cover-title"><span className="hero-cover-emoji">{trip.cover_emoji || "🧳"}</span><div><h1>{trip.title}</h1><p>{trip.cover_tagline || trip.cities?.join(" • ")}</p></div></div>
           <div className="hero-row"><div className="hero-stat"><strong>{days.length} วัน</strong><span>{trip.pace} pace</span></div><div className="pill">👨‍👩‍👧‍👵 {members.length} คน</div></div>
         </section>
@@ -95,7 +95,8 @@ export default async function TripDetailPage({ params, searchParams }: { params:
         <ReadinessCard tripId={trip.id} score={readiness.score} label={readiness.label} items={readiness.items} compact />
 
         <section className="quick-actions v7-quick-actions">
-          <Link className="quick-action primary" href={`/trips/${trip.id}/master-plan`}><span>🧭</span><strong>Master Plan</strong><small>แผนทั้งทริปหน้าเดียว</small></Link>
+          <Link className="quick-action primary" href={`/trips/${trip.id}/command-center`}><span>🧭</span><strong>Command Center</strong><small>V9.0 ภาพรวมทริปอัจฉริยะ</small></Link>
+          <Link className="quick-action" href={`/trips/${trip.id}/master-plan`}><span>📋</span><strong>Master Plan</strong><small>แผนทั้งทริปหน้าเดียว</small></Link>
           {firstDay && <Link className="quick-action" href={`/trips/${trip.id}/days/${firstDay.id}`}><span>🗓️</span><strong>Day Planner</strong><small>{canEdit ? "เรียง • ย้าย • คัดลอก" : "ดู Timeline"}</small></Link>}
           <Link className="quick-action" href={`/trips/${trip.id}/calendar`}><span>📆</span><strong>Calendar</strong><small>ภาพรวมทั้งทริป</small></Link>
           <Link className="quick-action" href={`/trips/${trip.id}/wishlist`}><span>♡</span><strong>Wishlist</strong><small>{wishlistCount || 0} สถานที่</small></Link>
@@ -105,6 +106,11 @@ export default async function TripDetailPage({ params, searchParams }: { params:
           <Link className="quick-action" href={`/trips/${trip.id}/transport`}><span>🚆</span><strong>Transport</strong><small>{transportCount || 0} ช่วง</small></Link>
           <Link className="quick-action" href={`/trips/${trip.id}/route`}><span>🛣️</span><strong>Trip Route</strong><small>รวมรถไฟ • Bus • รถเช่า</small></Link>
           <Link className="quick-action" href={`/trips/${trip.id}/rental-car`}><span>🚙</span><strong>Rental Car Pro</strong><small>ETC • Snow tire • Parking</small></Link>
+          <Link className="quick-action" href={`/trips/${trip.id}/timeline`}><span>🕒</span><strong>Timeline</strong><small>Activity • Transport • Booking</small></Link>
+          <Link className="quick-action" href={`/trips/${trip.id}/notifications`}><span>🔔</span><strong>Smart Alerts</strong><small>Booking • Docs • Family</small></Link>
+          <Link className="quick-action" href={`/trips/${trip.id}/offline-pack`}><span>📴</span><strong>Offline Pack</strong><small>เก็บทริปไว้ในเครื่อง</small></Link>
+          <Link className="quick-action" href={`/trips/${trip.id}/route-cost`}><span>🧮</span><strong>Route Cost</strong><small>Train • Bus • Car</small></Link>
+          <Link className="quick-action" href={`/trips/${trip.id}/driving`}><span>🛞</span><strong>Driving Assistant</strong><small>Checklist • Maps • Fuel</small></Link>
           <Link className="quick-action" href={`/trips/${trip.id}/bookings`}><span>🎫</span><strong>Booking Center</strong><small>จอง • จ่าย • Confirmation</small></Link>
           <Link className="quick-action" href={`/trips/${trip.id}/budget`}><span>💴</span><strong>Budget</strong><small>งบ • ใช้จริง • คงเหลือ</small></Link>
           <Link className="quick-action" href={`/trips/${trip.id}/conflicts`}><span>⚠️</span><strong>Conflict Check</strong><small>เวลา • Buffer • รถเช่า</small></Link>

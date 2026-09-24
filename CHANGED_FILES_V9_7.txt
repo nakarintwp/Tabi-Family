@@ -1,0 +1,26 @@
+V9.0–V9.7 key changes
+- package.json
+- app/version/route.ts
+- app/trips/[id]/page.tsx
+- app/trips/[id]/command-center/page.tsx
+- app/trips/[id]/timeline/page.tsx
+- app/trips/[id]/notifications/page.tsx
+- app/trips/[id]/offline-pack/page.tsx
+- app/trips/[id]/route-cost/page.tsx
+- app/trips/[id]/driving/page.tsx
+- app/trips/[id]/family/page.tsx
+- app/trips/[id]/family/actions.ts
+- app/explore/page.tsx
+- lib/v9.ts
+- lib/discovery.ts
+- components/RouteCostCalculator.tsx
+- components/DrivingChecklist.tsx
+- components/TripOfflinePackV9.tsx
+- components/BrowserNotificationButton.tsx
+- components/AppHeader.tsx
+- components/PwaRegister.tsx
+- public/sw.js
+- app/globals.css
+- supabase/migrations/20260924_v9_4_family_travel_profiles.sql
+- V9_4_FAMILY_TRAVEL_PROFILES.sql
+- V9_0_TO_V9_7_SMART_TRAVEL_UPGRADE.md

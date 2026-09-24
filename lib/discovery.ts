@@ -29,6 +29,9 @@ export type DiscoveryGuide = {
   bestTime?: string;
   familyNote?: string;
   foodGroups?: string[];
+  parkingNote?: string;
+  crowdNote?: string;
+  weatherNote?: string;
 };
 
 export const FOOD_FILTERS = [
@@ -77,6 +80,18 @@ export function matchesFoodFilter(place: DiscoveryPlace, filter: string) {
   if (filter === "family") return place.childFriendly;
   const guide = getPlaceGuide(place.slug);
   return place.tags.includes(filter) || (guide.foodGroups || []).includes(filter);
+}
+
+
+export function getPlaceIntelligence(place: DiscoveryPlace) {
+  const guide = getPlaceGuide(place.slug);
+  return {
+    duration: `${place.durationMinutes} นาที`,
+    parking: guide.parkingNote || (place.city === "Shirakawa-go" ? "ควรตรวจลานจอดรถและข้อจำกัดตามฤดูกาลก่อนขับเข้า" : "ถ้าขับรถมา ให้ตรวจที่จอดรถใกล้สถานที่ในวันเดินทาง"),
+    crowd: guide.crowdNote || (guide.bestTime ? `ช่วงที่แนะนำ: ${guide.bestTime}` : "หลีกเลี่ยงช่วงพีคถ้าต้องการเดินสบายกับครอบครัว"),
+    weather: guide.weatherNote || (place.isOutdoor ? "Outdoor: ตรวจฝน/หิมะ อุณหภูมิ และพื้นลื่นก่อนออก" : "Indoor: ใช้เป็นแผนสำรองได้เมื่ออากาศไม่ดี"),
+    verification: "เวลาเปิด วันหยุด ราคา และการจองอาจเปลี่ยน ควรตรวจข้อมูลล่าสุดก่อนเดินทาง",
+  };
 }
 
 export type TripTemplateActivity = {

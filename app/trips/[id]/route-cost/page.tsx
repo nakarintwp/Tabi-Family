@@ -1,0 +1,8 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { AppHeader } from "@/components/AppHeader";
+import { BottomNav } from "@/components/BottomNav";
+import { RouteCostCalculator } from "@/components/RouteCostCalculator";
+import { requireVerifiedUser } from "@/lib/supabase/auth";
+
+export default async function RouteCostPage({params}:{params:Promise<{id:string}>}){const{id}=await params;const{supabase}=await requireVerifiedUser(`/trips/${id}/route-cost`);const[{data:trip},{count:memberCount}]=await Promise.all([supabase.from("trips").select("id,title,cities").eq("id",id).single(),supabase.from("trip_members").select("id",{count:"exact",head:true}).eq("trip_id",id)]);if(!trip)notFound();return <main className="shell"><div className="container"><AppHeader/><div className="planner-topbar"><Link href={`/trips/${id}/command-center`} className="back-link">‹ Command Center</Link><span className="planner-counter">V9.5 Route Cost Calculator</span></div><section className="planner-hero cost-hero"><div><span className="eyebrow">TRAIN · BUS · TAXI · RENTAL CAR</span><h1>🧮 Route Cost Calculator</h1><p>{trip.title} · เปรียบเทียบค่าเดินทางสำหรับทั้งครอบครัวจากราคาที่คุณตรวจจริง</p></div><Link className="btn btn-secondary" href={`/trips/${id}/route`}>Trip Route</Link></section><RouteCostCalculator initialPartySize={memberCount||4}/><section className="notice"><span>💡</span><div><strong>ใช้คู่กับ Route View</strong><p>เหมาะสำหรับตัดสินใจแต่ละช่วง เช่น Nagoya → Takayama หรือ Takayama → Shirakawa-go โดยกรอกราคา Train/Bus และต้นทุนรถเช่าที่เช็กจากผู้ให้บริการจริง</p></div></section></div><BottomNav active="/plan"/></main>}

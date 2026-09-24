@@ -33,11 +33,22 @@ function MemberFields({ member }: { member?: any }) {
       <div className="field"><label>ความสนใจ</label><input className="input" name="interests" defaultValue={csv(member?.interests)} placeholder="เช่น อาหาร, ธรรมชาติ, รถไฟ, ช้อปปิ้ง" /></div>
       <div className="field"><label>ความต้องการอื่น ๆ</label><input className="input" name="needs" defaultValue={csv(member?.needs)} placeholder="คั่นด้วย comma" /></div>
       <div className="field"><label>Mobility note</label><input className="input" name="mobility_notes" defaultValue={member?.mobility_notes || ""} placeholder="เช่น ใช้ไม้เท้า / เดินทางลาดได้" /></div>
+      <div className="grid2">
+        <div className="field"><label>Passport expiry</label><input className="input" name="passport_expiry" type="date" defaultValue={member?.passport_expiry || ""} /></div>
+        <div className="field"><label>Seat preference</label><input className="input" name="seat_preference" defaultValue={member?.seat_preference || ""} placeholder="เช่น Window / Aisle / นั่งใกล้กัน" /></div>
+      </div>
+      <div className="grid2">
+        <div className="field"><label>Rail pass / Ticket</label><input className="input" name="rail_pass" defaultValue={member?.rail_pass || ""} placeholder="เช่น IC card / JR pass / Individual ticket" /></div>
+        <div className="field"><label>Emergency contact</label><input className="input" name="emergency_contact" defaultValue={member?.emergency_contact || ""} placeholder="ชื่อ + เบอร์โทร (ถ้าต้องการบันทึก)" /></div>
+      </div>
       <div className="check-row family-checks">
         <label><input type="checkbox" name="avoid_stairs" defaultChecked={Boolean(member?.avoid_stairs)} /> หลีกเลี่ยงบันได</label>
         <label><input type="checkbox" name="needs_frequent_rest" defaultChecked={Boolean(member?.needs_frequent_rest)} /> ต้องพักบ่อย</label>
         <label><input type="checkbox" name="stroller" defaultChecked={Boolean(member?.stroller)} /> ใช้รถเข็นเด็ก</label>
+        <label><input type="checkbox" name="child_seat" defaultChecked={Boolean(member?.child_seat)} /> Child seat</label>
+        <label><input type="checkbox" name="booster_seat" defaultChecked={Boolean(member?.booster_seat)} /> Booster seat</label>
       </div>
+      <div className="field"><label>หมายเหตุเอกสาร</label><input className="input" name="document_note" defaultValue={member?.document_note || ""} placeholder="เช่น Passport copy เก็บใน Trip Documents (ไม่แนะนำใส่เลข Passport)" /></div>
       <div className="field"><label>หมายเหตุ</label><textarea className="textarea" name="notes" defaultValue={member?.notes || ""} rows={3} placeholder="ข้อมูลเพิ่มเติมสำหรับการจัดแผน" /></div>
     </>
   );
@@ -49,7 +60,7 @@ export default async function FamilyPage({ params }: { params: Promise<{ id: str
 
   const { data: trip } = await supabase
     .from("trips")
-    .select("id,title,trip_members(id,name,member_type,age,walking_level,needs,dietary_preferences,interests,mobility_notes,avoid_stairs,needs_frequent_rest,stroller,notes,created_at)")
+    .select("id,title,trip_members(id,name,member_type,age,walking_level,needs,dietary_preferences,interests,mobility_notes,avoid_stairs,needs_frequent_rest,stroller,passport_expiry,seat_preference,rail_pass,child_seat,booster_seat,emergency_contact,document_note,notes,created_at)")
     .eq("id", id)
     .single();
   if (!trip) notFound();
@@ -66,7 +77,7 @@ export default async function FamilyPage({ params }: { params: Promise<{ id: str
         <div className="planner-topbar"><Link href={`/trips/${trip.id}`} className="back-link">‹ Dashboard</Link><span className={`role-badge ${role}`}>{role === "owner" ? "Owner" : role === "editor" ? "Editor" : "Viewer"}</span></div>
         <section className="planner-hero family-hero">
           <div><div className="eyebrow">Family profile</div><h1>ครอบครัวของทริปนี้</h1><p>{trip.title} · {members.length} คน</p></div>
-          <span className="planner-count-badge">👨‍👩‍👧‍👵 {members.length}</span>
+          <span className="planner-count-badge">V9.4 · {members.length} คน</span>
         </section>
 
         <div className="notice family-note"><span>🎯</span><div><strong>ข้อมูลส่วนนี้ใช้คำนวณ Family Pace Score</strong><br/><span className="muted">ระดับการเดิน เด็ก ผู้สูงอายุ การพัก และข้อจำกัดจะถูกนำไปประเมินความแน่นของแต่ละวัน</span></div></div>
@@ -84,7 +95,7 @@ export default async function FamilyPage({ params }: { params: Promise<{ id: str
                     <div className="family-tags">
                       {member.avoid_stairs && <span>🚫 บันได</span>}
                       {member.needs_frequent_rest && <span>☕ พักบ่อย</span>}
-                      {member.stroller && <span>🍼 รถเข็นเด็ก</span>}
+                      {member.stroller && <span>🍼 รถเข็นเด็ก</span>}{member.child_seat && <span>🚙 Child seat</span>}{member.booster_seat && <span>💺 Booster</span>}{member.passport_expiry && <span>🛂 Exp {member.passport_expiry}</span>}
                       {(member.dietary_preferences || []).slice(0,2).map((item: string) => <span key={item}>🍽 {item}</span>)}
                     </div>
                   </div>

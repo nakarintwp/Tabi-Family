@@ -38,6 +38,13 @@ export async function createMember(formData: FormData) {
     avoid_stairs: formData.get("avoid_stairs") === "on",
     needs_frequent_rest: formData.get("needs_frequent_rest") === "on",
     stroller: formData.get("stroller") === "on",
+    passport_expiry: String(formData.get("passport_expiry") || "").trim() || null,
+    seat_preference: String(formData.get("seat_preference") || "").trim() || null,
+    rail_pass: String(formData.get("rail_pass") || "").trim() || null,
+    child_seat: formData.get("child_seat") === "on",
+    booster_seat: formData.get("booster_seat") === "on",
+    emergency_contact: String(formData.get("emergency_contact") || "").trim() || null,
+    document_note: String(formData.get("document_note") || "").trim() || null,
     notes: String(formData.get("notes") || "").trim() || null,
   });
   refresh(tripId);
@@ -63,6 +70,13 @@ export async function updateMember(formData: FormData) {
     avoid_stairs: formData.get("avoid_stairs") === "on",
     needs_frequent_rest: formData.get("needs_frequent_rest") === "on",
     stroller: formData.get("stroller") === "on",
+    passport_expiry: String(formData.get("passport_expiry") || "").trim() || null,
+    seat_preference: String(formData.get("seat_preference") || "").trim() || null,
+    rail_pass: String(formData.get("rail_pass") || "").trim() || null,
+    child_seat: formData.get("child_seat") === "on",
+    booster_seat: formData.get("booster_seat") === "on",
+    emergency_contact: String(formData.get("emergency_contact") || "").trim() || null,
+    document_note: String(formData.get("document_note") || "").trim() || null,
     notes: String(formData.get("notes") || "").trim() || null,
   }).eq("id", memberId).eq("trip_id", tripId);
   refresh(tripId);

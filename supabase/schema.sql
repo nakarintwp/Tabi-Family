@@ -1047,3 +1047,12 @@ with check (bucket_id = 'trip-documents' and public.can_edit_trip(((storage.fold
 drop policy if exists "trip documents delete by trip editors" on storage.objects;
 create policy "trip documents delete by trip editors" on storage.objects for delete to authenticated
 using (bucket_id = 'trip-documents' and public.can_edit_trip(((storage.foldername(name))[1])::uuid));
+
+-- V9.4 — Family Travel Profiles
+alter table public.trip_members add column if not exists passport_expiry date;
+alter table public.trip_members add column if not exists seat_preference text;
+alter table public.trip_members add column if not exists rail_pass text;
+alter table public.trip_members add column if not exists child_seat boolean not null default false;
+alter table public.trip_members add column if not exists booster_seat boolean not null default false;
+alter table public.trip_members add column if not exists emergency_contact text;
+alter table public.trip_members add column if not exists document_note text;
