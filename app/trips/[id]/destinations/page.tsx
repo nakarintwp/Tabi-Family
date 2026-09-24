@@ -18,7 +18,7 @@ export default async function TripDestinationsPage({ params, searchParams }: { p
 
   return <main className="shell"><div className="container"><AppHeader />
     <div className="planner-topbar"><Link href={`/trips/${id}`} className="back-link">‹ Dashboard</Link><span className="planner-counter">Destinations</span></div>
-    <section className="planner-hero destination-hero"><div><span className="eyebrow">TRIP SCOPE</span><h1>เมือง / พื้นที่ที่จะไป</h1><p>{trip.title}</p></div><Link className="btn btn-secondary" href={`/explore?trip=${id}`}>✨ เปิด Explore</Link></section>
+    <section className="planner-hero destination-hero"><div><span className="eyebrow">TRIP SCOPE</span><h1>ชื่อเมือง / พื้นที่ที่จะไป</h1><p>{trip.title}</p></div><Link className="btn btn-secondary" href={`/explore?trip=${id}`}>✨ เปิด Explore</Link></section>
     {query.saved === "1" && <div className="success-box">อัปเดตพื้นที่ของ Trip แล้ว ✓</div>}
     {query.error && <div className="error-box">{query.error}</div>}
 
